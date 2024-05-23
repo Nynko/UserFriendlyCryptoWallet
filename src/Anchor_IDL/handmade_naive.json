@@ -1,0 +1,1404 @@
+{
+  "address": "Cxy33pZyucN3HvA3ovzyZaQoMwHGCHT5EEhsjjVaP5T3",
+  "metadata": {
+    "name": "handmade_naive",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_issuer_to_id",
+      "discriminator": [
+        213,
+        147,
+        148,
+        84,
+        40,
+        47,
+        21,
+        188
+      ],
+      "accounts": [
+        {
+          "name": "issuer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "idendity",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id_validity_duration",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "add_issuers_wrapper",
+      "discriminator": [
+        90,
+        150,
+        120,
+        185,
+        80,
+        51,
+        41,
+        200
+      ],
+      "accounts": [
+        {
+          "name": "wrapper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "approver",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "issuer",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "initialize_id",
+      "discriminator": [
+        63,
+        161,
+        143,
+        94,
+        240,
+        8,
+        194,
+        92
+      ],
+      "accounts": [
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "issuer",
+          "signer": true
+        },
+        {
+          "name": "idendity",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id_validity_duration",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_mint",
+      "discriminator": [
+        209,
+        42,
+        195,
+        4,
+        129,
+        85,
+        209,
+        44
+      ],
+      "accounts": [
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wrapper_associated_token_account",
+          "writable": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_two_auth",
+      "discriminator": [
+        240,
+        201,
+        133,
+        234,
+        112,
+        48,
+        218,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "idendity",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "two_auth",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  119,
+                  111,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "wrapper_account"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "two_auth_entity",
+          "signer": true,
+          "optional": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "two_auth",
+          "type": {
+            "option": {
+              "defined": {
+                "name": "TwoAuthArgs"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_wrap_account",
+      "discriminator": [
+        215,
+        136,
+        189,
+        15,
+        148,
+        26,
+        38,
+        90
+      ],
+      "accounts": [
+        {
+          "name": "wrapped_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  100,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "wrapper_account"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_wrapper",
+      "discriminator": [
+        143,
+        211,
+        228,
+        247,
+        131,
+        67,
+        40,
+        30
+      ],
+      "accounts": [
+        {
+          "name": "wrapper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "approver",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "list_issuer",
+          "type": {
+            "vec": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "remove_issuer_wrapper",
+      "discriminator": [
+        29,
+        234,
+        10,
+        98,
+        23,
+        35,
+        22,
+        183
+      ],
+      "accounts": [
+        {
+          "name": "wrapper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "approver",
+          "signer": true
+        },
+        {
+          "name": "issuer"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "transfer",
+      "discriminator": [
+        163,
+        52,
+        200,
+        231,
+        140,
+        3,
+        69,
+        186
+      ],
+      "accounts": [
+        {
+          "name": "source_wrapped_account",
+          "writable": true
+        },
+        {
+          "name": "source_owner",
+          "signer": true
+        },
+        {
+          "name": "idendity_sender",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "source_owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "two_auth",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  119,
+                  111,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "wrapper_account"
+              },
+              {
+                "kind": "account",
+                "path": "source_owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination_wrapped_account",
+          "writable": true
+        },
+        {
+          "name": "destination_owner"
+        },
+        {
+          "name": "idendity_receiver",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "destination_owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "two_auth_signer",
+          "signer": true,
+          "optional": true
+        },
+        {
+          "name": "wrapper_account",
+          "relations": [
+            "source_wrapped_account"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_two_auth",
+      "discriminator": [
+        222,
+        98,
+        57,
+        40,
+        232,
+        148,
+        90,
+        198
+      ],
+      "accounts": [
+        {
+          "name": "idendity",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          }
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "two_auth",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  119,
+                  111,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "wrapper_account"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "two_auth_entity",
+          "signer": true,
+          "optional": true
+        },
+        {
+          "name": "old_two_auth_entity",
+          "signer": true,
+          "optional": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "two_auth",
+          "type": {
+            "option": {
+              "defined": {
+                "name": "TwoAuthArgs"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "wrap_tokens",
+      "discriminator": [
+        244,
+        137,
+        57,
+        251,
+        232,
+        224,
+        54,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "wrapper_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "approver"
+              }
+            ]
+          },
+          "relations": [
+            "user_wrapped_token_account"
+          ]
+        },
+        {
+          "name": "approver"
+        },
+        {
+          "name": "wrapper_token_account",
+          "writable": true
+        },
+        {
+          "name": "user_wrapped_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  114,
+                  97,
+                  112,
+                  112,
+                  101,
+                  100,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "wrapper_account"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "mint",
+          "relations": [
+            "user_wrapped_token_account"
+          ]
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "decimals",
+          "type": "u8"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "IdAccount",
+      "discriminator": [
+        97,
+        148,
+        16,
+        183,
+        235,
+        126,
+        146,
+        150
+      ]
+    },
+    {
+      "name": "TwoAuth",
+      "discriminator": [
+        130,
+        227,
+        165,
+        108,
+        170,
+        222,
+        193,
+        225
+      ]
+    },
+    {
+      "name": "WrappedTokenAccount",
+      "discriminator": [
+        110,
+        125,
+        117,
+        175,
+        200,
+        107,
+        71,
+        221
+      ]
+    },
+    {
+      "name": "WrapperAccount",
+      "discriminator": [
+        66,
+        159,
+        143,
+        36,
+        181,
+        246,
+        145,
+        205
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "RecoveryTimeNotPassed",
+      "msg": "Recovery time not passed"
+    },
+    {
+      "code": 6001,
+      "name": "NotEnoughSignatures",
+      "msg": "Not enough signatures"
+    }
+  ],
+  "types": [
+    {
+      "name": "CircularTimeWindow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "start_index",
+            "type": "u8"
+          },
+          {
+            "name": "window",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "duration",
+            "type": {
+              "defined": {
+                "name": "Duration"
+              }
+            }
+          },
+          {
+            "name": "last_value_time",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Duration",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Seconds",
+            "fields": [
+              "u8"
+            ]
+          },
+          {
+            "name": "Minutes",
+            "fields": [
+              "u8"
+            ]
+          },
+          {
+            "name": "Hours",
+            "fields": [
+              "u8"
+            ]
+          },
+          {
+            "name": "Days",
+            "fields": [
+              "u8"
+            ]
+          },
+          {
+            "name": "Weeks",
+            "fields": [
+              "u8"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "IdAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "issuers",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Issuer"
+                }
+              }
+            }
+          },
+          {
+            "name": "recovered_address",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Issuer",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "pubkey"
+          },
+          {
+            "name": "last_modified",
+            "type": "i64"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          },
+          {
+            "name": "active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TwoAuth",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "two_auth",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "TwoAuthParameters"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TwoAuthArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "functions",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "TwoAuthFunction"
+                }
+              }
+            }
+          },
+          {
+            "name": "allowed_issuers",
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TwoAuthFunction",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Always"
+          },
+          {
+            "name": "OnMax",
+            "fields": [
+              {
+                "name": "max",
+                "type": "u64"
+              }
+            ]
+          },
+          {
+            "name": "CounterResetOnMax",
+            "fields": [
+              {
+                "name": "max",
+                "type": "u64"
+              },
+              {
+                "name": "counter",
+                "type": "u64"
+              }
+            ]
+          },
+          {
+            "name": "CounterResetOnTime",
+            "fields": [
+              {
+                "name": "max",
+                "type": "u64"
+              },
+              {
+                "name": "duration",
+                "type": {
+                  "defined": {
+                    "name": "Duration"
+                  }
+                }
+              },
+              {
+                "name": "counter",
+                "type": "u64"
+              },
+              {
+                "name": "last_reset_time",
+                "type": "i64"
+              }
+            ]
+          },
+          {
+            "name": "CounterWithTimeWindow",
+            "fields": [
+              {
+                "name": "max",
+                "type": "u64"
+              },
+              {
+                "name": "window",
+                "type": {
+                  "defined": {
+                    "name": "CircularTimeWindow"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "DeactivateForUserSpecificWhiteList",
+            "fields": [
+              {
+                "name": "white_list",
+                "type": {
+                  "vec": "pubkey"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "TwoAuthParameters",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "functions",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "TwoAuthFunction"
+                }
+              }
+            }
+          },
+          {
+            "name": "two_auth_entity",
+            "type": "pubkey"
+          },
+          {
+            "name": "allowed_issuers",
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "WrappedTokenAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wrapper_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "last_tx",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WrapperAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "approver",
+            "type": "pubkey"
+          },
+          {
+            "name": "list_issuer",
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
