@@ -105,9 +105,10 @@ function generateKeypair(
   return keypair;
 }
 
-export async function addWrappedToken(
-  WrappedTokenAccount: anchor.web3.PublicKey,
-  mint: anchor.web3.PublicKey,
+export async function saveAddress(
+  address: anchor.web3.PublicKey,
+  service: string,
+  username: string,
 ) {
   let biometric = await Keychain.getSupportedBiometryType();
   if (Platform.OS === 'android') {
@@ -115,7 +116,7 @@ export async function addWrappedToken(
   }
   let constraints: Keychain.Options = {
     accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-    service: 'WrappedToken' + mint.toString(),
+    service: service,
   };
   if (biometric) {
   }
@@ -126,8 +127,17 @@ export async function addWrappedToken(
     authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
   };
 
-  let username = JSON.stringify(mint);
-  let secretKey = JSON.stringify(WrappedTokenAccount);
+  // const oldValueExist = await checkIfExist(service);
+  // if (oldValueExist) {
+  //   const result = await Keychain.resetGenericPassword({service});
+  //   if (result != true) {
+  //     throw new Error(
+  //       `Tried to reset the storage for service: ${service} but failed`,
+  //     );
+  //   }
+  // }
+
+  let secretKey = JSON.stringify(address);
 
   Keychain.setGenericPassword(username, secretKey, constraints);
 
@@ -135,25 +145,38 @@ export async function addWrappedToken(
   // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD, --> Iphone
 }
 
-export async function accessWrappedToken(
-  mint: anchor.web3.PublicKey,
+async function checkIfExist(service: string): Promise<boolean> {
+  try {
+    await accessAddress(service);
+    return true;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      (error as Error).message == 'No credentials stored'
+    ) {
+      return false;
+    } else {
+      throw error;
+    }
+  }
+}
+
+export async function accessAddress(
+  service: string,
 ): Promise<anchor.web3.PublicKey> {
   try {
     // Retrieve the credentials
     const credentials = await Keychain.getGenericPassword({
-      service: 'WrappedToken' + mint.toString(),
+      service: service,
     });
     if (credentials) {
-      const secret = JSON.parse(credentials.password);
-      return new anchor.web3.PublicKey(secret);
+      const address = JSON.parse(credentials.password);
+      return new anchor.web3.PublicKey(address);
     } else {
       const errorMess = 'No credentials stored';
-      console.log(errorMess);
       throw Error(errorMess);
     }
   } catch (error) {
-    const errorMess = "Keychain couldn't be accessed! :" + error;
-    console.log(errorMess);
-    throw Error(errorMess);
+    throw error;
   }
 }

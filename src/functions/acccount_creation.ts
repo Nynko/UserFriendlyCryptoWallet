@@ -6,7 +6,7 @@ import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
 import IDL from '../Anchor_IDL/handmade_naive.json';
 import {Program} from '@coral-xyz/anchor';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
-import {accessSolanaWallet, addWrappedToken} from './solana_wallet';
+import {accessSolanaWallet, saveAddress} from './solana_wallet';
 
 export async function create_account(connection: anchor.web3.Connection) {
   const program = new Program<HandmadeNaive>(IDL as HandmadeNaive, {
@@ -20,10 +20,10 @@ export async function create_account(connection: anchor.web3.Connection) {
     219, 36, 179, 98, 237, 169, 19, 188, 167, 169, 130, 113, 121, 123, 123, 63,
   ]);
   const issuerKey = new Uint8Array([
-    111, 34, 247, 125, 1, 222, 140, 99, 37, 44, 166, 191, 231, 230, 174, 180,
-    36, 38, 192, 51, 19, 124, 23, 89, 227, 105, 12, 155, 134, 105, 220, 84, 33,
-    10, 165, 83, 21, 252, 176, 184, 191, 44, 26, 42, 47, 248, 88, 43, 230, 97,
-    58, 75, 32, 71, 26, 96, 99, 221, 159, 2, 28, 45, 174, 234,
+    7, 180, 193, 197, 0, 71, 3, 215, 189, 62, 105, 174, 103, 217, 159, 213, 150,
+    87, 51, 162, 196, 76, 106, 180, 149, 49, 242, 76, 144, 60, 255, 176, 208,
+    28, 91, 68, 184, 212, 238, 247, 179, 135, 221, 93, 64, 94, 216, 131, 193,
+    192, 188, 170, 153, 27, 2, 17, 91, 64, 205, 185, 251, 95, 165, 157,
   ]);
   const payer = anchor.web3.Keypair.fromSecretKey(secretKey);
   const issuer = anchor.web3.Keypair.fromSecretKey(issuerKey);
@@ -31,9 +31,11 @@ export async function create_account(connection: anchor.web3.Connection) {
     '3gfvTF5mEkHtZvn8d4wVFL7RsMfnBN2nyLn15TVhnR6x',
   );
   const mint = new anchor.web3.PublicKey(
-    'DufKxDjrHcfw7cuh2x8CNrYz9GMHXiLAuYFmvtHc6jbE',
+    'BCEkAUyM6NZtoorWn4n7b5pk7aN4haJAqifUEQQ8Ut8W',
   );
-  const idendity = await issue_idendity(
+
+  const transaction = new anchor.web3.Transaction();
+  const [idendity, idInstruction] = await issue_idendity_instruction(
     1000,
     signer,
     issuer,
@@ -42,7 +44,10 @@ export async function create_account(connection: anchor.web3.Connection) {
     wrapper,
     program,
   );
-  const twoAuth = await initialize_two_auth(
+
+  transaction.add(idInstruction);
+
+  const [twoAuth, twoAuthInstruction] = await initialize_two_auth_instruction(
     signer,
     payer,
     idendity,
@@ -51,21 +56,54 @@ export async function create_account(connection: anchor.web3.Connection) {
     payer.publicKey,
     program,
   );
-  const wrapped_account = await initialize_wrapped_account(
-    signer,
-    payer,
-    mint,
-    payer.publicKey,
-    wrapper,
-    program,
-  );
+
+  transaction.add(twoAuthInstruction);
+
+  const [wrappedAccount, wrappedAccountInstruction] =
+    await initialize_wrapped_account_instruction(
+      signer,
+      payer,
+      mint,
+      payer.publicKey,
+      wrapper,
+      program,
+    );
+
+  transaction.add(wrappedAccountInstruction);
 
   // Recovery
 
-  await addWrappedToken(wrapped_account, mint);
+  transaction.feePayer = payer.publicKey;
+
+  try {
+    // let blockhash = (await connection.getLatestBlockhash('confirmed'))
+    //   .blockhash;
+    // transaction.recentBlockhash = blockhash;
+    const txid = await anchor.web3.sendAndConfirmTransaction(
+      program.provider.connection,
+      transaction,
+      [issuer, signer, payer],
+      {commitment: 'confirmed'},
+    );
+    console.log(`Creating Account tx : ${txid}`);
+  } catch (error) {
+    console.log(error);
+
+    console.log((error as anchor.AnchorError).logs);
+  }
+
+  await saveAddress(
+    wrappedAccount,
+    'WrappedAccount' + mint.toString(),
+    mint.toString(),
+  );
+
+  await saveAddress(idendity, 'Idendity', '');
+
+  await saveAddress(twoAuth, 'TwoAuth' + wrappedAccount.toString(), '');
 }
 
-async function initialize_wrapped_account(
+async function initialize_wrapped_account_instruction(
   owner: anchor.web3.Signer,
   payer: anchor.web3.Signer,
   mint: anchor.web3.PublicKey,
@@ -73,7 +111,7 @@ async function initialize_wrapped_account(
   wrapper_account: anchor.web3.PublicKey,
   program: Program<HandmadeNaive>,
   token_program: anchor.web3.PublicKey = TOKEN_PROGRAM_ID,
-): Promise<anchor.web3.PublicKey> {
+): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
   const [wrapped_account, bump] =
     await anchor.web3.PublicKey.findProgramAddressSync(
       [
@@ -100,24 +138,10 @@ async function initialize_wrapped_account(
     })
     .instruction();
 
-  const transaction = new anchor.web3.Transaction().add(instruction);
-  transaction.feePayer = payer.publicKey;
-
-  try {
-    const txid = await anchor.web3.sendAndConfirmTransaction(
-      program.provider.connection,
-      transaction,
-      [owner, payer],
-    );
-    console.log('Init wrapped account tx', txid);
-  } catch (error) {
-    console.log(JSON.stringify(error));
-  }
-
-  return wrapped_account;
+  return [wrapped_account, instruction];
 }
 
-async function initialize_two_auth(
+async function initialize_two_auth_instruction(
   owner: anchor.web3.Signer,
   payer: anchor.web3.Signer,
   idendity: anchor.web3.PublicKey,
@@ -125,7 +149,7 @@ async function initialize_two_auth(
   wrapper_account: anchor.web3.PublicKey,
   two_auth_entity: anchor.web3.PublicKey,
   program: Program<HandmadeNaive>,
-): Promise<anchor.web3.PublicKey> {
+): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
   const [two_auth, bump] = await anchor.web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from('two_auth'),
@@ -182,23 +206,10 @@ async function initialize_two_auth(
     })
     .instruction();
 
-  const transaction = new anchor.web3.Transaction().add(instruction);
-  transaction.feePayer = payer.publicKey;
-
-  try {
-    const txid = await anchor.web3.sendAndConfirmTransaction(
-      program.provider.connection,
-      transaction,
-      [owner, payer],
-    );
-    console.log('Init 2auth tx', txid);
-  } catch (error) {
-    console.log(JSON.stringify(error));
-  }
-  return two_auth;
+  return [two_auth, instruction];
 }
 
-async function issue_idendity(
+async function issue_idendity_instruction(
   validity_duration: number,
   owner: anchor.web3.Signer,
   issuer: anchor.web3.Signer,
@@ -206,7 +217,7 @@ async function issue_idendity(
   approver: anchor.web3.PublicKey,
   wrapper: anchor.web3.PublicKey,
   program: Program<HandmadeNaive>,
-): Promise<anchor.web3.PublicKey> {
+): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
   const [idendity, bump] = await anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from('identity'), owner.publicKey.toBuffer()],
     program.programId,
@@ -226,18 +237,5 @@ async function issue_idendity(
     })
     .instruction();
 
-  const transaction = new anchor.web3.Transaction().add(instruction);
-  transaction.feePayer = payer.publicKey;
-  try {
-    const txid = await anchor.web3.sendAndConfirmTransaction(
-      program.provider.connection,
-      transaction,
-      [issuer, owner, payer],
-    );
-    console.log(`Creating Idendity tx : ${txid}`);
-  } catch (error) {
-    console.log((error as anchor.AnchorError).logs);
-  }
-
-  return idendity;
+  return [idendity, instruction];
 }
