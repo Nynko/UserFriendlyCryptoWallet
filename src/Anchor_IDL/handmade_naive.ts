@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/handmade_naive.json`.
  */
 export type HandmadeNaive = {
-  "address": "Cxy33pZyucN3HvA3ovzyZaQoMwHGCHT5EEhsjjVaP5T3",
+  "address": "Dq1SdmsJ5GpeGazTRbhFVoQkowZDY77CDdVhcoAw5Zu",
   "metadata": {
     "name": "handmadeNaive",
     "version": "0.1.0",
@@ -1074,13 +1074,38 @@ export type HandmadeNaive = {
   "errors": [
     {
       "code": 6000,
-      "name": "recoveryTimeNotPassed",
-      "msg": "Recovery time not passed"
+      "name": "idendityAlreadyExists",
+      "msg": "Idendity already exists"
     },
     {
       "code": 6001,
-      "name": "notEnoughSignatures",
-      "msg": "Not enough signatures"
+      "name": "idendityNotActive",
+      "msg": "Idendity is not active"
+    },
+    {
+      "code": 6002,
+      "name": "idendityExpired",
+      "msg": "Idendity expired"
+    },
+    {
+      "code": 6003,
+      "name": "idendityRecovered",
+      "msg": "Idendity recovered"
+    },
+    {
+      "code": 6004,
+      "name": "idendityAlreadyRecovered",
+      "msg": "Idendity already recovered"
+    },
+    {
+      "code": 6005,
+      "name": "issuerNotApproved",
+      "msg": "Issuer is not approved"
+    },
+    {
+      "code": 6006,
+      "name": "invalidIdendity",
+      "msg": "No approved issuer found or inactive/expired issuer"
     }
   ],
   "types": [

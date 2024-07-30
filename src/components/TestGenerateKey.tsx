@@ -1,13 +1,23 @@
 import {Button} from 'react-native';
-import {createSolanaWallet} from '../functions/solana_wallet';
+import {createSolanaWallet, saveAddress} from '../functions/solana_wallet';
 import * as anchor from '@coral-xyz/anchor';
+import { WRAPPER } from '../tmp';
 
 export const TestGenerateKey = () => {
   const programId = new anchor.web3.PublicKey(
     'Cxy33pZyucN3HvA3ovzyZaQoMwHGCHT5EEhsjjVaP5T3',
   );
-  const wrapperAccount = new anchor.web3.PublicKey("3gfvTF5mEkHtZvn8d4wVFL7RsMfnBN2nyLn15TVhnR6x");
+  const wrapperAccount = new anchor.web3.PublicKey(
+    WRAPPER,
+  );
   return (
-    <Button title="TestKeys" onPress={() => {createSolanaWallet(programId,wrapperAccount)}} />
+    <Button
+      title="TestKeys"
+      onPress={async () => {
+        let publicKey = await createSolanaWallet(programId, wrapperAccount);
+        console.log(publicKey);
+        saveAddress(publicKey, 'PublicKey', '');
+      }}
+    />
   );
 };

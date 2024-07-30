@@ -2,41 +2,32 @@
 This contain the logic for creating a token account for a given wallet.
 */
 import * as anchor from '@coral-xyz/anchor';
-import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
+import { HandmadeNaive } from '../Anchor_IDL/handmade_naive';
 import IDL from '../Anchor_IDL/handmade_naive.json';
-import {Program} from '@coral-xyz/anchor';
-import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
-import {accessSolanaWallet, saveAddress} from './solana_wallet';
+import { Program } from '@coral-xyz/anchor';
+import { TOKEN_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
+import { accessSolanaWallet, saveAddress } from './solana_wallet';
+import { ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER } from '../tmp';
 
 export async function create_account(connection: anchor.web3.Connection) {
   const program = new Program<HandmadeNaive>(IDL as HandmadeNaive, {
     connection,
   });
   const signer = await accessSolanaWallet();
-  const secretKey = new Uint8Array([
-    168, 211, 226, 112, 155, 144, 84, 189, 91, 180, 27, 154, 232, 214, 171, 34,
-    170, 170, 129, 92, 121, 182, 191, 46, 214, 251, 216, 56, 75, 188, 172, 111,
-    183, 94, 11, 97, 242, 122, 154, 242, 188, 154, 126, 25, 182, 99, 199, 61,
-    219, 36, 179, 98, 237, 169, 19, 188, 167, 169, 130, 113, 121, 123, 123, 63,
-  ]);
-  const issuerKey = new Uint8Array([
-    7, 180, 193, 197, 0, 71, 3, 215, 189, 62, 105, 174, 103, 217, 159, 213, 150,
-    87, 51, 162, 196, 76, 106, 180, 149, 49, 242, 76, 144, 60, 255, 176, 208,
-    28, 91, 68, 184, 212, 238, 247, 179, 135, 221, 93, 64, 94, 216, 131, 193,
-    192, 188, 170, 153, 27, 2, 17, 91, 64, 205, 185, 251, 95, 165, 157,
-  ]);
+  const secretKey = new Uint8Array(PRIVATE_KEY);
+  const issuerKey = new Uint8Array(ISSUER_LOCAL);
   const payer = anchor.web3.Keypair.fromSecretKey(secretKey);
   const issuer = anchor.web3.Keypair.fromSecretKey(issuerKey);
   const wrapper = new anchor.web3.PublicKey(
-    '3gfvTF5mEkHtZvn8d4wVFL7RsMfnBN2nyLn15TVhnR6x',
+    WRAPPER,
   );
   const mint = new anchor.web3.PublicKey(
-    'BCEkAUyM6NZtoorWn4n7b5pk7aN4haJAqifUEQQ8Ut8W',
+    MINT_PUB,
   );
 
   const transaction = new anchor.web3.Transaction();
   const [idendity, idInstruction] = await issue_idendity_instruction(
-    1000,
+    10000000,
     signer,
     issuer,
     payer,
@@ -83,7 +74,7 @@ export async function create_account(connection: anchor.web3.Connection) {
       program.provider.connection,
       transaction,
       [issuer, signer, payer],
-      {commitment: 'confirmed'},
+      { commitment: 'confirmed' },
     );
     console.log(`Creating Account tx : ${txid}`);
   } catch (error) {
@@ -164,7 +155,7 @@ async function initialize_two_auth_instruction(
   const instruction = await program.methods
     .initializeTwoAuth({
       functions: [
-        {onMax: {max: new anchor.BN(10)}},
+        { onMax: { max: new anchor.BN(10) } },
         {
           counterResetOnMax: {
             max: new anchor.BN(10),
@@ -174,7 +165,7 @@ async function initialize_two_auth_instruction(
         {
           counterResetOnTime: {
             max: new anchor.BN(10),
-            duration: {seconds: [1]},
+            duration: { seconds: [1] },
             lastResetTime: new anchor.BN(56),
             counter: new anchor.BN(0),
           },
@@ -183,15 +174,15 @@ async function initialize_two_auth_instruction(
           counterWithTimeWindow: {
             max: new anchor.BN(10),
             window: {
-              duration: {days: [30]},
+              duration: { days: [30] },
               lastValueTime: new anchor.BN(0),
               window: [],
               startIndex: 0,
             },
           },
         },
-        {deactivateForUserSpecificWhiteList: {whiteList: []}},
-        {always: {}},
+        { deactivateForUserSpecificWhiteList: { whiteList: [] } },
+        { always: {} },
       ],
       allowedIssuers: [approver],
     })

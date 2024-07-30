@@ -1,10 +1,11 @@
 import {Button, Text, View} from 'react-native';
 import * as anchor from '@coral-xyz/anchor';
 import {accessAddress} from '../functions/solana_wallet';
+import { MINT_PUB } from '../tmp';
 
 export const TestAccessAccount = () => {
   const mint = new anchor.web3.PublicKey(
-    'BCEkAUyM6NZtoorWn4n7b5pk7aN4haJAqifUEQQ8Ut8W',
+    MINT_PUB,
   );
   return (
     <View>

@@ -1,5 +1,5 @@
 {
-  "address": "Cxy33pZyucN3HvA3ovzyZaQoMwHGCHT5EEhsjjVaP5T3",
+  "address": "Dq1SdmsJ5GpeGazTRbhFVoQkowZDY77CDdVhcoAw5Zu",
   "metadata": {
     "name": "handmade_naive",
     "version": "0.1.0",
@@ -1068,13 +1068,38 @@
   "errors": [
     {
       "code": 6000,
-      "name": "RecoveryTimeNotPassed",
-      "msg": "Recovery time not passed"
+      "name": "IdendityAlreadyExists",
+      "msg": "Idendity already exists"
     },
     {
       "code": 6001,
-      "name": "NotEnoughSignatures",
-      "msg": "Not enough signatures"
+      "name": "IdendityNotActive",
+      "msg": "Idendity is not active"
+    },
+    {
+      "code": 6002,
+      "name": "IdendityExpired",
+      "msg": "Idendity expired"
+    },
+    {
+      "code": 6003,
+      "name": "IdendityRecovered",
+      "msg": "Idendity recovered"
+    },
+    {
+      "code": 6004,
+      "name": "IdendityAlreadyRecovered",
+      "msg": "Idendity already recovered"
+    },
+    {
+      "code": 6005,
+      "name": "IssuerNotApproved",
+      "msg": "Issuer is not approved"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidIdendity",
+      "msg": "No approved issuer found or inactive/expired issuer"
     }
   ],
   "types": [

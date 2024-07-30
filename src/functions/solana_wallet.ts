@@ -9,7 +9,7 @@ import * as anchor from '@coral-xyz/anchor';
 export async function createSolanaWallet(
   programId: anchor.web3.PublicKey,
   wrapperAccount: anchor.web3.PublicKey,
-) {
+): Promise<anchor.web3.PublicKey> {
   let biometric = await Keychain.getSupportedBiometryType();
   if (Platform.OS === 'android') {
     let android_security_level = await Keychain.getSecurityLevel();
@@ -38,6 +38,8 @@ export async function createSolanaWallet(
 
   // Generate a backup with password protection ?
   // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD, --> Iphone
+
+  return key.publicKey;
 }
 
 export async function accessSolanaWallet(): Promise<anchor.web3.Keypair> {
@@ -122,20 +124,7 @@ export async function saveAddress(
   }
   constraints = {
     ...constraints,
-    accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
-    // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-    authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
   };
-
-  // const oldValueExist = await checkIfExist(service);
-  // if (oldValueExist) {
-  //   const result = await Keychain.resetGenericPassword({service});
-  //   if (result != true) {
-  //     throw new Error(
-  //       `Tried to reset the storage for service: ${service} but failed`,
-  //     );
-  //   }
-  // }
 
   let secretKey = JSON.stringify(address);
 
@@ -143,22 +132,6 @@ export async function saveAddress(
 
   // Generate a backup with password protection ?
   // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD, --> Iphone
-}
-
-async function checkIfExist(service: string): Promise<boolean> {
-  try {
-    await accessAddress(service);
-    return true;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      (error as Error).message == 'No credentials stored'
-    ) {
-      return false;
-    } else {
-      throw error;
-    }
-  }
 }
 
 export async function accessAddress(

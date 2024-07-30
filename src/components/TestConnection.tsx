@@ -4,7 +4,7 @@ import {Program} from '@coral-xyz/anchor';
 import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
 import IDL from '../Anchor_IDL/handmade_naive.json';
 import {SetStateAction, useEffect, useState} from 'react';
-import {ENV, ISSUER_LOCAL, ISSUER_DEVNET} from '../tmp';
+import {ENV, ISSUER_LOCAL, ISSUER_DEVNET, PRIVATE_KEY, WRAPPER} from '../tmp';
 import {useConnection} from '@solana/wallet-adapter-react';
 
 const handleClick = async (
@@ -14,12 +14,7 @@ const handleClick = async (
   // const connection = new anchor.web3.Connection("https://api.devnet.solana.com");
   // const connection = new anchor.web3.Connection("http://localhost:8899");
 
-  const secretKey = new Uint8Array([
-    168, 211, 226, 112, 155, 144, 84, 189, 91, 180, 27, 154, 232, 214, 171, 34,
-    170, 170, 129, 92, 121, 182, 191, 46, 214, 251, 216, 56, 75, 188, 172, 111,
-    183, 94, 11, 97, 242, 122, 154, 242, 188, 154, 126, 25, 182, 99, 199, 61,
-    219, 36, 179, 98, 237, 169, 19, 188, 167, 169, 130, 113, 121, 123, 123, 63,
-  ]);
+  const secretKey = new Uint8Array(PRIVATE_KEY);
   let issuerSecret;
   if (ENV === 'LOCAL') {
     issuerSecret = new Uint8Array(ISSUER_LOCAL);
@@ -61,7 +56,7 @@ const handleClick = async (
     .accountsPartial({
       approver: payer.publicKey,
       wrapperAccount: new anchor.web3.PublicKey(
-        '3gfvTF5mEkHtZvn8d4wVFL7RsMfnBN2nyLn15TVhnR6x',
+        WRAPPER,
       ),
       issuer: issuer.publicKey,
       owner: keypair.publicKey,
