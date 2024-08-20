@@ -8,6 +8,7 @@ import { Program } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
 import { accessSolanaWallet, saveAddress } from './solana_wallet';
 import { ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER } from '../tmp';
+import { KeychainElements } from '../types/keychains';
 
 export async function create_account(connection: anchor.web3.Connection) {
   const program = new Program<HandmadeNaive>(IDL as HandmadeNaive, {
@@ -85,13 +86,15 @@ export async function create_account(connection: anchor.web3.Connection) {
 
   await saveAddress(
     wrappedAccount,
-    'WrappedAccount' + mint.toString(),
+    KeychainElements.WrappedAccountWithMint + mint.toString(),
     mint.toString(),
   );
 
-  await saveAddress(idendity, 'Idendity', '');
+  await saveAddress(idendity, KeychainElements.Idendity, '');
 
-  await saveAddress(twoAuth, 'TwoAuth' + wrappedAccount.toString(), '');
+  // Can't we just remove the added wrapped account ? And worse case just put "solana"
+  await saveAddress(twoAuth, KeychainElements.TwoAuthWithWrappedAccount + wrappedAccount.toString(), '');
+  await saveAddress(payer.publicKey, KeychainElements.TwoAuthEntityWithWrappedAccount + wrappedAccount.toString(), '');
 }
 
 async function initialize_wrapped_account_instruction(

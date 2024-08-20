@@ -49,5 +49,7 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your Camera.</string>
+	<key>com.apple.developer.nfc.hce</key>
+	<true/>
 </dict>
 </plist>

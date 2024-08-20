@@ -14,7 +14,7 @@ export const PRIVATE_KEY = [
 
 export const USER_KEY = local.user1_info.user1
 export const USER_WRAPPED_ACC = local.user1_info.wrapped_account
-export const USER_1_AUTH = "AMbdkRheivoch16puYKgHyHQFyLDMzq25wojwMt7FqP2"
+export const USER_1_AUTH = "BycmRBUHnaTg3JtR69S99JgzYbwUb2u5LJoziXxXzQ96"
 
 
 export const MINT_PUB = local.mint_info.mint

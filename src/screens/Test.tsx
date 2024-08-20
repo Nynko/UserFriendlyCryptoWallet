@@ -23,6 +23,7 @@ import {TestAccessAccount} from '../components/TestAccessAccount';
 import {TestBalance} from '../components/TestBalance';
 import {Airdrop} from '../components/Airdrop';
 import {TestTransfer} from '../components/TestTransfer';
+import { TestCreateAnonCreds } from '../components/TestCreateAnonCreds';
 
 
 type SectionProps = PropsWithChildren<{
@@ -82,8 +83,8 @@ export function Test({reloadBalances}: {reloadBalances: () => void}) {
           <TestAccessAccount />
           <TestBalance />
           <Airdrop reloadBalances={reloadBalances}/>
-
           <TestTransfer reloadBalances={reloadBalances} />
+          <TestCreateAnonCreds/>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change
             this screen and then come back to see your edits.

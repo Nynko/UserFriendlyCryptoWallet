@@ -1,6 +1,6 @@
 import * as anchor from '@coral-xyz/anchor';
 import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
-
+import { BACKEND_URL } from '@env';
 
 interface RawTxData {
   transaction: String,
@@ -9,7 +9,10 @@ interface RawTxData {
 
 async function signTwoAuth(rawData: RawTxData) : Promise<RawTxData | Error> {
   try {
-    const response = await fetch('http://192.168.1.240:3000/two-auth-sign', {
+    const backend_url = BACKEND_URL;
+    console.log();
+    
+    const response = await fetch(`${backend_url}/two-auth-sign`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

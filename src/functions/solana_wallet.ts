@@ -5,27 +5,13 @@ storing it securely and access it when needed.
 import * as Keychain from 'react-native-keychain';
 import {Platform} from 'react-native';
 import * as anchor from '@coral-xyz/anchor';
+import { store_secret } from './secrets';
+import { KeychainElements } from '../types/keychains';
 
 export async function createSolanaWallet(
   programId: anchor.web3.PublicKey,
   wrapperAccount: anchor.web3.PublicKey,
 ): Promise<anchor.web3.PublicKey> {
-  let biometric = await Keychain.getSupportedBiometryType();
-  if (Platform.OS === 'android') {
-    let android_security_level = await Keychain.getSecurityLevel();
-  }
-  let constraints: Keychain.Options = {
-    accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-    service: 'PrivateKey',
-  };
-  if (biometric) {
-  }
-  constraints = {
-    ...constraints,
-    accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
-    // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-    authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
-  };
 
   let key = generateKeypair(programId, wrapperAccount);
   if (!key) {
@@ -34,7 +20,7 @@ export async function createSolanaWallet(
   let username = JSON.stringify(key.publicKey);
   let secretKey = JSON.stringify(Array.from(key.secretKey));
 
-  Keychain.setGenericPassword(username, secretKey, constraints);
+  store_secret(username, secretKey, KeychainElements.PrivateKey);
 
   // Generate a backup with password protection ?
   // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD, --> Iphone
@@ -46,7 +32,7 @@ export async function accessSolanaWallet(): Promise<anchor.web3.Keypair> {
   try {
     // Retrieve the credentials
     const credentials = await Keychain.getGenericPassword({
-      service: 'PrivateKey',
+      service: KeychainElements.PrivateKey,
     });
     if (credentials) {
       const secret = JSON.parse(credentials.password) as number[];
