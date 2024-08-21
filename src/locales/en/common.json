@@ -1,0 +1,14 @@
+{
+  "welcome": "Welcome",
+  "next": "Next",
+  "chooseLanguage": "Choose your language",
+  "accountCreation": "Account Creation",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "dateOfBirth": "Date of Birth",
+  "email": "Email",
+  "phoneNumber": "Phone Number",
+  "clickHere": "Click here",
+  "choosePseudo": "Choose a pseudo",
+  "pseudoArePublic": "Pseudos are public and unique"
+}
