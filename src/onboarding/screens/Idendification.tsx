@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {typography} from '../../../styles/typography';
 
-import {useForm, Controller, SubmitHandler} from 'react-hook-form';
+import {useForm, Controller} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {IdentificationFormData, RootStackParamList} from '../OnboardingMain';
 import DatePicker from 'react-native-date-picker';
@@ -18,7 +18,6 @@ type PersonalInfoScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Idendification'
 >;
-import {StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {styles} from './styles';
 import React, {useState} from 'react';

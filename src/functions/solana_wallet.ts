@@ -5,34 +5,42 @@ storing it securely and access it when needed.
 import * as Keychain from 'react-native-keychain';
 import {Platform} from 'react-native';
 import * as anchor from '@coral-xyz/anchor';
-import { store_secret } from './secrets';
-import { KeychainElements } from '../types/keychains';
+import {store_secret} from './secrets';
+import {KeychainElements} from '../types/keychains';
+import {SolanaWalletErrors} from '../Errors/Solana_wallets_errors';
+import {TypedError} from '../Errors/TypedError';
 
 export async function createSolanaWallet(
   programId: anchor.web3.PublicKey,
   wrapperAccount: anchor.web3.PublicKey,
-): Promise<anchor.web3.PublicKey> {
-
-  let key = generateKeypair(programId, wrapperAccount);
+  mint: anchor.web3.PublicKey,
+): Promise<[anchor.web3.PublicKey, anchor.web3.PublicKey]> {
+  let [key, wrapped_account] = generateKeypairMint(
+    programId,
+    wrapperAccount,
+    mint,
+  );
   if (!key) {
     throw new Error('Error while generating key');
   }
   let username = JSON.stringify(key.publicKey);
   let secretKey = JSON.stringify(Array.from(key.secretKey));
 
-  store_secret(username, secretKey, KeychainElements.PrivateKey);
+  await store_secret(username, secretKey, KeychainElements.SOL_PrivateKey);
+
+  console.log('Created a new solana wallet: ', key.publicKey.toBase58());
 
   // Generate a backup with password protection ?
   // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD, --> Iphone
 
-  return key.publicKey;
+  return [key.publicKey, wrapped_account];
 }
 
 export async function accessSolanaWallet(): Promise<anchor.web3.Keypair> {
   try {
     // Retrieve the credentials
     const credentials = await Keychain.getGenericPassword({
-      service: KeychainElements.PrivateKey,
+      service: KeychainElements.SOL_PrivateKey,
     });
     if (credentials) {
       const secret = JSON.parse(credentials.password) as number[];
@@ -93,6 +101,48 @@ function generateKeypair(
   return keypair;
 }
 
+/**
+ * This function generate addresses that has a maximum bump of 255 for the PDAs necessary when transfering a specific mint (often EURC).
+ * This is to ensure minimum Comput-Unit use when transfering and prevent inequality in this matter.
+ * @param programId The program ID (should be always the same, taken from the IDL with check from a constant)
+ * @param wrapperAccount The wrapper account corresponding to our provider (ourselves)
+ * @param mint The mint account
+ * @returns A web3.Keypair with 255 bump for generating the pdas related to transfers
+ */
+function generateKeypairMint(
+  programId: anchor.web3.PublicKey,
+  wrapper_pda: anchor.web3.PublicKey,
+  mint: anchor.web3.PublicKey,
+): [anchor.web3.Keypair, anchor.web3.PublicKey] {
+  let keypair: anchor.web3.Keypair | null = null;
+  let wrapped_account: anchor.web3.PublicKey | null = null;
+  let errorOccurred = true;
+  while (errorOccurred) {
+    try {
+      keypair = anchor.web3.Keypair.generate();
+      wrapped_account = anchor.web3.PublicKey.createProgramAddressSync(
+        [
+          Buffer.from('wrapped_token'),
+          wrapper_pda.toBuffer(),
+          mint.toBuffer(),
+          keypair.publicKey.toBuffer(),
+          Buffer.from([255]), // Bump of 255
+        ],
+        programId,
+      );
+      errorOccurred = false;
+    } catch (error) {
+      continue;
+    }
+  }
+
+  if (!keypair || !wrapped_account) {
+    throw new Error('Error when generating a new solana keypair');
+  }
+
+  return [keypair, wrapped_account];
+}
+
 export async function saveAddress(
   address: anchor.web3.PublicKey,
   service: string,
@@ -122,7 +172,7 @@ export async function saveAddress(
 
 export async function accessAddress(
   service: string,
-): Promise<anchor.web3.PublicKey> {
+): Promise<anchor.web3.PublicKey | Error> {
   try {
     // Retrieve the credentials
     const credentials = await Keychain.getGenericPassword({
@@ -132,10 +182,9 @@ export async function accessAddress(
       const address = JSON.parse(credentials.password);
       return new anchor.web3.PublicKey(address);
     } else {
-      const errorMess = 'No credentials stored';
-      throw Error(errorMess);
+      return new TypedError(SolanaWalletErrors.NoCredentialStored);
     }
   } catch (error) {
-    throw error;
+    return error as Error;
   }
 }

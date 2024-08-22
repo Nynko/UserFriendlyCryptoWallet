@@ -4,12 +4,12 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../OnboardingMain';
 import {useTranslation} from 'react-i18next';
 import React from 'react';
-import {TouchableOpacity, View, StyleSheet} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import {styles} from './styles';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Information'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Langues'>;
 
-export function Information({navigation}: Props) {
+export function Langues({navigation}: Props) {
   const {t, i18n} = useTranslation();
   const onNext = () => {
     navigation.navigate('Idendification');

@@ -1,80 +1,51 @@
-import React, { useState } from 'react';
+import {useEffect, useState} from 'react';
+import {PublicKey} from '@solana/web3.js';
+import MainConnected from './MainConnected';
+import {OnboardingMain} from './onboarding/OnboardingMain';
 import {
-  Button,
-  ImageBackground,
-  SafeAreaView,
-  Text,
-  View,
-} from 'react-native';
+  AddressesContextState,
+  useAddresses,
+} from './hooks/contexts/useAddresses';
+import {SolanaAddresses} from './components/context/SolanaAddresses';
+import {getAddresses} from './functions/addresses/getAddresses';
+import {TypedError} from './Errors/TypedError';
 
-import SolanaConnection from './components/context/SolanaConnection';
-import { AnchorProgramProvider } from './components/context/SolanaAnchorProgram';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Test } from './screens/Test';
-import { Home } from './screens/Home';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+export function Main() {
+  const [addresses, setAddresses] = useState<
+    AddressesContextState | Error | undefined
+  >(undefined);
 
-import backgroundImage from '../assets/background3.png';
-import { TabBar } from 'react-native-tab-view';
-import { useUpdateBalances } from './hooks/useUpdateBalances';
-import { RefreshView } from './components/utils/RefreshView';
-import NewModuleButton from './components/ios/NewModuleButton';
+  useEffect(() => {
+    getAddresses().then(addresses => {
+      if (addresses instanceof TypedError) {
+        setAddresses(addresses);
+      } else if (addresses instanceof Error) {
+        const err = new Error(
+          `An unexpected error occurred: ${addresses.message}`,
+        );
+        console.error(err);
+        setAddresses(err);
+      } else {
+        setAddresses(addresses);
+      }
+    });
+  }, []);
 
-const Tab = createMaterialTopTabNavigator();
+  if (addresses === undefined) {
+    return <>{/* LOADING */}</>;
+  }
 
-function HomeScreen({ navigation }: { navigation: any }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
-      />
-    </View>
-  );
+  if (addresses instanceof Error) {
+    return (
+      <>
+        <OnboardingMain />
+      </>
+    );
+  } else {
+    return (
+      <SolanaAddresses addresses={addresses}>
+        <MainConnected />
+      </SolanaAddresses>
+    );
+  }
 }
-
-function DetailsScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor:"transparent" }}>
-    <Text>Details Screen</Text>
-    <NewModuleButton/>
-    </View>
-  );
-}
-const navTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: 'transparent',
-  },
-};
-
-
-function Main(): React.JSX.Element {
-  const [reloadOnUpdate, updateBalances] = useUpdateBalances();
-
-  return (
-    <> 
-            <NavigationContainer theme={navTheme}>
-              <Tab.Navigator initialRouteName="Home" tabBarPosition="bottom"
-                screenOptions={{
-                  tabBarStyle: { borderColor: "#88C8F4", backgroundColor: 'transparent' },
-                }}>
-                <Tab.Screen name="Details2" component={DetailsScreen} />
-                <Tab.Screen name="Home"> 
-                  {() => <Home isBalanceReloading={reloadOnUpdate} reloadBalances={updateBalances} />}
-                </Tab.Screen>
-                <Tab.Screen name="Details">
-                  {() => <Test reloadBalances={updateBalances} /> }
-                  </Tab.Screen>
-              </Tab.Navigator>
-
-            </NavigationContainer>
-    </>
-  )
-}
-
-
-export default Main;

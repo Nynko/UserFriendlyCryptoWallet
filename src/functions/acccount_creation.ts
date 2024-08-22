@@ -2,13 +2,13 @@
 This contain the logic for creating a token account for a given wallet.
 */
 import * as anchor from '@coral-xyz/anchor';
-import { HandmadeNaive } from '../Anchor_IDL/handmade_naive';
+import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
 import IDL from '../Anchor_IDL/handmade_naive.json';
-import { Program } from '@coral-xyz/anchor';
-import { TOKEN_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
-import { accessSolanaWallet, saveAddress } from './solana_wallet';
-import { ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER } from '../tmp';
-import { KeychainElements } from '../types/keychains';
+import {Program} from '@coral-xyz/anchor';
+import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
+import {accessSolanaWallet, saveAddress} from './solana_wallet';
+import {ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER} from '../tmp';
+import {KeychainElements} from '../types/keychains';
 
 export async function create_account(connection: anchor.web3.Connection) {
   const program = new Program<HandmadeNaive>(IDL as HandmadeNaive, {
@@ -19,12 +19,8 @@ export async function create_account(connection: anchor.web3.Connection) {
   const issuerKey = new Uint8Array(ISSUER_LOCAL);
   const payer = anchor.web3.Keypair.fromSecretKey(secretKey);
   const issuer = anchor.web3.Keypair.fromSecretKey(issuerKey);
-  const wrapper = new anchor.web3.PublicKey(
-    WRAPPER,
-  );
-  const mint = new anchor.web3.PublicKey(
-    MINT_PUB,
-  );
+  const wrapper = new anchor.web3.PublicKey(WRAPPER);
+  const mint = new anchor.web3.PublicKey(MINT_PUB);
 
   const transaction = new anchor.web3.Transaction();
   const [idendity, idInstruction] = await issue_idendity_instruction(
@@ -75,7 +71,7 @@ export async function create_account(connection: anchor.web3.Connection) {
       program.provider.connection,
       transaction,
       [issuer, signer, payer],
-      { commitment: 'confirmed' },
+      {commitment: 'confirmed'},
     );
     console.log(`Creating Account tx : ${txid}`);
   } catch (error) {
@@ -93,8 +89,17 @@ export async function create_account(connection: anchor.web3.Connection) {
   await saveAddress(idendity, KeychainElements.Idendity, '');
 
   // Can't we just remove the added wrapped account ? And worse case just put "solana"
-  await saveAddress(twoAuth, KeychainElements.TwoAuthWithWrappedAccount + wrappedAccount.toString(), '');
-  await saveAddress(payer.publicKey, KeychainElements.TwoAuthEntityWithWrappedAccount + wrappedAccount.toString(), '');
+  await saveAddress(
+    twoAuth,
+    KeychainElements.TwoAuthWithWrappedAccount + wrappedAccount.toString(),
+    '',
+  );
+  await saveAddress(
+    payer.publicKey,
+    KeychainElements.TwoAuthEntityWithWrappedAccount +
+      wrappedAccount.toString(),
+    '',
+  );
 }
 
 async function initialize_wrapped_account_instruction(
@@ -158,7 +163,7 @@ async function initialize_two_auth_instruction(
   const instruction = await program.methods
     .initializeTwoAuth({
       functions: [
-        { onMax: { max: new anchor.BN(10) } },
+        {onMax: {max: new anchor.BN(10)}},
         {
           counterResetOnMax: {
             max: new anchor.BN(10),
@@ -168,7 +173,7 @@ async function initialize_two_auth_instruction(
         {
           counterResetOnTime: {
             max: new anchor.BN(10),
-            duration: { seconds: [1] },
+            duration: {seconds: [1]},
             lastResetTime: new anchor.BN(56),
             counter: new anchor.BN(0),
           },
@@ -177,15 +182,15 @@ async function initialize_two_auth_instruction(
           counterWithTimeWindow: {
             max: new anchor.BN(10),
             window: {
-              duration: { days: [30] },
+              duration: {days: [30]},
               lastValueTime: new anchor.BN(0),
               window: [],
               startIndex: 0,
             },
           },
         },
-        { deactivateForUserSpecificWhiteList: { whiteList: [] } },
-        { always: {} },
+        {deactivateForUserSpecificWhiteList: {whiteList: []}},
+        {always: {}},
       ],
       allowedIssuers: [approver],
     })

@@ -1,37 +1,10 @@
 import * as anchor from '@coral-xyz/anchor';
 import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
-import { BACKEND_URL } from '@env';
+import {BACKEND_URL} from '@env';
+import {signTwoAuth} from './backends/signatures';
 
-interface RawTxData {
-  transaction: String,
-  blockhash: String,
-};
-
-async function signTwoAuth(rawData: RawTxData) : Promise<RawTxData | Error> {
-  try {
-    const backend_url = BACKEND_URL;
-    console.log();
-    
-    const response = await fetch(`${backend_url}/two-auth-sign`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(rawData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error:', error);
-    return (error as Error)
-  }
-};
-
-export async function transferToken( amount: number,
+export async function transferToken(
+  amount: number,
   wrapper_account: anchor.web3.PublicKey,
   source_owner: anchor.web3.Signer,
   source_wrapped_account: anchor.web3.PublicKey,
@@ -40,8 +13,7 @@ export async function transferToken( amount: number,
   two_auth: anchor.web3.PublicKey,
   two_auth_signer: anchor.web3.PublicKey | null,
   program: anchor.Program<HandmadeNaive>,
-){
-
+) {
   const instruction = await program.methods
     .transfer(new anchor.BN(amount))
     .accountsPartial({
@@ -54,10 +26,11 @@ export async function transferToken( amount: number,
       wrapperAccount: wrapper_account,
     })
     .instruction();
-    
+
   const transaction = new anchor.web3.Transaction().add(instruction);
 
-  const blockhash = await program.provider.connection.getLatestBlockhashAndContext();
+  const blockhash =
+    await program.provider.connection.getLatestBlockhashAndContext();
 
   transaction.recentBlockhash = blockhash.value.blockhash;
   transaction.lastValidBlockHeight = blockhash.value.lastValidBlockHeight;
@@ -71,10 +44,12 @@ export async function transferToken( amount: number,
 
   // return [serializedTransaction, { blockhash: blockhash.value.blockhash, lastValidBlockHeight: blockhash.value.lastValidBlockHeight }]
 
-
-  const rawTx =  await signTwoAuth({ transaction: serializedTransaction.toString('base64'), blockhash: blockhash.value.blockhash });
-  let rawTx2 : Buffer;
-  if (rawTx instanceof Error){
+  const rawTx = await signTwoAuth({
+    transaction: serializedTransaction.toString('base64'),
+    blockhash: blockhash.value.blockhash,
+  });
+  let rawTx2: Buffer;
+  if (rawTx instanceof Error) {
     throw rawTx;
   } else {
     rawTx2 = Buffer.from(rawTx.transaction, 'base64');
@@ -82,16 +57,16 @@ export async function transferToken( amount: number,
 
   const txSig = await program.provider.connection.sendRawTransaction(rawTx2);
 
-  const confirmStrategy: anchor.web3.BlockheightBasedTransactionConfirmationStrategy = {
-    blockhash: blockhash.value.blockhash,
-    lastValidBlockHeight: blockhash.value.lastValidBlockHeight,
-    signature: txSig
-  }
+  const confirmStrategy: anchor.web3.BlockheightBasedTransactionConfirmationStrategy =
+    {
+      blockhash: blockhash.value.blockhash,
+      lastValidBlockHeight: blockhash.value.lastValidBlockHeight,
+      signature: txSig,
+    };
 
   await program.provider.connection.confirmTransaction(confirmStrategy);
 
   console.log(`Transfer (wrapped) raw tx : ${txSig}`);
-
 }
 
 export async function transferTokenNoSignature(

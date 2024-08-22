@@ -137,6 +137,8 @@ export async function create_anoncreds(
   credentialValues: Record<string, string>,
   anoncredsProgram: Program<AnoncredsSolana>,
 ) {
+  console.log('Creating anoncreds');
+
   const {session_id, credential_offer} = await get_credential_offer();
   const credentialOffer = CredentialOffer.fromJson(
     credential_offer as unknown as JsonObject,
@@ -171,4 +173,6 @@ export async function create_anoncreds(
   );
 
   confirm_credential(session_id);
+
+  console.log('Anoncreds created');
 }

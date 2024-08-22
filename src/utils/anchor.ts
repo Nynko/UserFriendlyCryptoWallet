@@ -10,11 +10,8 @@ export async function fetch_credential_definition(
   accountAddress: anchor.web3.PublicKey,
   anoncredProgram: Program<AnoncredsSolana>,
 ) {
-  console.log('here');
-
   const credentialDefinitionJson =
     await anoncredProgram.account.credentialDefinition.fetch(accountAddress);
-  console.log('after');
 
   const credentialDefinition = {
     ...credentialDefinitionJson,
