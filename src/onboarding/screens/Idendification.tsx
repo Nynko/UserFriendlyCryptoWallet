@@ -3,7 +3,6 @@ import {
   Keyboard,
   Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -20,7 +19,7 @@ type PersonalInfoScreenProps = NativeStackScreenProps<
 >;
 import {useTranslation} from 'react-i18next';
 import {styles} from './styles';
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 export function Idendification({navigation}: PersonalInfoScreenProps) {
   const {control, getValues} = useForm<IdentificationFormData>();
@@ -71,10 +70,13 @@ export function Idendification({navigation}: PersonalInfoScreenProps) {
             render={({field: {onChange, value}}) => (
               <>
                 <TextInput
-                  readOnly={true}
+                  // readOnly={true} // TODO: To change for android
                   style={[styles.input, styles.dateInput]}
                   value={value ? value.toLocaleDateString() : t('clickHere')}
-                  onPress={() => setOpen(true)}
+                  onPress={() => {
+                    console.log('teest');
+                    setOpen(true);
+                  }}
                 />
                 <DatePicker
                   modal

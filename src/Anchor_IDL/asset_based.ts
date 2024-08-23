@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/asset_based.json`.
  */
 export type AssetBased = {
-  "address": "B9nkHcAiANcEUArs72j4ku7Jsa6fMsasg6ERtx7mqQCk",
+  "address": "43BeXgVQtVYNQAopMAfkMCEHd5sbAi83DbrvndhHjXGD",
   "metadata": {
     "name": "assetBased",
     "version": "0.1.0",
@@ -217,6 +217,11 @@ export type AssetBased = {
               }
             ]
           }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "owner",
@@ -1790,6 +1795,10 @@ export type AssetBased = {
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
           }
         ]
       }

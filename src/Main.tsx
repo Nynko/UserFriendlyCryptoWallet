@@ -1,35 +1,31 @@
 import {useEffect, useState} from 'react';
-import {PublicKey} from '@solana/web3.js';
 import MainConnected from './MainConnected';
 import {OnboardingMain} from './onboarding/OnboardingMain';
-import {
-  AddressesContextState,
-  useAddresses,
-} from './hooks/contexts/useAddresses';
+import {AddressesContextState} from './hooks/contexts/useAddresses';
 import {SolanaAddresses} from './components/context/SolanaAddresses';
 import {getAddresses} from './functions/addresses/getAddresses';
 import {TypedError} from './Errors/TypedError';
+import {useBoolState} from './hooks/useBoolState';
 
 export function Main() {
   const [addresses, setAddresses] = useState<
     AddressesContextState | Error | undefined
   >(undefined);
+  const [reloaded, reload] = useBoolState();
 
   useEffect(() => {
-    getAddresses().then(addresses => {
-      if (addresses instanceof TypedError) {
-        setAddresses(addresses);
-      } else if (addresses instanceof Error) {
-        const err = new Error(
-          `An unexpected error occurred: ${addresses.message}`,
-        );
+    getAddresses().then(addr => {
+      if (addr instanceof TypedError) {
+        setAddresses(addr);
+      } else if (addr instanceof Error) {
+        const err = new Error(`An unexpected error occurred: ${addr.message}`);
         console.error(err);
         setAddresses(err);
       } else {
-        setAddresses(addresses);
+        setAddresses(addr);
       }
     });
-  }, []);
+  }, [reloaded]);
 
   if (addresses === undefined) {
     return <>{/* LOADING */}</>;
@@ -38,13 +34,13 @@ export function Main() {
   if (addresses instanceof Error) {
     return (
       <>
-        <OnboardingMain />
+        <OnboardingMain reload={reload} />
       </>
     );
   } else {
     return (
       <SolanaAddresses addresses={addresses}>
-        <MainConnected />
+        <MainConnected reload={reload} />
       </SolanaAddresses>
     );
   }

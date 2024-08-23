@@ -6,7 +6,7 @@ import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
 import IDL from '../Anchor_IDL/handmade_naive.json';
 import {Program} from '@coral-xyz/anchor';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
-import {accessSolanaWallet, saveAddress} from './solana_wallet';
+import {accessSolanaWallet, saveAddress} from './wallet/solana_wallet';
 import {ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER} from '../tmp';
 import {KeychainElements} from '../types/keychains';
 

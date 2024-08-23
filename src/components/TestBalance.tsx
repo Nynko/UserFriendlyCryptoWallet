@@ -2,23 +2,20 @@ import {Button, Text, View} from 'react-native';
 import * as anchor from '@coral-xyz/anchor';
 import {useState} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
-import {getWrappedAccount} from '../functions/get_wrapped_account';
-import {accessAddress} from '../functions/solana_wallet';
-import {publicKey} from '@coral-xyz/anchor/dist/cjs/utils';
+import {accessAddress} from '../functions/wallet/solana_wallet';
 import {getBalance} from '../functions/get_account';
-import { MINT_PUB } from '../tmp';
+import {MINT_PUB} from '../tmp';
+import {getWrappedAccount} from '../functions/solana/getWrappedAccountBalance';
 
 export const TestBalance = () => {
   const [tokenBalance, setTokenBalance] = useState<anchor.BN | null>(null);
   const [solBalance, setSolBalance] = useState<number | null>(null);
   const program = useAnchorProgram().program;
-  const mint = new anchor.web3.PublicKey(
-    MINT_PUB,
-  );
+  const mint = new anchor.web3.PublicKey(MINT_PUB);
 
   return (
     <View>
-      <Text>Test get token Balance</Text>
+      {/* <Text>Test get token Balance</Text>
       <Button
         title={'Get Balance'}
         onPress={async () =>
@@ -40,7 +37,7 @@ export const TestBalance = () => {
             ),
           )
         }></Button>
-      <Text>{solBalance}</Text>
+      <Text>{solBalance}</Text> */}
     </View>
   );
 };

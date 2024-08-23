@@ -10,5 +10,7 @@
   "phoneNumber": "Phone Number",
   "clickHere": "Click here",
   "choosePseudo": "Choose a pseudo",
-  "pseudoArePublic": "Pseudos are public and unique"
+  "pseudoArePublic": "Pseudos are public and unique",
+  "pseudoAlreadyTaken": "Pseudo already taken !",
+  "pseudoTooLong": "Pseudo too long ! (max 32 char)"
 }

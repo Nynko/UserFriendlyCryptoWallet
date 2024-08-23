@@ -1,40 +1,15 @@
-import React, {useState} from 'react';
-import {Button, ImageBackground, SafeAreaView, Text, View} from 'react-native';
+import React from 'react';
+import {Text, View} from 'react-native';
 
-import SolanaConnection from './components/context/SolanaConnection';
-import {AnchorProgramProvider} from './components/context/SolanaAnchorProgram';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Test} from './screens/Test';
 import {Home} from './screens/Home';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
-import backgroundImage from '../assets/background3.png';
-import {TabBar} from 'react-native-tab-view';
 import {useUpdateBalances} from './hooks/useUpdateBalances';
-import {RefreshView} from './components/utils/RefreshView';
 import NewModuleButton from './components/ios/NewModuleButton';
-import {useAddresses} from './hooks/contexts/useAddresses';
 
 const Tab = createMaterialTopTabNavigator();
-
-function HomeScreen({navigation}: {navigation: any}) {
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-      }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
-      />
-    </View>
-  );
-}
 
 function DetailsScreen() {
   return (
@@ -58,7 +33,7 @@ const navTheme = {
   },
 };
 
-function MainConnected(): React.JSX.Element {
+function MainConnected({reload}: {reload: () => void}): React.JSX.Element {
   const [reloadOnUpdate, updateBalances] = useUpdateBalances();
   return (
     <>
@@ -82,7 +57,9 @@ function MainConnected(): React.JSX.Element {
             )}
           </Tab.Screen>
           <Tab.Screen name="Details">
-            {() => <Test reloadBalances={updateBalances} />}
+            {() => (
+              <Test reloadBalances={updateBalances} reloadAddresses={reload} />
+            )}
           </Tab.Screen>
         </Tab.Navigator>
       </NavigationContainer>

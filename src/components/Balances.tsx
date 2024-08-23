@@ -1,19 +1,27 @@
 import {Text, View} from 'react-native';
-import * as anchor from '@coral-xyz/anchor';
 import {useEffect, useState} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
-import {getWrappedAccount} from '../functions/get_wrapped_account';
-import {accessAddress} from '../functions/solana_wallet';
-import {getBalance} from '../functions/get_account';
-import {MINT_PUB} from '../tmp';
-import {sleep} from '../utils/async';
+import {getBalance, getMinimumRent} from '../functions/get_account';
 
-import {material} from 'react-native-typography';
 import {typography} from '../../styles/typography';
-import {styles} from '../../styles/style';
+import {mainStyle} from '../../styles/style';
 import {SolToEur} from '../functions/prices/get_prices';
-import {KeychainElements} from '../types/keychains';
 import {useAddresses} from '../hooks/contexts/useAddresses';
+import {getWrappedAccount} from '../functions/solana/getWrappedAccountBalance';
+
+const cutThreshold = (
+  amount: number,
+  mintRent: number,
+  minFee: number = 0.00001, // We have two signers here
+  decimals: number = 5,
+): number => {
+  if (amount < mintRent + minFee) {
+    return 0;
+  } else {
+    const factor = Math.pow(10, decimals);
+    return Math.round((amount - mintRent) * factor) / factor;
+  }
+};
 
 export const Balances = ({
   isBalanceReloading,
@@ -21,10 +29,23 @@ export const Balances = ({
   isBalanceReloading: boolean;
 }) => {
   const addresses = useAddresses();
-  const [tokenBalance, setTokenBalance] = useState<anchor.BN | null>(null);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [solBalance, setSolBalance] = useState<number | null>(null);
   const program = useAnchorProgram().program;
-  const mint = new anchor.web3.PublicKey(MINT_PUB);
+
+  const [rentMinimum, setRentMinimum] = useState<number | null>(null);
+  const adjustedSolBalance =
+    solBalance && rentMinimum ? cutThreshold(solBalance, rentMinimum) : 0;
+  console.log(rentMinimum);
+
+  console.log(solBalance && rentMinimum ? solBalance - rentMinimum : 0);
+
+  useEffect(() => {
+    const fetchRentMinimum = async () => {
+      getMinimumRent(0, program.provider.connection).then(setRentMinimum);
+    };
+    fetchRentMinimum();
+  }, [program.provider.connection]);
 
   useEffect(() => {
     async function updateBalances() {
@@ -32,23 +53,19 @@ export const Balances = ({
         async balance => setSolBalance(balance),
       );
 
-      getWrappedAccount(addresses.wrappedToken, program).then(account =>
-        setTokenBalance(account.amount),
-      );
+      getWrappedAccount(addresses.wrappedToken, program).then(setTokenBalance);
     }
 
     updateBalances();
-  }, [isBalanceReloading]);
+  }, [isBalanceReloading, addresses, program]);
 
-  const total_eur = (Number(tokenBalance) || 0) + SolToEur(solBalance || 0);
+  const total_eur = (tokenBalance || 0) + SolToEur(adjustedSolBalance);
 
   return (
-    <View style={styles.container}>
+    <View style={mainStyle.container}>
       <Text style={typography.thinTitle}>{`${total_eur.toFixed(2)} € `}</Text>
-      <Text style={typography.thinSmaller}>{`${
-        tokenBalance ? tokenBalance.toString() : null
-      } EURC`}</Text>
-      <Text style={typography.thinSmaller}>{`${solBalance} SOL`}</Text>
+      <Text style={typography.thinSmaller}>{`${tokenBalance} EURC`}</Text>
+      <Text style={typography.thinSmaller}>{`${adjustedSolBalance} SOL`}</Text>
       <Text style={typography.smallText}> ... </Text>
       <Text style={typography.smallText}> See more </Text>
     </View>

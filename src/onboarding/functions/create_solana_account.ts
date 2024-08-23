@@ -3,14 +3,13 @@ This contain the logic for creating a token account for a given wallet.
 */
 import * as anchor from '@coral-xyz/anchor';
 import {AssetBased} from '../../Anchor_IDL/asset_based';
-import IDL from '../../Anchor_IDL/asset_based.json';
 import {Program} from '@coral-xyz/anchor';
 import {KeychainElements} from '../../types/keychains';
 import {
   accessSolanaWallet,
   createSolanaWallet,
   saveAddress,
-} from '../../functions/solana_wallet';
+} from '../../functions/wallet/solana_wallet';
 import {
   APPROVER,
   EURC_MINT,
@@ -21,12 +20,11 @@ import {
 import {signIssuerId, signTwoAuth} from '../../functions/backends/signatures';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 
-export async function create_account(connection: anchor.web3.Connection) {
+export async function create_account(
+  pseudo: string,
+  program: Program<AssetBased>,
+) {
   console.log('Start creating account');
-
-  const program = new Program<AssetBased>(IDL as AssetBased, {
-    connection,
-  });
 
   const approver = new anchor.web3.PublicKey(APPROVER);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
@@ -108,6 +106,17 @@ export async function create_account(connection: anchor.web3.Connection) {
 
   transaction.add(recoveryInstruction);
 
+  const [pseudoAccount, pseudoInstruction] =
+    await initialize_pseudo_instruction(
+      two_auth_entity,
+      idendity,
+      signer,
+      pseudo,
+      program,
+    );
+
+  transaction.add(pseudoInstruction);
+
   if (wrappedAccount.toString() != wrapped_account_check.toString()) {
     throw new Error('Error when deriving the wrapped account');
   }
@@ -159,20 +168,21 @@ export async function create_account(connection: anchor.web3.Connection) {
 
   await program.provider.connection.confirmTransaction(confirmStrategy);
 
-  await saveAddress(signer.publicKey, KeychainElements.SOL_PublicKey, '');
+  await saveAddress(signer.publicKey, KeychainElements.SOL_PublicKey);
   await saveAddress(
     wrappedAccount,
     KeychainElements.SOL_WrappedAccountAddMint + mint.toString(),
     mint.toString(),
   );
-  await saveAddress(idendity, KeychainElements.SOL_Idendity, '');
-  await saveAddress(twoAuth, KeychainElements.SOL_TwoAuth, '');
-  await saveAddress(two_auth_entity, KeychainElements.SOL_TwoAuthEntity, '');
-  await saveAddress(recoveryAccount, KeychainElements.SOL_RecoveryAccount, '');
+  await saveAddress(idendity, KeychainElements.SOL_Idendity);
+  await saveAddress(twoAuth, KeychainElements.SOL_TwoAuth);
+  await saveAddress(two_auth_entity, KeychainElements.SOL_TwoAuthEntity);
+  await saveAddress(recoveryAccount, KeychainElements.SOL_RecoveryAccount);
+  await saveAddress(pseudoAccount, KeychainElements.SOL_PseudoAccount);
 
   console.log('Finish creating account');
 
-  return signer.publicKey;
+  return {pk: signer.publicKey, id: idendity};
 }
 
 interface RecoveryAuthority {
@@ -190,10 +200,11 @@ async function initialize_recovery_account_instruction(
   wrapper: anchor.web3.PublicKey,
   program: anchor.Program<AssetBased>,
 ): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
-  const [recovery_account, bump] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from('recovery'), owner.publicKey.toBuffer()],
-    program.programId,
-  );
+  const [recovery_account, _bump] =
+    anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from('recovery'), owner.publicKey.toBuffer()],
+      program.programId,
+    );
 
   console.log('[Pk] User recovery account', recovery_account.toBase58());
 
@@ -223,7 +234,7 @@ async function initialize_wrapped_account_instruction(
   tokenProgram: anchor.web3.PublicKey,
   program: Program<AssetBased>,
 ): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
-  const [wrapped_account, bump] = anchor.web3.PublicKey.findProgramAddressSync(
+  const [wrapped_account, _bump] = anchor.web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from('wrapped_token'),
       wrapper.toBuffer(),
@@ -261,7 +272,7 @@ async function initialize_two_auth_instruction(
   two_auth_entity: anchor.web3.PublicKey,
   program: Program<AssetBased>,
 ): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
-  const [two_auth, bump] = await anchor.web3.PublicKey.findProgramAddressSync(
+  const [two_auth, _bump] = await anchor.web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from('two_auth'),
       wrapper_account.toBuffer(),
@@ -329,7 +340,7 @@ async function issue_idendity_instruction(
   wrapper: anchor.web3.PublicKey,
   program: Program<AssetBased>,
 ): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
-  const [idendity, bump] = await anchor.web3.PublicKey.findProgramAddressSync(
+  const [idendity, _bump] = await anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from('identity'), owner.publicKey.toBuffer()],
     program.programId,
   );
@@ -349,4 +360,32 @@ async function issue_idendity_instruction(
     .instruction();
 
   return [idendity, instruction];
+}
+
+async function initialize_pseudo_instruction(
+  payer: anchor.web3.PublicKey,
+  idendity: anchor.web3.PublicKey,
+  owner: anchor.web3.Signer,
+  pseudo: string,
+  program: anchor.Program<AssetBased>,
+): Promise<[anchor.web3.PublicKey, anchor.web3.TransactionInstruction]> {
+  const [pseudo_account, _bump] =
+    await anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from('pseudo'), Buffer.from(pseudo)],
+      program.programId,
+    );
+
+  const instruction = await program.methods
+    .addPseudo(pseudo)
+    .accountsPartial({
+      owner: owner.publicKey,
+      idendity,
+      pseudoAccount: pseudo_account,
+      payer,
+    })
+    .instruction();
+
+  console.log(`[PK] Pseudo account : ${pseudo_account}`);
+
+  return [pseudo_account, instruction];
 }

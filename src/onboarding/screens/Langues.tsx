@@ -3,7 +3,6 @@ import {typography} from '../../../styles/typography';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../OnboardingMain';
 import {useTranslation} from 'react-i18next';
-import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {styles} from './styles';
 

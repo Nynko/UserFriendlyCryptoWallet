@@ -1,6 +1,7 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Button,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -24,6 +25,8 @@ import {TestBalance} from '../components/TestBalance';
 import {Airdrop} from '../components/Airdrop';
 import {TestTransfer} from '../components/TestTransfer';
 import {TestCreateAnonCreds} from '../components/TestCreateAnonCreds';
+import {KeychainElements} from '../types/keychains';
+import {deleteAddress} from '../functions/wallet/solana_wallet';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -55,7 +58,13 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
-export function Test({reloadBalances}: {reloadBalances: () => void}) {
+export function Test({
+  reloadBalances,
+  reloadAddresses,
+}: {
+  reloadBalances: () => void;
+  reloadAddresses: () => void;
+}) {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -75,6 +84,14 @@ export function Test({reloadBalances}: {reloadBalances: () => void}) {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <Button
+            title="Delete Account"
+            onPress={() =>
+              deleteAddress(KeychainElements.SOL_PublicKey).then(
+                reloadAddresses,
+              )
+            }
+          />
           <TestGenerateKey />
           <TestAccessKey />
           <TestConnection />

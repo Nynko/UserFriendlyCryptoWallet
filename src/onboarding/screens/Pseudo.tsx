@@ -3,18 +3,20 @@ import {
   Keyboard,
   Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import {typography} from '../../../styles/typography';
 
-import {useForm, Controller, SubmitHandler} from 'react-hook-form';
+import {useForm, Controller} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {IdentificationFormData, RootStackParamList} from '../OnboardingMain';
-import {StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {styles} from './styles';
+import {useState} from 'react';
+import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo';
+import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
+import {mainStyle} from '../../../styles/style';
 
 type PersonalInfoScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -22,15 +24,26 @@ type PersonalInfoScreenProps = NativeStackScreenProps<
 >;
 
 export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
+  const program = useAnchorProgram().program;
   const {control, getValues} = useForm<IdentificationFormData>();
+  const [error, setError] = useState<String | null>(null);
   const {t} = useTranslation();
   const {identification} = route.params;
 
-  const onNext = () => {
+  const onNext = async () => {
     const data = getValues();
-    navigation.navigate('AccountCreation', {
-      identification: {...identification, ...data},
-    });
+    if (data.pseudo.length > 32) {
+      setError(t('pseudoTooLong'));
+      return;
+    }
+    const addr = await getAddressFromPseudo(data.pseudo, program);
+    if (addr) {
+      setError(t('pseudoAlreadyTaken'));
+    } else {
+      navigation.navigate('AccountCreation', {
+        identification: {...identification, ...data},
+      });
+    }
   };
 
   return (
@@ -50,11 +63,17 @@ export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
             render={({field: {onChange, value}}) => (
               <TextInput
                 style={styles.input}
-                onChangeText={onChange}
+                onChangeText={e => {
+                  setError(null);
+                  onChange(e);
+                }}
                 value={value}
               />
             )}
           />
+          {error && (
+            <Text style={[mainStyle.errorText, styles.center]}>{error}</Text>
+          )}
         </View>
         <View style={{marginTop: 40}}>
           <Button title={t('next')} onPress={onNext} />

@@ -3,12 +3,11 @@ This contain the logic for creating a solana wallet,
 storing it securely and access it when needed. 
 */
 import * as Keychain from 'react-native-keychain';
-import {Platform} from 'react-native';
 import * as anchor from '@coral-xyz/anchor';
-import {store_secret} from './secrets';
-import {KeychainElements} from '../types/keychains';
-import {SolanaWalletErrors} from '../Errors/Solana_wallets_errors';
-import {TypedError} from '../Errors/TypedError';
+import {store_secret} from '../secrets';
+import {KeychainElements} from '../../types/keychains';
+import {SolanaWalletErrors} from '../../Errors/SolanaWalletsErrors';
+import {TypedError} from '../../Errors/TypedError';
 
 export async function createSolanaWallet(
   programId: anchor.web3.PublicKey,
@@ -59,49 +58,6 @@ export async function accessSolanaWallet(): Promise<anchor.web3.Keypair> {
 }
 
 /**
- * This function generate addresses that has a maximum bump of 255 for the PDAs necessary when transfering (Idendity and 2auth).
- * This is to ensure minimum Comput-Unit use when transfering and prevent inequality in this matter.
- * @param programId The program ID (should be always the same, taken from the IDL with check from a constant)
- * @param wrapperAccount The wrapper account corresponding to our provider (ourselves)
- * @returns A web3.Keypair with 255 bump for generating the pdas related to transfers
- */
-function generateKeypair(
-  programId: anchor.web3.PublicKey,
-  wrapperAccount: anchor.web3.PublicKey,
-) {
-  let keypair;
-  let errorOccurred = true;
-  const bump = 255;
-  while (errorOccurred) {
-    try {
-      keypair = anchor.web3.Keypair.generate();
-      anchor.web3.PublicKey.createProgramAddressSync(
-        [
-          Buffer.from('identity'),
-          keypair.publicKey.toBuffer(),
-          Buffer.from([bump]),
-        ],
-        programId,
-      );
-      anchor.web3.PublicKey.createProgramAddressSync(
-        [
-          Buffer.from('two_auth'),
-          wrapperAccount.toBuffer(),
-          keypair.publicKey.toBuffer(),
-          Buffer.from([bump]),
-        ],
-        programId,
-      );
-      errorOccurred = false;
-    } catch (error) {
-      continue;
-    }
-  }
-
-  return keypair;
-}
-
-/**
  * This function generate addresses that has a maximum bump of 255 for the PDAs necessary when transfering a specific mint (often EURC).
  * This is to ensure minimum Comput-Unit use when transfering and prevent inequality in this matter.
  * @param programId The program ID (should be always the same, taken from the IDL with check from a constant)
@@ -146,12 +102,12 @@ function generateKeypairMint(
 export async function saveAddress(
   address: anchor.web3.PublicKey,
   service: string,
-  username: string,
+  username?: string,
 ) {
   let biometric = await Keychain.getSupportedBiometryType();
-  if (Platform.OS === 'android') {
-    let android_security_level = await Keychain.getSecurityLevel();
-  }
+  // if (Platform.OS === 'android') {
+  //   let android_security_level = await Keychain.getSecurityLevel();
+  // }
   let constraints: Keychain.Options = {
     accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
     service: service,
@@ -164,6 +120,9 @@ export async function saveAddress(
 
   let secretKey = JSON.stringify(address);
 
+  if (!username) {
+    username = service;
+  }
   Keychain.setGenericPassword(username, secretKey, constraints);
 
   // Generate a backup with password protection ?
@@ -187,4 +146,11 @@ export async function accessAddress(
   } catch (error) {
     return error as Error;
   }
+}
+
+export async function deleteAddress(service: string): Promise<boolean> {
+  Keychain.resetGenericPassword({
+    service,
+  });
+  return true;
 }

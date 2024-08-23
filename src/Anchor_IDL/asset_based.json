@@ -1,5 +1,5 @@
 {
-  "address": "B9nkHcAiANcEUArs72j4ku7Jsa6fMsasg6ERtx7mqQCk",
+  "address": "43BeXgVQtVYNQAopMAfkMCEHd5sbAi83DbrvndhHjXGD",
   "metadata": {
     "name": "asset_based",
     "version": "0.1.0",
@@ -211,6 +211,11 @@
               }
             ]
           }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "owner",
@@ -1784,6 +1789,10 @@
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
           }
         ]
       }

@@ -24,25 +24,19 @@ export interface IdentificationFormData {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export function OnboardingMain(): React.JSX.Element {
-  const initialParams = {
-    identification: {
-      firstName: '',
-      lastName: '',
-      dateOfBirth: new Date(Date.now()),
-      pseudo: '',
-    },
-  };
+export function OnboardingMain({
+  reload,
+}: {
+  reload: () => void;
+}): React.JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Langues">
         <Stack.Screen name="Langues" component={Langues} />
         <Stack.Screen name="Idendification" component={Idendification} />
-        <Stack.Screen
-          name="AccountCreation"
-          component={AccountCreation}
-          initialParams={initialParams}
-        />
+        <Stack.Screen name="AccountCreation">
+          {props => <AccountCreation {...props} reload={reload} />}
+        </Stack.Screen>
         <Stack.Screen name="Pseudo" component={Pseudo} />
       </Stack.Navigator>
     </NavigationContainer>

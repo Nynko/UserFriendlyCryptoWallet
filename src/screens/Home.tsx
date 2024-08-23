@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {
   Keyboard,
   Text,
@@ -37,6 +37,7 @@ export function Home({
 
   const addresses = useAddresses(); // Remove and have a global state
   const pk = addresses?.pubKey;
+  console.log('pk', pk);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

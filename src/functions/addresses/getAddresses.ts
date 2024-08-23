@@ -1,7 +1,7 @@
 import {EURC_MINT} from '../../const';
 import {AddressesContextState} from '../../hooks/contexts/useAddresses';
 import * as anchor from '@coral-xyz/anchor';
-import {accessAddress} from '../solana_wallet';
+import {accessAddress} from '../wallet/solana_wallet';
 import {KeychainElements} from '../../types/keychains';
 
 export async function getAddresses(): Promise<Error | AddressesContextState> {

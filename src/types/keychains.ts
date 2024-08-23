@@ -8,4 +8,5 @@ export enum KeychainElements {
   SOL_TwoAuth = 'SOL_TwoAuth',
   SOL_TwoAuthEntity = 'SOL_TwoAuthEntity',
   SOL_RecoveryAccount = 'SOL_RecoveryAccount',
+  SOL_PseudoAccount = 'SOL_PseudoAccount',
 }

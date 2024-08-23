@@ -1,8 +1,16 @@
 import * as anchor from '@coral-xyz/anchor';
 import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
 import {transferTokenNoSignature} from './transfer';
-import {accessAddress} from './solana_wallet';
-import { ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, USER_1_AUTH, USER_KEY, USER_WRAPPED_ACC, WRAPPER } from '../tmp';
+import {accessAddress} from './wallet/solana_wallet';
+import {
+  ISSUER_LOCAL,
+  MINT_PUB,
+  PRIVATE_KEY,
+  USER_1_AUTH,
+  USER_KEY,
+  USER_WRAPPED_ACC,
+  WRAPPER,
+} from '../tmp';
 
 export async function airdropToken(
   to: anchor.web3.PublicKey,
@@ -12,17 +20,11 @@ export async function airdropToken(
   const issuerKey = new Uint8Array(ISSUER_LOCAL);
   const payer = anchor.web3.Keypair.fromSecretKey(secretKey);
   const issuer = anchor.web3.Keypair.fromSecretKey(issuerKey);
-  const wrapper = new anchor.web3.PublicKey(
-    WRAPPER,
-  );
-  const mint = new anchor.web3.PublicKey(
-    MINT_PUB,
-  );
+  const wrapper = new anchor.web3.PublicKey(WRAPPER);
+  const mint = new anchor.web3.PublicKey(MINT_PUB);
 
   const user1Key = new Uint8Array(USER_KEY);
-  const user1WrappedAccount = new anchor.web3.PublicKey(
-    USER_WRAPPED_ACC,
-  );
+  const user1WrappedAccount = new anchor.web3.PublicKey(USER_WRAPPED_ACC);
   const user1 = anchor.web3.Keypair.fromSecretKey(user1Key);
 
   const toWrappedAccount = await accessAddress(
@@ -36,9 +38,7 @@ export async function airdropToken(
   //     ],
   //     program.programId,
   //   );
-  const two_auth = new anchor.web3.PublicKey(
-    USER_1_AUTH,
-  );
+  const two_auth = new anchor.web3.PublicKey(USER_1_AUTH);
 
   await transferTokenNoSignature(
     1,

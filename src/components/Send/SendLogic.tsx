@@ -1,48 +1,72 @@
-import * as  anchor from '@coral-xyz/anchor';
-import { useDeriveAddresses } from '../../hooks/useDeriveAddresses';
-import { MINT_PUB, WRAPPER } from '../../tmp';
-import { ActivityIndicator, Button } from 'react-native';
-import { transferToken } from '../../functions/transfer';
-import { accessAddress, accessSolanaWallet } from '../../functions/solana_wallet';
-import { HandmadeNaive } from '../../Anchor_IDL/handmade_naive';
-import { useAnchorProgram } from '../../hooks/contexts/useAnchorProgram';
-import { useState } from 'react';
+import * as anchor from '@coral-xyz/anchor';
+import {ActivityIndicator, Button} from 'react-native';
+import {transferToken} from '../../functions/transfer';
+import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
+import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
+import {Dispatch, SetStateAction, useState} from 'react';
+import {useAddresses} from '../../hooks/contexts/useAddresses';
+import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
+import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
+import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
+import {TypedError} from '../../Errors/TypedError';
 
+export function SendLogic({
+  pk,
+  value,
+  reloadBalances,
+  setError,
+}: {
+  pk: anchor.web3.PublicKey;
+  value: number;
+  reloadBalances: () => void;
+  setError: Dispatch<SetStateAction<string | null>>;
+}) {
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const program = useAnchorProgram().program;
+  const addresses = useAddresses();
+  const mint = new anchor.web3.PublicKey(EURC_MINT);
+  const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
+  const approver = new anchor.web3.PublicKey(APPROVER);
+  async function getAndTransfer() {
+    const [destinationWrappedAccount, _destinationIdendity] =
+      await getDeriveAddresses(mint, wrapper, pk, program);
+    setLoading(true);
+    accessSolanaWallet()
+      .then(async signer => {
+        return await transferToken(
+          value,
+          wrapper,
+          signer,
+          addresses.wrappedToken,
+          pk,
+          destinationWrappedAccount,
+          addresses.twoAuth,
+          addresses.twoAuthEntity,
+          mint,
+          approver,
+          TOKEN_PROGRAM_ID,
+          program,
+        ).catch(e => {
+          if (e instanceof TypedError) {
+            setError(e.toString());
+          } else {
+            console.log(e);
 
+            // Send to us the error
+          }
+        });
+      })
+      .then(() => {
+        reloadBalances();
+        setLoading(false);
+      });
+  }
 
-export function SendLogic({pk,value, reloadBalances}:{pk: anchor.web3.PublicKey, value: number, reloadBalances: () => void}){
-
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const program = useAnchorProgram().program;
-    const wrapper = new anchor.web3.PublicKey(
-        WRAPPER,
-      );
-      const mint = new anchor.web3.PublicKey(
-        MINT_PUB,
-      );
-
-    console.log(pk.toBase58());
-    
-    const addresses = useDeriveAddresses(mint, wrapper,pk);
-
-    const destinationWrappedAccount = addresses[0];
-
-    async function getAndTransfer(){
-        setLoading(true);
-        accessSolanaWallet().then(async (signer) => {
-            const wrappedAccount = await accessAddress('WrappedAccount' + mint.toString());
-            console.log(wrappedAccount);
-            
-            const twoAuth = await accessAddress('TwoAuth' + wrappedAccount.toString());
-            const TwoAuthEntity = await accessAddress('TwoAuthEntity' + wrappedAccount.toString());
-            return transferToken(value,wrapper,signer,wrappedAccount,pk,destinationWrappedAccount,twoAuth,TwoAuthEntity,program)
-            }).then(() => {reloadBalances(); setLoading(false)})
-    }
-    
-    return (<>
-        <Button title='Confirm'onPress={getAndTransfer} />
-        {loading && <ActivityIndicator />}
-    </>)
+  return (
+    <>
+      <Button title="Confirm" onPress={getAndTransfer} />
+      {loading && <ActivityIndicator />}
+    </>
+  );
 }

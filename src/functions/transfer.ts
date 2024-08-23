@@ -1,7 +1,8 @@
 import * as anchor from '@coral-xyz/anchor';
-import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
-import {BACKEND_URL} from '@env';
+import {AssetBased} from '../Anchor_IDL/asset_based';
 import {signTwoAuth} from './backends/signatures';
+import {TypedError} from '../Errors/TypedError';
+import {SolanaWalletErrors} from '../Errors/SolanaWalletsErrors';
 
 export async function transferToken(
   amount: number,
@@ -12,7 +13,10 @@ export async function transferToken(
   destination_wrapped_account: anchor.web3.PublicKey,
   two_auth: anchor.web3.PublicKey,
   two_auth_signer: anchor.web3.PublicKey | null,
-  program: anchor.Program<HandmadeNaive>,
+  mint: anchor.web3.PublicKey,
+  approver: anchor.web3.PublicKey,
+  tokenProgram: anchor.web3.PublicKey,
+  program: anchor.Program<AssetBased>,
 ) {
   const instruction = await program.methods
     .transfer(new anchor.BN(amount))
@@ -24,6 +28,9 @@ export async function transferToken(
       twoAuthSigner: two_auth_signer ? two_auth_signer : null,
       twoAuth: two_auth,
       wrapperAccount: wrapper_account,
+      mint,
+      approver,
+      tokenProgram,
     })
     .instruction();
 
@@ -55,7 +62,25 @@ export async function transferToken(
     rawTx2 = Buffer.from(rawTx.transaction, 'base64');
   }
 
-  const txSig = await program.provider.connection.sendRawTransaction(rawTx2);
+  const txSig = await program.provider.connection
+    .sendRawTransaction(rawTx2)
+    .catch(async e => {
+      if (e instanceof anchor.web3.SendTransactionError) {
+        if (
+          e.transactionError.message ===
+          'Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.'
+        ) {
+          throw new TypedError(
+            SolanaWalletErrors.NotEnoughSolBalanceToPayFees,
+            e,
+          );
+        }
+
+        throw new Error(`Unknown SendTransactionError: ${e}`);
+      } else {
+        throw e;
+      }
+    });
 
   const confirmStrategy: anchor.web3.BlockheightBasedTransactionConfirmationStrategy =
     {
@@ -68,7 +93,7 @@ export async function transferToken(
 
   console.log(`Transfer (wrapped) raw tx : ${txSig}`);
 }
-
+// TODO OLD
 export async function transferTokenNoSignature(
   amount: number,
   wrapper_account: anchor.web3.PublicKey,
@@ -78,7 +103,7 @@ export async function transferTokenNoSignature(
   destination_wrapped_account: anchor.web3.PublicKey,
   two_auth: anchor.web3.PublicKey,
   two_auth_signer: anchor.web3.Signer | null,
-  program: anchor.Program<HandmadeNaive>,
+  program: anchor.Program<AssetBased>,
 ) {
   const instruction = await program.methods
     .transfer(new anchor.BN(amount))

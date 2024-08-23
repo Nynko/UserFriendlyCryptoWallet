@@ -7,3 +7,13 @@ export async function getBalance(
   let balance = await connection.getBalance(wallet);
   return balance / anchor.web3.LAMPORTS_PER_SOL;
 }
+
+export async function getMinimumRent(
+  dataSize: number,
+  connection: anchor.web3.Connection,
+): Promise<number> {
+  return (
+    (await connection.getMinimumBalanceForRentExemption(dataSize)) /
+    anchor.web3.LAMPORTS_PER_SOL
+  );
+}

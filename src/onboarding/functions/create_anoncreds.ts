@@ -1,6 +1,5 @@
 import {BACKEND_ID_URL} from '@env';
 import {
-  anoncreds,
   Credential,
   CredentialDefinition,
   CredentialOffer,

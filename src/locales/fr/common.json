@@ -10,5 +10,7 @@
   "phoneNumber": "Numéro de téléphone",
   "clickHere": "Cliquez ici",
   "choosePseudo": "Choisissez un pseudo",
-  "pseudoArePublic": "Les pseudos sont publics et uniques"
+  "pseudoArePublic": "Les pseudos sont publics et uniques",
+  "pseudoAlreadyTaken": "Le pseudo est déjà pris !",
+  "pseudoTooLong": "Le pseudo est trop long ! (max 32 char)"
 }
