@@ -1,7 +1,7 @@
 import {Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
-import {getBalance, getMinimumRent} from '../functions/get_account';
+import {getBalance, getMinimumRent} from '../functions/solana/get_account';
 
 import {typography} from '../../styles/typography';
 import {mainStyle} from '../../styles/style';
@@ -36,9 +36,6 @@ export const Balances = ({
   const [rentMinimum, setRentMinimum] = useState<number | null>(null);
   const adjustedSolBalance =
     solBalance && rentMinimum ? cutThreshold(solBalance, rentMinimum) : 0;
-  console.log(rentMinimum);
-
-  console.log(solBalance && rentMinimum ? solBalance - rentMinimum : 0);
 
   useEffect(() => {
     const fetchRentMinimum = async () => {

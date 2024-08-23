@@ -19,6 +19,7 @@ import {
 } from '../../const';
 import {signIssuerId, signTwoAuth} from '../../functions/backends/signatures';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
+import {storeStringValueUnlocked} from '../../functions/secrets';
 
 export async function create_account(
   pseudo: string,
@@ -179,6 +180,7 @@ export async function create_account(
   await saveAddress(two_auth_entity, KeychainElements.SOL_TwoAuthEntity);
   await saveAddress(recoveryAccount, KeychainElements.SOL_RecoveryAccount);
   await saveAddress(pseudoAccount, KeychainElements.SOL_PseudoAccount);
+  await storeStringValueUnlocked(pseudo, KeychainElements.SOL_PseudoValue);
 
   console.log('Finish creating account');
 

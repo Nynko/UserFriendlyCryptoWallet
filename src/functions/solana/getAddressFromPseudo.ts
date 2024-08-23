@@ -13,6 +13,7 @@ export async function getAddressFromPseudo(
   const account = await program.account.pseudoAccount.fetchNullable(
     pseudo_account,
   );
+  console.log(account);
 
   return account ? account.owner : null;
 }

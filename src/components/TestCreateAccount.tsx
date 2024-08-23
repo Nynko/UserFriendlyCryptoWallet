@@ -6,7 +6,7 @@ import IDL from '../Anchor_IDL/handmade_naive.json';
 import {SetStateAction, useEffect, useState} from 'react';
 import {ENV, ISSUER_LOCAL, ISSUER_DEVNET} from '../tmp';
 import {useConnection} from '@solana/wallet-adapter-react';
-import {create_account} from '../functions/acccount_creation';
+import {create_account} from '../functions/TODELETE/acccount_creation';
 
 export const TestCreateAccount = () => {
   const connection = useConnection().connection;

@@ -1,6 +1,5 @@
 import * as Keychain from 'react-native-keychain';
-import * as anchor from '@coral-xyz/anchor';
-import {KeychainElements} from '../types/keychains';
+import {KeychainElements} from '../../types/keychains';
 import {Credential, JsonObject} from '@hyperledger/anoncreds-react-native';
 
 export async function accessCredential(): Promise<Credential> {

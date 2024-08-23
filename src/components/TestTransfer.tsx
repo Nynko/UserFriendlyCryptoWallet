@@ -2,7 +2,7 @@ import {Button, Text, View} from 'react-native';
 import * as anchor from '@coral-xyz/anchor';
 import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
 import {PRIVATE_KEY, USER_KEY, MINT_PUB, WRAPPER} from '../tmp';
-import {transferToken} from '../functions/transfer';
+import {transferToken} from '../functions/solana/transfer';
 import {
   accessAddress,
   accessSolanaWallet,

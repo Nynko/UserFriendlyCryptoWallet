@@ -12,5 +12,8 @@
   "choosePseudo": "Choose a pseudo",
   "pseudoArePublic": "Pseudos are public and unique",
   "pseudoAlreadyTaken": "Pseudo already taken !",
-  "pseudoTooLong": "Pseudo too long ! (max 32 char)"
+  "pseudoTooLong": "Pseudo too long ! (max 32 char)",
+  "Receive money": "Receive money",
+  "My Pseudo": "My Pseudo",
+  "Scan QR Code": "Scan QR Code"
 }

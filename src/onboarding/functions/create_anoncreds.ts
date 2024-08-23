@@ -7,13 +7,16 @@ import {
   CredentialRequestMetadata,
   JsonObject,
   LinkSecret,
+  PresentationRequest,
+  Schema,
 } from '@hyperledger/anoncreds-react-native';
-import {store_secret} from '../../functions/secrets';
+import {store_secret, storeStringValueUnlocked} from '../../functions/secrets';
 import {KeychainElements} from '../../types/keychains';
 import {get_solana_address} from '../../utils/anoncredsUris';
-import {fetch_credential_definition} from '../../utils/anchor';
+import {fetch_credential_definition, fetch_schema} from '../../utils/anchor';
 import {Program} from '@coral-xyz/anchor';
 import {AnoncredsSolana} from '../../Anchor_IDL/anoncreds_solana';
+import {createMainPresentation} from '../../functions/anoncreds/createPresentations';
 
 interface GetCredentialResponse {
   credential_offer: string;
@@ -49,6 +52,7 @@ async function get_credential(
   credential: Credential;
   linkSecret: LinkSecret;
   credentialDefinition: CredentialDefinition;
+  credDefId: string;
 }> {
   let credOffer = credentialOffer.toJson();
   let credDefId = credOffer.cred_def_id as string;
@@ -106,6 +110,7 @@ async function get_credential(
     credential: Credential.fromJson(credential),
     linkSecret,
     credentialDefinition,
+    credDefId,
   };
 }
 
@@ -148,6 +153,7 @@ export async function create_anoncreds(
     credentialRequestMetadata,
     linkSecret,
     credentialDefinition,
+    credDefId,
   } = await get_credential(
     credentialOffer,
     session_id,
@@ -163,8 +169,6 @@ export async function create_anoncreds(
 
   let credential_json = JSON.stringify(credential.toJson());
 
-  console.log(credential_json);
-
   await store_secret(
     'anoncred_credential',
     credential_json,
@@ -173,5 +177,46 @@ export async function create_anoncreds(
 
   confirm_credential(session_id);
 
+  let schemaId = credentialOffer.toJson().schema_id as string;
+  let schema_address = get_solana_address(schemaId);
+
+  const schema = await fetch_schema(schema_address, anoncredsProgram);
+
+  const {presentation, presentationRequest, credDef} = createMainPresentation(
+    credential,
+    credDefId,
+    linkSecret,
+    schema,
+    schemaId,
+    credentialDefinition,
+  );
+
+  const presentation_json = JSON.stringify(presentation.toJson());
+
+  await storeStringValueUnlocked(
+    presentation_json,
+    KeychainElements.AnoncredsMainPresentation,
+  );
+
+  const anoncredsDefinitions = {
+    schema: JSON.stringify(schema.toJson()),
+    schemaId,
+    credDef: JSON.stringify(credDef.toJson()),
+    credDefId,
+    mainPresentationRequest: JSON.stringify(presentationRequest.toJson()),
+  };
+
+  await storeStringValueUnlocked(
+    JSON.stringify(anoncredsDefinitions),
+    KeychainElements.AnoncredsDefinitions,
+  );
   console.log('Anoncreds created');
+}
+
+export interface AnoncredsDefinitions {
+  schema: Schema;
+  schemaId: string;
+  credDef: CredentialDefinition;
+  credDefId: string;
+  mainPresentationRequest: PresentationRequest;
 }

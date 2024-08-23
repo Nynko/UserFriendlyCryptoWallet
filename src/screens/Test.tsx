@@ -26,7 +26,7 @@ import {Airdrop} from '../components/Airdrop';
 import {TestTransfer} from '../components/TestTransfer';
 import {TestCreateAnonCreds} from '../components/TestCreateAnonCreds';
 import {KeychainElements} from '../types/keychains';
-import {deleteAddress} from '../functions/wallet/solana_wallet';
+import {deleteKeychain} from '../functions/wallet/solana_wallet';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -87,7 +87,7 @@ export function Test({
           <Button
             title="Delete Account"
             onPress={() =>
-              deleteAddress(KeychainElements.SOL_PublicKey).then(
+              deleteKeychain(KeychainElements.SOL_PublicKey).then(
                 reloadAddresses,
               )
             }

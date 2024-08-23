@@ -8,6 +8,7 @@ import {store_secret} from '../secrets';
 import {KeychainElements} from '../../types/keychains';
 import {SolanaWalletErrors} from '../../Errors/SolanaWalletsErrors';
 import {TypedError} from '../../Errors/TypedError';
+import {Platform} from 'react-native';
 
 export async function createSolanaWallet(
   programId: anchor.web3.PublicKey,
@@ -36,6 +37,10 @@ export async function createSolanaWallet(
 }
 
 export async function accessSolanaWallet(): Promise<anchor.web3.Keypair> {
+  if (Platform.OS === 'android') {
+    let android_security_level = await Keychain.getSecurityLevel();
+    console.log(android_security_level);
+  }
   try {
     // Retrieve the credentials
     const credentials = await Keychain.getGenericPassword({
@@ -148,7 +153,7 @@ export async function accessAddress(
   }
 }
 
-export async function deleteAddress(service: string): Promise<boolean> {
+export async function deleteKeychain(service: string): Promise<boolean> {
   Keychain.resetGenericPassword({
     service,
   });

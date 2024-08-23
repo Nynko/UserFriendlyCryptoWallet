@@ -8,6 +8,7 @@ export interface AddressesContextState {
   recovery: anchor.web3.PublicKey;
   twoAuth: anchor.web3.PublicKey;
   twoAuthEntity: anchor.web3.PublicKey;
+  pseudo: string;
 }
 
 export interface AddressesDispatchContext {}

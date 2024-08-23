@@ -1,6 +1,8 @@
 export enum KeychainElements {
   LinkSecret = 'anoncreds_link_secret',
   AnoncredsCredential = 'AnoncredsCredential',
+  AnoncredsMainPresentation = 'AnoncredsMainPresentation',
+  AnoncredsDefinitions = 'AnoncredsDefinitions',
   SOL_PrivateKey = 'SOL_PrivateKey',
   SOL_PublicKey = 'SOL_PublicKey',
   SOL_WrappedAccountAddMint = 'SOL_WrappedAccount', // Add the mint !!
@@ -9,4 +11,5 @@ export enum KeychainElements {
   SOL_TwoAuthEntity = 'SOL_TwoAuthEntity',
   SOL_RecoveryAccount = 'SOL_RecoveryAccount',
   SOL_PseudoAccount = 'SOL_PseudoAccount',
+  SOL_PseudoValue = 'SOL_PseudoValue',
 }

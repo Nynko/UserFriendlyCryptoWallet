@@ -1074,38 +1074,13 @@ export type HandmadeNaive = {
   "errors": [
     {
       "code": 6000,
-      "name": "idendityAlreadyExists",
-      "msg": "Idendity already exists"
+      "name": "recoveryTimeNotPassed",
+      "msg": "Recovery time not passed"
     },
     {
       "code": 6001,
-      "name": "idendityNotActive",
-      "msg": "Idendity is not active"
-    },
-    {
-      "code": 6002,
-      "name": "idendityExpired",
-      "msg": "Idendity expired"
-    },
-    {
-      "code": 6003,
-      "name": "idendityRecovered",
-      "msg": "Idendity recovered"
-    },
-    {
-      "code": 6004,
-      "name": "idendityAlreadyRecovered",
-      "msg": "Idendity already recovered"
-    },
-    {
-      "code": 6005,
-      "name": "issuerNotApproved",
-      "msg": "Issuer is not approved"
-    },
-    {
-      "code": 6006,
-      "name": "invalidIdendity",
-      "msg": "No approved issuer found or inactive/expired issuer"
+      "name": "notEnoughSignatures",
+      "msg": "Not enough signatures"
     }
   ],
   "types": [

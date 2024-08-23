@@ -2,13 +2,13 @@
 This contain the logic for creating a token account for a given wallet.
 */
 import * as anchor from '@coral-xyz/anchor';
-import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
-import IDL from '../Anchor_IDL/handmade_naive.json';
+import {HandmadeNaive} from '../../Anchor_IDL/handmade_naive';
+import IDL from '../../Anchor_IDL/handmade_naive.json';
 import {Program} from '@coral-xyz/anchor';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
-import {accessSolanaWallet, saveAddress} from './wallet/solana_wallet';
-import {ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER} from '../tmp';
-import {KeychainElements} from '../types/keychains';
+import {accessSolanaWallet, saveAddress} from '../wallet/solana_wallet';
+import {ISSUER_LOCAL, MINT_PUB, PRIVATE_KEY, WRAPPER} from '../../tmp';
+import {KeychainElements} from '../../types/keychains';
 
 export async function create_account(connection: anchor.web3.Connection) {
   const program = new Program<HandmadeNaive>(IDL as HandmadeNaive, {

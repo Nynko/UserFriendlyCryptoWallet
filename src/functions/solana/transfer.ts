@@ -1,8 +1,8 @@
 import * as anchor from '@coral-xyz/anchor';
-import {AssetBased} from '../Anchor_IDL/asset_based';
-import {signTwoAuth} from './backends/signatures';
-import {TypedError} from '../Errors/TypedError';
-import {SolanaWalletErrors} from '../Errors/SolanaWalletsErrors';
+import {AssetBased} from '../../Anchor_IDL/asset_based';
+import {signTwoAuth} from '../backends/signatures';
+import {TypedError} from '../../Errors/TypedError';
+import {SolanaWalletErrors} from '../../Errors/SolanaWalletsErrors';
 
 export async function transferToken(
   amount: number,
@@ -22,6 +22,7 @@ export async function transferToken(
     .transfer(new anchor.BN(amount))
     .accountsPartial({
       sourceOwner: source_owner.publicKey,
+      payer: source_owner.publicKey,
       destinationOwner: destination_owner,
       sourceWrappedAccount: source_wrapped_account,
       destinationWrappedAccount: destination_wrapped_account,
@@ -109,6 +110,7 @@ export async function transferTokenNoSignature(
     .transfer(new anchor.BN(amount))
     .accountsPartial({
       sourceOwner: source_owner.publicKey,
+      payer: source_owner.publicKey,
       destinationOwner: destination_owner,
       sourceWrappedAccount: source_wrapped_account,
       destinationWrappedAccount: destination_wrapped_account,

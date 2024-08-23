@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/asset_based.json`.
  */
 export type AssetBased = {
-  "address": "43BeXgVQtVYNQAopMAfkMCEHd5sbAi83DbrvndhHjXGD",
+  "address": "FRHkJLQxLmaTKTbfRdR8LQUA5h95CDqJZRpjTnqQN4Ng",
   "metadata": {
     "name": "assetBased",
     "version": "0.1.0",
@@ -1060,6 +1060,11 @@ export type AssetBased = {
           "name": "twoAuthSigner",
           "signer": true,
           "optional": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "wrapperAccount",

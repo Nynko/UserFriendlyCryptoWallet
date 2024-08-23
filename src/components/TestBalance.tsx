@@ -3,7 +3,7 @@ import * as anchor from '@coral-xyz/anchor';
 import {useState} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
 import {accessAddress} from '../functions/wallet/solana_wallet';
-import {getBalance} from '../functions/get_account';
+import {getBalance} from '../functions/solana/get_account';
 import {MINT_PUB} from '../tmp';
 import {getWrappedAccount} from '../functions/solana/getWrappedAccountBalance';
 

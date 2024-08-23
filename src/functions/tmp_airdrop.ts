@@ -1,6 +1,6 @@
 import * as anchor from '@coral-xyz/anchor';
 import {HandmadeNaive} from '../Anchor_IDL/handmade_naive';
-import {transferTokenNoSignature} from './transfer';
+import {transferTokenNoSignature} from './solana/transfer';
 import {accessAddress} from './wallet/solana_wallet';
 import {
   ISSUER_LOCAL,

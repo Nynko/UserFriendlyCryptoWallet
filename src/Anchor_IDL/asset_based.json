@@ -1,5 +1,5 @@
 {
-  "address": "43BeXgVQtVYNQAopMAfkMCEHd5sbAi83DbrvndhHjXGD",
+  "address": "5U7uBXK4as2Ayu5SRM3zoXSDGqoDx9YvKfCWn2JEkNgV",
   "metadata": {
     "name": "asset_based",
     "version": "0.1.0",
@@ -1056,6 +1056,11 @@
           "optional": true
         },
         {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "wrapper_account",
           "pda": {
             "seeds": [
@@ -1602,48 +1607,13 @@
   "errors": [
     {
       "code": 6000,
-      "name": "IdendityAlreadyExists",
-      "msg": "Idendity already exists"
+      "name": "InvalidDecimals",
+      "msg": "Decimal provided does not match the mint's decimal value"
     },
     {
       "code": 6001,
-      "name": "IdendityNotActive",
-      "msg": "Idendity is not active"
-    },
-    {
-      "code": 6002,
-      "name": "IdendityExpired",
-      "msg": "Idendity expired"
-    },
-    {
-      "code": 6003,
-      "name": "IdendityRecovered",
-      "msg": "Idendity recovered"
-    },
-    {
-      "code": 6004,
-      "name": "IdendityAlreadyRecovered",
-      "msg": "Idendity already recovered"
-    },
-    {
-      "code": 6005,
-      "name": "IssuerNotApproved",
-      "msg": "Issuer is not approved"
-    },
-    {
-      "code": 6006,
-      "name": "InvalidIdendity",
-      "msg": "No approved issuer found or inactive/expired issuer"
-    },
-    {
-      "code": 6007,
-      "name": "PseudoAlreadyExist",
-      "msg": "A pseudo already exist, please use the update method"
-    },
-    {
-      "code": 6008,
-      "name": "PseudoDontExist",
-      "msg": "The old pseudo doesn't exist, please use the add method"
+      "name": "InvalidExitRegulator",
+      "msg": "Invalid exit regulator for the specified wrapper"
     }
   ],
   "types": [
