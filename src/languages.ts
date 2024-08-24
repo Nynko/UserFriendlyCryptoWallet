@@ -4,6 +4,8 @@ import RNLanguageDetector from '@os-team/i18next-react-native-language-detector'
 
 import commonEn from './locales/en/common.json';
 import commonFr from './locales/fr/common.json';
+import errorsEn from './locales/en/errors.json';
+import errorsFr from './locales/fr/errors.json';
 
 i18n
   .use(RNLanguageDetector)
@@ -13,7 +15,7 @@ i18n
     fallbackLng: 'en',
     debug: true,
     supportedLngs: ['en', 'fr'],
-    ns: ['common'],
+    ns: ['common', 'errors'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
@@ -21,9 +23,11 @@ i18n
     resources: {
       en: {
         common: commonEn,
+        errors: errorsEn,
       },
       fr: {
         common: commonFr,
+        errors: errorsFr,
       },
     },
   });

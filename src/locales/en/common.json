@@ -15,5 +15,7 @@
   "pseudoTooLong": "Pseudo too long ! (max 32 char)",
   "Receive money": "Receive money",
   "My Pseudo": "My Pseudo",
-  "Scan QR Code": "Scan QR Code"
+  "Scan QR Code": "Scan QR Code",
+  "Send to": "Send to",
+  "Send to Pseudo": "Send to Pseudo"
 }

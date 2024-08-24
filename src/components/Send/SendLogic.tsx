@@ -32,6 +32,7 @@ export function SendLogic({
     const [destinationWrappedAccount, _destinationIdendity] =
       await getDeriveAddresses(mint, wrapper, pk, program);
     setLoading(true);
+    setError(null);
     accessSolanaWallet()
       .then(async signer => {
         return await transferToken(

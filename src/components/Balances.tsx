@@ -62,7 +62,10 @@ export const Balances = ({
     <View style={mainStyle.container}>
       <Text style={typography.thinTitle}>{`${total_eur.toFixed(2)} € `}</Text>
       <Text style={typography.thinSmaller}>{`${tokenBalance} EURC`}</Text>
-      <Text style={typography.thinSmaller}>{`${adjustedSolBalance} SOL`}</Text>
+      <Text
+        style={
+          typography.subtitleText
+        }>{`${adjustedSolBalance} SOL ${'for fees'}`}</Text>
       <Text style={typography.smallText}> ... </Text>
       <Text style={typography.smallText}> See more </Text>
     </View>

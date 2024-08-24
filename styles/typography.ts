@@ -19,4 +19,8 @@ export const typography = StyleSheet.create({
     ...material.titleObject,
     ...systemWeights.thin,
   },
+  subtitleText: {
+    ...material.subheadingObject,
+    ...systemWeights.thin,
+  },
 });

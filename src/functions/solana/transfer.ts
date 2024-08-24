@@ -75,8 +75,12 @@ export async function transferToken(
             SolanaWalletErrors.NotEnoughSolBalanceToPayFees,
             e,
           );
+        } else if (
+          e.logs &&
+          e.logs.includes('Program log: Error: insufficient funds')
+        ) {
+          throw new TypedError(SolanaWalletErrors.NotEnoughTokenBalance);
         }
-
         throw new Error(`Unknown SendTransactionError: ${e}`);
       } else {
         throw e;
