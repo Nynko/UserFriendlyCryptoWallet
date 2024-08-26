@@ -1,5 +1,10 @@
 {
   "NoCredentialStored": "No credentials stored",
   "NotEnoughSolBalanceToPayFees": "Not enough SOL balance to pay fees",
-  "NotEnoughTokenBalance": "Not enough tokens to pay"
+  "NotEnoughTokenBalance": "Not enough tokens to pay",
+  "DltAccountAlreadyExist": "Dlt account already exist",
+  "DltAccountDoesNotExist": "Dlt account does not exist",
+  "WrapperAddressAlreadyExist": "Wrapper already exist",
+  "WrapperAddressDoesNotExist": "Wrapper does not exist",
+  "MintAddressAlreadyExist": "Mint address already exist"
 }

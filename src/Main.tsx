@@ -1,37 +1,39 @@
 import {useEffect, useState} from 'react';
 import MainConnected from './MainConnected';
 import {OnboardingMain} from './onboarding/OnboardingMain';
-import {AddressesContextState} from './hooks/contexts/useAddresses';
-import {SolanaAddresses} from './components/context/SolanaAddresses';
-import {getAddresses} from './functions/addresses/getAddresses';
-import {TypedError} from './Errors/TypedError';
+import {AccountContext, AccountContextState} from './hooks/contexts/useAccount';
 import {useBoolState} from './hooks/useBoolState';
+import {useMMKV} from 'react-native-mmkv';
+import {AccountDispatchProvider} from './components/context/AccountDispatchProvider';
+import {loadDltAccount} from './functions/accounts/mmkv-utils';
+import {DLT} from './types/account';
 
 export function Main() {
-  const [addresses, setAddresses] = useState<
-    AddressesContextState | Error | undefined
+  const [accounts, setAccounts] = useState<
+    AccountContextState | null | undefined
   >(undefined);
   const [reloaded, reload] = useBoolState();
+  const mmkv = useMMKV();
+
+  // TODO: Check if mmkv contain data and if not, show onboarding
 
   useEffect(() => {
-    getAddresses().then(addr => {
-      if (addr instanceof TypedError) {
-        setAddresses(addr);
-      } else if (addr instanceof Error) {
-        const err = new Error(`An unexpected error occurred: ${addr.message}`);
-        console.error(err);
-        setAddresses(err);
-      } else {
-        setAddresses(addr);
-      }
-    });
-  }, [reloaded]);
+    const dltAccount = loadDltAccount(DLT.SOLANA, mmkv);
+    const _dltAccounts: AccountContextState | null = dltAccount
+      ? {
+          dltAccounts: {
+            [DLT.SOLANA]: dltAccount,
+          },
+        }
+      : null;
+    setAccounts(_dltAccounts);
+  }, [reloaded, mmkv]);
 
-  if (addresses === undefined) {
+  if (accounts === undefined) {
     return <>{/* LOADING */}</>;
   }
 
-  if (addresses instanceof Error) {
+  if (accounts === null) {
     return (
       <>
         <OnboardingMain reload={reload} />
@@ -39,9 +41,11 @@ export function Main() {
     );
   } else {
     return (
-      <SolanaAddresses addresses={addresses}>
-        <MainConnected reload={reload} />
-      </SolanaAddresses>
+      <AccountContext.Provider value={accounts}>
+        <AccountDispatchProvider>
+          <MainConnected reload={reload} />
+        </AccountDispatchProvider>
+      </AccountContext.Provider>
     );
   }
 }

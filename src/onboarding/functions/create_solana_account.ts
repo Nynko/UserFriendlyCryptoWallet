@@ -32,11 +32,11 @@ export async function create_account(
   const issuer_id = new anchor.web3.PublicKey(ID_ISSUER);
   const mint = new anchor.web3.PublicKey(EURC_MINT);
   const mint_decimals = 2;
-  const two_auth_entity = new anchor.web3.PublicKey(TWO_AUTH_AUTHORITY);
+  const twoAuthEntity = new anchor.web3.PublicKey(TWO_AUTH_AUTHORITY);
   const token_program_id = TOKEN_PROGRAM_ID;
   const two_auth_entity_token_account = anchor.utils.token.associatedAddress({
     mint,
-    owner: two_auth_entity,
+    owner: twoAuthEntity,
   });
   const [sol_addr, wrapped_account_check] = await createSolanaWallet(
     program.programId,
@@ -69,11 +69,11 @@ export async function create_account(
 
   const [twoAuth, twoAuthInstruction] = await initialize_two_auth_instruction(
     signer,
-    two_auth_entity,
+    twoAuthEntity,
     idendity,
     approver,
     wrapper,
-    two_auth_entity,
+    twoAuthEntity,
     program,
   );
 
@@ -85,7 +85,7 @@ export async function create_account(
       wrapper,
       approver,
       signer.publicKey,
-      two_auth_entity,
+      twoAuthEntity,
       mint,
       two_auth_entity_token_account,
       token_program_id,
@@ -109,7 +109,7 @@ export async function create_account(
 
   const [pseudoAccount, pseudoInstruction] =
     await initialize_pseudo_instruction(
-      two_auth_entity,
+      twoAuthEntity,
       idendity,
       signer,
       pseudo,
@@ -127,7 +127,7 @@ export async function create_account(
 
   transaction.recentBlockhash = blockhash.value.blockhash;
   transaction.lastValidBlockHeight = blockhash.value.lastValidBlockHeight;
-  transaction.feePayer = two_auth_entity;
+  transaction.feePayer = twoAuthEntity;
 
   transaction.partialSign(signer);
 
@@ -177,14 +177,23 @@ export async function create_account(
   );
   await saveAddress(idendity, KeychainElements.SOL_Idendity);
   await saveAddress(twoAuth, KeychainElements.SOL_TwoAuth);
-  await saveAddress(two_auth_entity, KeychainElements.SOL_TwoAuthEntity);
+  await saveAddress(twoAuthEntity, KeychainElements.SOL_TwoAuthEntity);
   await saveAddress(recoveryAccount, KeychainElements.SOL_RecoveryAccount);
   await saveAddress(pseudoAccount, KeychainElements.SOL_PseudoAccount);
   await storeStringValueUnlocked(pseudo, KeychainElements.SOL_PseudoValue);
 
   console.log('Finish creating account');
 
-  return {pk: signer.publicKey, id: idendity};
+  return {
+    pk: signer.publicKey,
+    idendity,
+    wrappedAccount,
+    twoAuth,
+    twoAuthEntity,
+    recoveryAccount,
+    pseudoAccount,
+    pseudo,
+  };
 }
 
 interface RecoveryAuthority {

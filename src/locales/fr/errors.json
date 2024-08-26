@@ -1,5 +1,10 @@
 {
   "NoCredentialStored": "Aucune information d'identification stockée",
   "NotEnoughSolBalanceToPayFees": "Solde SOL insuffisant pour payer les frais",
-  "NotEnoughTokenBalance": "Solde de tokens insuffisant pour payer"
+  "NotEnoughTokenBalance": "Solde de tokens insuffisant pour payer",
+  "DltAccountAlreadyExist": "Le compte DLT existe déjà",
+  "DltAccountDoesNotExist": "Le compte DLT n'existe pas",
+  "WrapperAddressAlreadyExist": "Le sous-système existe déjà",
+  "WrapperAddressDoesNotExist": "Le sous-système n'existe pas",
+  "MintAddressAlreadyExist": "L'adresse de mint existe déjà"
 }

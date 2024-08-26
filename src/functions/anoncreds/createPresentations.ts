@@ -2,12 +2,12 @@ import {
   Credential,
   CredentialDefinition,
   CredentialProve,
+  JsonObject,
   LinkSecret,
   Presentation,
   PresentationRequest,
   Schema,
 } from '@hyperledger/anoncreds-react-native';
-import {ANONCREDS_SCHEMA_NAME} from '../../const';
 
 export function createMainPresentation(
   cred: Credential,
@@ -17,6 +17,8 @@ export function createMainPresentation(
   schemaId: string,
   credDef: CredentialDefinition,
 ) {
+  const schemaName = (schema.toJson() as JsonObject).name;
+
   // "firstName",
   // "lastName",
   // "dateOfBirth",
@@ -32,7 +34,7 @@ export function createMainPresentation(
         names: ['firstName', 'lastName', 'pseudo', 'solanaAddress', 'solId'],
         restrictions: [
           {
-            schema_name: ANONCREDS_SCHEMA_NAME,
+            schema_name: schemaName,
           },
         ],
       },

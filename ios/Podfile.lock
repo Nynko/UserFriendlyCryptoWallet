@@ -11,6 +11,9 @@ PODS:
   - hermes-engine (0.74.0):
     - hermes-engine/Pre-built (= 0.74.0)
   - hermes-engine/Pre-built (0.74.0)
+  - MMKV (1.3.9):
+    - MMKVCore (~> 1.3.9)
+  - MMKVCore (1.3.9)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -943,7 +946,31 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.11.0):
     - React-Core
+  - react-native-mmkv (2.12.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - MMKV (>= 1.3.3)
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-netinfo (11.3.2):
+    - React-Core
+  - react-native-nfc-manager (3.15.1):
     - React-Core
   - react-native-pager-view (6.4.0):
     - DoubleConversion
@@ -1277,7 +1304,9 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-nfc-manager (from `../node_modules/react-native-nfc-manager`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-worklets-core (from `../node_modules/react-native-worklets-core`)
@@ -1312,6 +1341,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - MMKV
+    - MMKVCore
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1382,8 +1413,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
+  react-native-mmkv:
+    :path: "../node_modules/react-native-mmkv"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-nfc-manager:
+    :path: "../node_modules/react-native-nfc-manager"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
@@ -1455,6 +1490,8 @@ SPEC CHECKSUMS:
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
   hermes-engine: 6eae7edb2f563ee41d7c1f91f4f2e57c26d8a5c3
+  MMKV: 817ba1eea17421547e01e087285606eb270a8dcb
+  MMKVCore: af055b00e27d88cd92fad301c5fecd1ff9b26dd9
   RCT-Folly: 045d6ecaa59d826c5736dfba0b2f4083ff8d79df
   RCTDeprecation: 3ca8b6c36bfb302e1895b72cfe7db0de0c92cd47
   RCTRequired: 9fc183af555fd0c89a366c34c1ae70b7e03b1dc5
@@ -1481,7 +1518,9 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 5e05d78fe6505f4a054b86f415733d4ad02dd314
   react-native-date-picker: 6891317e850deae5b53d51355226e07a495aba61
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
+  react-native-mmkv: 8c9a677e64a1ac89b0c6cf240feea528318b3074
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
+  react-native-nfc-manager: 3134770f9afcb586c0ae859e747fda3106ec1f76
   react-native-pager-view: e91c3d72e53fed828f3f94eca4cff25f334ebecf
   react-native-safe-area-context: ab8f4a3d8180913bd78ae75dd599c94cce3d5e9a
   react-native-worklets-core: f51430dd07bf5343d4918d28a4bb00fe8f98b982

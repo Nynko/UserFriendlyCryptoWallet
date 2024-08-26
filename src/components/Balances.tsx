@@ -6,7 +6,7 @@ import {getBalance, getMinimumRent} from '../functions/solana/get_account';
 import {typography} from '../../styles/typography';
 import {mainStyle} from '../../styles/style';
 import {SolToEur} from '../functions/prices/get_prices';
-import {useAddresses} from '../hooks/contexts/useAddresses';
+import {useAccount} from '../hooks/contexts/useAccount';
 import {getWrappedAccount} from '../functions/solana/getWrappedAccountBalance';
 
 const cutThreshold = (
@@ -28,7 +28,7 @@ export const Balances = ({
 }: {
   isBalanceReloading: boolean;
 }) => {
-  const addresses = useAddresses();
+  const addresses = useAccount();
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [solBalance, setSolBalance] = useState<number | null>(null);
   const program = useAnchorProgram().program;

@@ -5,7 +5,7 @@ import {useState} from 'react';
 import QRCode from 'react-qr-code';
 import {useBoolState} from '../../hooks/useBoolState';
 import {useTranslation} from 'react-i18next';
-import {useAddresses} from '../../hooks/contexts/useAddresses';
+import {useAccount} from '../../hooks/contexts/useAccount';
 
 export function Receive({
   pk,
@@ -17,7 +17,7 @@ export function Receive({
   const {t} = useTranslation();
   const [value, setValue] = useState<string>('');
   const [qr, setQr] = useBoolState(false);
-  const pseudo = useAddresses().pseudo;
+  const pseudo = useAccount().pseudo;
   const data = JSON.stringify([pk.toBase58(), Number(value), pseudo]);
 
   return (

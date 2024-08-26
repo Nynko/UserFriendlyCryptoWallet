@@ -9,6 +9,7 @@ import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {create_account} from '../functions/create_solana_account';
 import {styles} from './styles';
 import {useTranslation} from 'react-i18next';
+import {useMMKV} from 'react-native-mmkv';
 
 type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -32,6 +33,7 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
   const program = programs.program;
   const {identification} = route.params;
   const {t} = useTranslation();
+  const mmkv = useMMKV();
 
   const onClick = async () => {
     const {pk, id} = await create_account(identification.pseudo, program);

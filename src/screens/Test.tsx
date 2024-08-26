@@ -10,23 +10,14 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 import {TestConnection} from '../components/TestConnection';
-import {TestGenerateKey} from '../components/TestGenerateKey';
-import {TestAccessKey} from '../components/TestAccessKey';
-import {TestCreateAccount} from '../components/TestCreateAccount';
-import {TestAccessAccount} from '../components/TestAccessAccount';
-import {TestBalance} from '../components/TestBalance';
 import {Airdrop} from '../components/Airdrop';
 import {TestTransfer} from '../components/TestTransfer';
-import {TestCreateAnonCreds} from '../components/TestCreateAnonCreds';
 import {KeychainElements} from '../types/keychains';
 import {deleteKeychain} from '../functions/wallet/solana_wallet';
+import NFC from '../components/TestNFC';
+import {useAccount} from '../hooks/contexts/useAccount';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -66,6 +57,12 @@ export function Test({
   reloadAddresses: () => void;
 }) {
   const isDarkMode = useColorScheme() === 'dark';
+  const addresses = useAccount();
+
+  console.log(addresses);
+  const uiManager = global?.nativeFabricUIManager ? 'Fabric' : 'Paper';
+
+  console.log(`Using ${uiManager}`);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -92,39 +89,12 @@ export function Test({
               )
             }
           />
-          <TestGenerateKey />
-          <TestAccessKey />
+          <View style={styles.sectionContainer}>
+            <NFC />
+          </View>
           <TestConnection />
-          <TestCreateAccount />
-          <TestAccessAccount />
-          <TestBalance />
           <Airdrop reloadBalances={reloadBalances} />
           <TestTransfer reloadBalances={reloadBalances} />
-          <TestCreateAnonCreds />
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <View style={styles.sectionContainer}>
-            <Text
-              style={[
-                styles.sectionDescription,
-                {
-                  color: isDarkMode ? Colors.light : Colors.dark,
-                },
-              ]}>
-              test
-            </Text>
-          </View>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
         </View>
       </ScrollView>
     </>

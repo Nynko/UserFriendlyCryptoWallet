@@ -11,7 +11,7 @@ import {Receive} from '../components/Receive/Receive';
 import {Send} from '../components/Send/Send';
 import {styles2} from './Style';
 import {RefreshView} from '../components/utils/RefreshView';
-import {useAddresses} from '../hooks/contexts/useAddresses';
+import {useAccount} from '../hooks/contexts/useAccount';
 
 let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
@@ -35,7 +35,7 @@ export function Home({
   counterHome++;
   console.log(counterHome);
 
-  const addresses = useAddresses(); // Remove and have a global state
+  const addresses = useAccount(); // Remove and have a global state
   const pk = addresses?.pubKey;
   console.log('pk', pk);
 

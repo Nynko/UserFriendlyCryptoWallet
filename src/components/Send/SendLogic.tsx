@@ -4,7 +4,7 @@ import {transferToken} from '../../functions/solana/transfer';
 import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {useAddresses} from '../../hooks/contexts/useAddresses';
+import {useAccount} from '../../hooks/contexts/useAccount';
 import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
 import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
@@ -24,7 +24,7 @@ export function SendLogic({
   const [loading, setLoading] = useState<boolean>(false);
 
   const program = useAnchorProgram().program;
-  const addresses = useAddresses();
+  const addresses = useAccount();
   const mint = new anchor.web3.PublicKey(EURC_MINT);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
   const approver = new anchor.web3.PublicKey(APPROVER);
@@ -50,6 +50,8 @@ export function SendLogic({
           program,
         ).catch(e => {
           if (e instanceof TypedError) {
+            console.log(e.toStringComplete());
+
             setError(e.toString());
           } else {
             console.log(e);
