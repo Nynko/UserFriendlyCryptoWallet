@@ -6,6 +6,7 @@ import QRCode from 'react-qr-code';
 import {useBoolState} from '../../hooks/useBoolState';
 import {useTranslation} from 'react-i18next';
 import {useAccount} from '../../hooks/contexts/useAccount';
+import {DLT} from '../../types/account';
 
 export function Receive({
   pk,
@@ -17,7 +18,7 @@ export function Receive({
   const {t} = useTranslation();
   const [value, setValue] = useState<string>('');
   const [qr, setQr] = useBoolState(false);
-  const pseudo = useAccount().pseudo;
+  const pseudo = useAccount().dltAccounts[DLT.SOLANA].generalAddresses.pseudo;
   const data = JSON.stringify([pk.toBase58(), Number(value), pseudo]);
 
   return (

@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/asset_based.json`.
  */
 export type AssetBased = {
-  "address": "5U7uBXK4as2Ayu5SRM3zoXSDGqoDx9YvKfCWn2JEkNgV",
+  "address": "DTnwFQeHGnp6QNWnvma8q8pxwcpzM8GTxeEG5JMhS3JS",
   "metadata": {
     "name": "assetBased",
     "version": "0.1.0",
@@ -1107,6 +1107,10 @@ export type AssetBased = {
         {
           "name": "amount",
           "type": "u64"
+        },
+        {
+          "name": "decimals",
+          "type": "u8"
         }
       ]
     },
@@ -1613,13 +1617,48 @@ export type AssetBased = {
   "errors": [
     {
       "code": 6000,
-      "name": "invalidDecimals",
-      "msg": "Decimal provided does not match the mint's decimal value"
+      "name": "idendityAlreadyExists",
+      "msg": "Idendity already exists"
     },
     {
       "code": 6001,
-      "name": "invalidExitRegulator",
-      "msg": "Invalid exit regulator for the specified wrapper"
+      "name": "idendityNotActive",
+      "msg": "Idendity is not active"
+    },
+    {
+      "code": 6002,
+      "name": "idendityExpired",
+      "msg": "Idendity expired"
+    },
+    {
+      "code": 6003,
+      "name": "idendityRecovered",
+      "msg": "Idendity recovered"
+    },
+    {
+      "code": 6004,
+      "name": "idendityAlreadyRecovered",
+      "msg": "Idendity already recovered"
+    },
+    {
+      "code": 6005,
+      "name": "issuerNotApproved",
+      "msg": "Issuer is not approved"
+    },
+    {
+      "code": 6006,
+      "name": "invalidIdendity",
+      "msg": "No approved issuer found or inactive/expired issuer"
+    },
+    {
+      "code": 6007,
+      "name": "pseudoAlreadyExist",
+      "msg": "A pseudo already exist, please use the update method"
+    },
+    {
+      "code": 6008,
+      "name": "pseudoDontExist",
+      "msg": "The old pseudo doesn't exist, please use the add method"
     }
   ],
   "types": [

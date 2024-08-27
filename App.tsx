@@ -6,7 +6,6 @@ import backgroundImage from './assets/background3.png';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './src/languages';
 import {Main} from './src/Main';
-import {MmkvProvider} from './src/components/context/MmkvProvider';
 
 function App(): React.JSX.Element {
   return (
@@ -19,13 +18,11 @@ function App(): React.JSX.Element {
           backgroundColor: 'transparent',
         }}>
         <I18nextProvider i18n={i18n}>
-          <MmkvProvider>
-            <SolanaConnection>
-              <AnchorProgramProvider>
-                <Main />
-              </AnchorProgramProvider>
-            </SolanaConnection>
-          </MmkvProvider>
+          <SolanaConnection>
+            <AnchorProgramProvider>
+              <Main />
+            </AnchorProgramProvider>
+          </SolanaConnection>
         </I18nextProvider>
       </ImageBackground>
     </>

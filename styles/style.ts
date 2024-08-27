@@ -4,8 +4,18 @@ export const mainStyle = StyleSheet.create({
   errorText: {
     color: 'red',
   },
+  safeArea: {
+    flex: 1,
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  innerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },

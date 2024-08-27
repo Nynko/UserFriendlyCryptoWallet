@@ -75,11 +75,11 @@ export const AccountDispatchProvider: FC<{
     }
     if (
       !account.dltAccounts[dlt].wrapperAddresses[wrapper].mints[
-        address.mint.toString()
+        address.mintAddress.toString()
       ]
     ) {
       account.dltAccounts[dlt].wrapperAddresses[wrapper].mints[
-        address.mint.toString()
+        address.mintAddress.toString()
       ] = address;
       updateDltAccount(account.dltAccounts[dlt], dlt, account);
     } else {

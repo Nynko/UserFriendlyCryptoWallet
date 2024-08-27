@@ -8,6 +8,8 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 
 import {useUpdateBalances} from './hooks/useUpdateBalances';
 import NewModuleButton from './components/ios/NewModuleButton';
+import {Balances} from './screens/Balances';
+import {use} from 'i18next';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -35,6 +37,7 @@ const navTheme = {
 
 function MainConnected({reload}: {reload: () => void}): React.JSX.Element {
   const [reloadOnUpdate, updateBalances] = useUpdateBalances();
+  const balances = useBalances();
   return (
     <>
       <NavigationContainer theme={navTheme}>
@@ -56,9 +59,12 @@ function MainConnected({reload}: {reload: () => void}): React.JSX.Element {
               />
             )}
           </Tab.Screen>
-          <Tab.Screen name="Details">
+          <Tab.Screen name="Balances">
             {() => (
-              <Test reloadBalances={updateBalances} reloadAddresses={reload} />
+              <Balances
+                isBalanceReloading={reloadOnUpdate}
+                reloadBalances={updateBalances}
+              />
             )}
           </Tab.Screen>
         </Tab.Navigator>

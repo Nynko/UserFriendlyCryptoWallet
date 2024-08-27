@@ -12,7 +12,7 @@ export type WrapperAddress = _WrapperAddress<anchor.web3.PublicKey>;
 
 // String when serialized, PublicKey when deserialized
 export interface _MintAddress<T extends String | anchor.web3.PublicKey> {
-  mint: T;
+  mintAddress: T;
   mintMetadata: T;
 }
 
@@ -23,6 +23,7 @@ export type MintAddress = _MintAddress<anchor.web3.PublicKey>;
 export interface GeneralAddresses<T extends String | anchor.web3.PublicKey> {
   pubKey: T;
   pseudo: string;
+  pseudoAccount: T;
   idendity: T;
   recovery: T;
   twoAuth: T;

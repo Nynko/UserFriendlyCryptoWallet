@@ -1,6 +1,6 @@
 import {Button, Text, View} from 'react-native';
 import {typography} from '../../../styles/typography';
-
+import {web3 as web3} from '@coral-xyz/anchor';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../OnboardingMain';
@@ -10,6 +10,9 @@ import {create_account} from '../functions/create_solana_account';
 import {styles} from './styles';
 import {useTranslation} from 'react-i18next';
 import {useMMKV} from 'react-native-mmkv';
+import {saveDltAccount} from '../../functions/accounts/mmkv-utils';
+import {DLT, DltAccount} from '../../types/account';
+import {EURC_MINT, WRAPPER_PDA} from '../../const';
 
 type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -36,16 +39,51 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
   const mmkv = useMMKV();
 
   const onClick = async () => {
-    const {pk, id} = await create_account(identification.pseudo, program);
+    const {
+      pk,
+      idendity,
+      wrappedAccount,
+      twoAuth,
+      twoAuthEntity,
+      recoveryAccount,
+      pseudoAccount,
+      pseudo,
+    } = await create_account(identification.pseudo, program);
     await create_anoncreds(
       {
         ...identification,
         dateOfBirth: identification.dateOfBirth.getTime().toString(),
         solanaAddress: pk.toBase58(),
-        solId: id.toBase58(),
+        solId: idendity.toBase58(),
       },
       anoncredsProgram,
     );
+    const dltAccount: DltAccount = {
+      dltName: DLT.SOLANA,
+      generalAddresses: {
+        pubKey: pk,
+        pseudo,
+        pseudoAccount,
+        idendity,
+        recovery: recoveryAccount,
+        twoAuth,
+        twoAuthEntity,
+      },
+      wrapperAddresses: {
+        [WRAPPER_PDA]: {
+          wrapperName: 'Main',
+          wrapper: new web3.PublicKey(WRAPPER_PDA),
+          wrappedToken: wrappedAccount,
+          mints: {
+            EURC: {
+              mintAddress: new web3.PublicKey(EURC_MINT),
+              mintMetadata: new web3.PublicKey(EURC_MINT), // TODO find the proper mint metadata
+            },
+          },
+        },
+      },
+    };
+    saveDltAccount(DLT.SOLANA, dltAccount, mmkv);
     reload();
   };
 

@@ -18,6 +18,9 @@ import {KeychainElements} from '../types/keychains';
 import {deleteKeychain} from '../functions/wallet/solana_wallet';
 import NFC from '../components/TestNFC';
 import {useAccount} from '../hooks/contexts/useAccount';
+import {saveState} from '../functions/accounts/mmkv-utils';
+import {DLT} from '../types/account';
+import {useMMKV} from 'react-native-mmkv';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -51,13 +54,14 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 export function Test({
   reloadBalances,
-  reloadAddresses,
+  reloadAccounts,
 }: {
   reloadBalances: () => void;
-  reloadAddresses: () => void;
+  reloadAccounts: () => void;
 }) {
   const isDarkMode = useColorScheme() === 'dark';
   const addresses = useAccount();
+  const mmkv = useMMKV();
 
   console.log(addresses);
   const uiManager = global?.nativeFabricUIManager ? 'Fabric' : 'Paper';
@@ -83,11 +87,10 @@ export function Test({
           }}>
           <Button
             title="Delete Account"
-            onPress={() =>
-              deleteKeychain(KeychainElements.SOL_PublicKey).then(
-                reloadAddresses,
-              )
-            }
+            onPress={() => {
+              mmkv.delete(DLT.SOLANA);
+              reloadAccounts();
+            }}
           />
           <View style={styles.sectionContainer}>
             <NFC />

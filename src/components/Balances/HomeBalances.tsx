@@ -1,13 +1,15 @@
 import {Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
-import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
-import {getBalance, getMinimumRent} from '../functions/solana/get_account';
+import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
+import {getBalance, getMinimumRent} from '../../functions/solana/get_account';
 
-import {typography} from '../../styles/typography';
-import {mainStyle} from '../../styles/style';
-import {SolToEur} from '../functions/prices/get_prices';
-import {useAccount} from '../hooks/contexts/useAccount';
-import {getWrappedAccount} from '../functions/solana/getWrappedAccountBalance';
+import {typography} from '../../../styles/typography';
+import {mainStyle} from '../../../styles/style';
+import {SolToEur} from '../../functions/prices/get_prices';
+import {useAccount} from '../../hooks/contexts/useAccount';
+import {getWrappedAccount} from '../../functions/solana/getWrappedAccountBalance';
+import {DLT} from '../../types/account';
+import {WRAPPER_PDA} from '../../const';
 
 const cutThreshold = (
   amount: number,
@@ -23,12 +25,12 @@ const cutThreshold = (
   }
 };
 
-export const Balances = ({
+export const HomeBalances = ({
   isBalanceReloading,
 }: {
   isBalanceReloading: boolean;
 }) => {
-  const addresses = useAccount();
+  const {dltAccounts} = useAccount();
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [solBalance, setSolBalance] = useState<number | null>(null);
   const program = useAnchorProgram().program;
@@ -46,15 +48,19 @@ export const Balances = ({
 
   useEffect(() => {
     async function updateBalances() {
-      getBalance(program.provider.connection, addresses.pubKey).then(
-        async balance => setSolBalance(balance),
-      );
+      getBalance(
+        program.provider.connection,
+        dltAccounts[DLT.SOLANA].generalAddresses.pubKey,
+      ).then(async balance => setSolBalance(balance));
 
-      getWrappedAccount(addresses.wrappedToken, program).then(setTokenBalance);
+      getWrappedAccount(
+        dltAccounts[DLT.SOLANA].wrapperAddresses[WRAPPER_PDA].wrappedToken,
+        program,
+      ).then(setTokenBalance);
     }
 
     updateBalances();
-  }, [isBalanceReloading, addresses, program]);
+  }, [isBalanceReloading, dltAccounts, program]);
 
   const total_eur = (tokenBalance || 0) + SolToEur(adjustedSolBalance);
 

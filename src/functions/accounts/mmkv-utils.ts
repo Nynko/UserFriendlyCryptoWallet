@@ -30,6 +30,9 @@ export const saveDltAccount = (
       twoAuthEntity: serializePublicKey(
         dltAccount.generalAddresses.twoAuthEntity,
       ),
+      pseudoAccount: serializePublicKey(
+        dltAccount.generalAddresses.pseudoAccount,
+      ),
     },
     wrapperAddresses: Object.fromEntries(
       Object.entries(dltAccount.wrapperAddresses).map(([key, value]) => [
@@ -42,7 +45,7 @@ export const saveDltAccount = (
             Object.entries(value.mints).map(([mintKey, mintValue]) => [
               mintKey,
               {
-                mint: serializePublicKey(mintValue.mint),
+                mint: serializePublicKey(mintValue.mintAddress),
                 mintMetadata: serializePublicKey(mintValue.mintMetadata),
               },
             ]),
@@ -81,6 +84,9 @@ export const loadDltAccount = (
       twoAuthEntity: deserializePublicKey(
         serializedAccount.generalAddresses.twoAuthEntity,
       ),
+      pseudoAccount: deserializePublicKey(
+        serializedAccount.generalAddresses.pseudoAccount,
+      ),
     },
     wrapperAddresses: Object.fromEntries(
       Object.entries(serializedAccount.wrapperAddresses).map(([key, value]) => [
@@ -93,7 +99,7 @@ export const loadDltAccount = (
             Object.entries(value.mints).map(([mintKey, mintValue]) => [
               mintKey,
               {
-                mint: deserializePublicKey(mintValue.mint),
+                mint: deserializePublicKey(mintValue.mintAddress),
                 mintMetadata: deserializePublicKey(mintValue.mintMetadata),
               },
             ]),

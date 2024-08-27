@@ -4,11 +4,9 @@ This contain the logic for creating a token account for a given wallet.
 import * as anchor from '@coral-xyz/anchor';
 import {AssetBased} from '../../Anchor_IDL/asset_based';
 import {Program} from '@coral-xyz/anchor';
-import {KeychainElements} from '../../types/keychains';
 import {
   accessSolanaWallet,
   createSolanaWallet,
-  saveAddress,
 } from '../../functions/wallet/solana_wallet';
 import {
   APPROVER,
@@ -19,7 +17,6 @@ import {
 } from '../../const';
 import {signIssuerId, signTwoAuth} from '../../functions/backends/signatures';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
-import {storeStringValueUnlocked} from '../../functions/secrets';
 
 export async function create_account(
   pseudo: string,
@@ -168,19 +165,6 @@ export async function create_account(
     };
 
   await program.provider.connection.confirmTransaction(confirmStrategy);
-
-  await saveAddress(signer.publicKey, KeychainElements.SOL_PublicKey);
-  await saveAddress(
-    wrappedAccount,
-    KeychainElements.SOL_WrappedAccountAddMint + mint.toString(),
-    mint.toString(),
-  );
-  await saveAddress(idendity, KeychainElements.SOL_Idendity);
-  await saveAddress(twoAuth, KeychainElements.SOL_TwoAuth);
-  await saveAddress(twoAuthEntity, KeychainElements.SOL_TwoAuthEntity);
-  await saveAddress(recoveryAccount, KeychainElements.SOL_RecoveryAccount);
-  await saveAddress(pseudoAccount, KeychainElements.SOL_PseudoAccount);
-  await storeStringValueUnlocked(pseudo, KeychainElements.SOL_PseudoValue);
 
   console.log('Finish creating account');
 
