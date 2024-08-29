@@ -6,5 +6,6 @@
   "DltAccountDoesNotExist": "Le compte DLT n'existe pas",
   "WrapperAddressAlreadyExist": "Le sous-système existe déjà",
   "WrapperAddressDoesNotExist": "Le sous-système n'existe pas",
-  "MintAddressAlreadyExist": "L'adresse de mint existe déjà"
+  "MintAddressAlreadyExist": "L'adresse de mint existe déjà",
+  "NoMintAccountFound": "Aucun compte Mint trouvé"
 }

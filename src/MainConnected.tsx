@@ -2,14 +2,12 @@ import React from 'react';
 import {Text, View} from 'react-native';
 
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {Test} from './screens/Test';
 import {Home} from './screens/Home';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
 import {useUpdateBalances} from './hooks/useUpdateBalances';
 import NewModuleButton from './components/ios/NewModuleButton';
 import {Balances} from './screens/Balances';
-import {use} from 'i18next';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -35,9 +33,8 @@ const navTheme = {
   },
 };
 
-function MainConnected({reload}: {reload: () => void}): React.JSX.Element {
-  const [reloadOnUpdate, updateBalances] = useUpdateBalances();
-  const balances = useBalances();
+function MainConnected(): React.JSX.Element {
+  // const balances = useBalances();
   return (
     <>
       <NavigationContainer theme={navTheme}>
@@ -51,22 +48,8 @@ function MainConnected({reload}: {reload: () => void}): React.JSX.Element {
             },
           }}>
           <Tab.Screen name="Details2" component={DetailsScreen} />
-          <Tab.Screen name="Home">
-            {() => (
-              <Home
-                isBalanceReloading={reloadOnUpdate}
-                reloadBalances={updateBalances}
-              />
-            )}
-          </Tab.Screen>
-          <Tab.Screen name="Balances">
-            {() => (
-              <Balances
-                isBalanceReloading={reloadOnUpdate}
-                reloadBalances={updateBalances}
-              />
-            )}
-          </Tab.Screen>
+          <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen name="Balances" component={Balances} />
         </Tab.Navigator>
       </NavigationContainer>
     </>

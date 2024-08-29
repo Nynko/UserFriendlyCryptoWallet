@@ -4,7 +4,10 @@ import {web3 as web3} from '@coral-xyz/anchor';
 import {TypedError} from '../../Errors/TypedError';
 import {CodingErrors} from '../../Errors/CodingError';
 
-export type DltBalancesContextState = Record<WrapperName, BalancesMint>;
+export interface DltBalancesContextState {
+  wrappers: Record<WrapperName, BalancesMint>;
+  nativeBalance: number;
+}
 
 export type WrapperName = string;
 
@@ -12,12 +15,13 @@ export type WrapperName = string;
 export type BalancesMint = Record<string, Mint>;
 
 export interface Mint {
+  balance: number;
   mintAddress: web3.PublicKey;
-  reloadBalanceForMint: () => void;
+  reloadBalance: () => void;
 }
 
-export const balancesContexts = Object.keys(DLT).reduce((acc, key) => {
-  acc[key as DLT] = createContext<DltBalancesContextState>(
+export const balancesContexts = Object.values(DLT).reduce((acc, dlt) => {
+  acc[dlt] = createContext<DltBalancesContextState>(
     {} as DltBalancesContextState,
   );
   return acc;

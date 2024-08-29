@@ -10,6 +10,7 @@ import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 import {TypedError} from '../../Errors/TypedError';
 import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo';
+import {DLT} from '../../types/account';
 
 export function SendToPseudo({
   reloadBalances,
@@ -23,7 +24,7 @@ export function SendToPseudo({
   const [pseudo, setPseudo] = useState<string>('');
 
   const program = useAnchorProgram().program;
-  const addresses = useAccount();
+  const account = useAccount().dltAccounts[DLT.SOLANA];
   const mint = new anchor.web3.PublicKey(EURC_MINT);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
   const approver = new anchor.web3.PublicKey(APPROVER);
@@ -45,13 +46,14 @@ export function SendToPseudo({
       .then(async signer => {
         return await transferToken(
           value,
+          2,
           wrapper,
           signer,
-          addresses.wrappedToken,
+          account.wrapperAddresses[wrapper.toBase58()].wrappedToken,
           pk,
           destinationWrappedAccount,
-          addresses.twoAuth,
-          addresses.twoAuthEntity,
+          account.generalAddresses.twoAuth,
+          account.generalAddresses.twoAuthEntity,
           mint,
           approver,
           TOKEN_PROGRAM_ID,

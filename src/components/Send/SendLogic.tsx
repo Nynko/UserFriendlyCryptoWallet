@@ -9,6 +9,7 @@ import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
 import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 import {TypedError} from '../../Errors/TypedError';
+import {DLT} from '../../types/account';
 
 export function SendLogic({
   pk,
@@ -24,7 +25,8 @@ export function SendLogic({
   const [loading, setLoading] = useState<boolean>(false);
 
   const program = useAnchorProgram().program;
-  const addresses = useAccount();
+  const account = useAccount().dltAccounts[DLT.SOLANA];
+
   const mint = new anchor.web3.PublicKey(EURC_MINT);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
   const approver = new anchor.web3.PublicKey(APPROVER);
@@ -37,13 +39,14 @@ export function SendLogic({
       .then(async signer => {
         return await transferToken(
           value,
+          2,
           wrapper,
           signer,
-          addresses.wrappedToken,
+          account.wrapperAddresses[wrapper.toBase58()].wrappedToken,
           pk,
           destinationWrappedAccount,
-          addresses.twoAuth,
-          addresses.twoAuthEntity,
+          account.generalAddresses.twoAuth,
+          account.generalAddresses.twoAuthEntity,
           mint,
           approver,
           TOKEN_PROGRAM_ID,

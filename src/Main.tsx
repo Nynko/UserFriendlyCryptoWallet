@@ -7,6 +7,7 @@ import {useMMKV} from 'react-native-mmkv';
 import {AccountDispatchProvider} from './components/context/AccountDispatchProvider';
 import {loadDltAccount} from './functions/accounts/mmkv-utils';
 import {DLT} from './types/account';
+import {BalancesProvider} from './components/context/BalancesProviders/BalancesProvider';
 
 export function Main() {
   const [accounts, setAccounts] = useState<
@@ -43,7 +44,9 @@ export function Main() {
     return (
       <AccountContext.Provider value={accounts}>
         <AccountDispatchProvider>
-          <MainConnected reload={reload} />
+          <BalancesProvider>
+            <MainConnected />
+          </BalancesProvider>
         </AccountDispatchProvider>
       </AccountContext.Provider>
     );

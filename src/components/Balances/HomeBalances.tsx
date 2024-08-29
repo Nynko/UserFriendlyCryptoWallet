@@ -1,15 +1,14 @@
 import {Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
-import {getBalance, getMinimumRent} from '../../functions/solana/get_account';
+import {getMinimumRent} from '../../functions/solana/get_account';
 
 import {typography} from '../../../styles/typography';
 import {mainStyle} from '../../../styles/style';
 import {SolToEur} from '../../functions/prices/get_prices';
-import {useAccount} from '../../hooks/contexts/useAccount';
-import {getWrappedAccount} from '../../functions/solana/getWrappedAccountBalance';
 import {DLT} from '../../types/account';
 import {WRAPPER_PDA} from '../../const';
+import {useBalances} from '../../hooks/contexts/useBalances';
 
 const cutThreshold = (
   amount: number,
@@ -25,19 +24,15 @@ const cutThreshold = (
   }
 };
 
-export const HomeBalances = ({
-  isBalanceReloading,
-}: {
-  isBalanceReloading: boolean;
-}) => {
-  const {dltAccounts} = useAccount();
-  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
-  const [solBalance, setSolBalance] = useState<number | null>(null);
+export const HomeBalances = () => {
   const program = useAnchorProgram().program;
 
+  const balances = useBalances(DLT.SOLANA);
+  const eurcBalance = balances.wrappers[WRAPPER_PDA].EURC.balance;
   const [rentMinimum, setRentMinimum] = useState<number | null>(null);
-  const adjustedSolBalance =
-    solBalance && rentMinimum ? cutThreshold(solBalance, rentMinimum) : 0;
+  const adjustedSolBalance = rentMinimum
+    ? cutThreshold(balances.nativeBalance, rentMinimum)
+    : 0;
 
   useEffect(() => {
     const fetchRentMinimum = async () => {
@@ -46,28 +41,12 @@ export const HomeBalances = ({
     fetchRentMinimum();
   }, [program.provider.connection]);
 
-  useEffect(() => {
-    async function updateBalances() {
-      getBalance(
-        program.provider.connection,
-        dltAccounts[DLT.SOLANA].generalAddresses.pubKey,
-      ).then(async balance => setSolBalance(balance));
-
-      getWrappedAccount(
-        dltAccounts[DLT.SOLANA].wrapperAddresses[WRAPPER_PDA].wrappedToken,
-        program,
-      ).then(setTokenBalance);
-    }
-
-    updateBalances();
-  }, [isBalanceReloading, dltAccounts, program]);
-
-  const total_eur = (tokenBalance || 0) + SolToEur(adjustedSolBalance);
+  const total_eur = (eurcBalance || 0) + SolToEur(adjustedSolBalance);
 
   return (
     <View style={mainStyle.container}>
       <Text style={typography.thinTitle}>{`${total_eur.toFixed(2)} € `}</Text>
-      <Text style={typography.thinSmaller}>{`${tokenBalance} EURC`}</Text>
+      <Text style={typography.thinSmaller}>{`${eurcBalance} EURC`}</Text>
       <Text
         style={
           typography.subtitleText

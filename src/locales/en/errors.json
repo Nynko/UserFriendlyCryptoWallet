@@ -6,5 +6,6 @@
   "DltAccountDoesNotExist": "Dlt account does not exist",
   "WrapperAddressAlreadyExist": "Wrapper already exist",
   "WrapperAddressDoesNotExist": "Wrapper does not exist",
-  "MintAddressAlreadyExist": "Mint address already exist"
+  "MintAddressAlreadyExist": "Mint address already exist",
+  "NoMintAccountFound": "No account found"
 }

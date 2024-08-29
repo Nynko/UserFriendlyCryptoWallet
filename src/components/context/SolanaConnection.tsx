@@ -3,7 +3,7 @@ import {ConnectionProvider, WalletProvider} from '@solana/wallet-adapter-react';
 import * as ledger from '@solana/wallet-adapter-ledger';
 
 const SolanaConnection: FC<{children: ReactNode}> = ({children}) => {
-  const endpoint = 'http://172.20.10.11:8899';
+  const endpoint = 'http://192.168.1.57:8899';
   const wallets = useMemo(() => {
     return [new ledger.LedgerWalletAdapter()];
   }, []);

@@ -4,7 +4,7 @@ storing it securely and access it when needed.
 */
 import * as Keychain from 'react-native-keychain';
 import {TypedError} from '../Errors/TypedError';
-import {SolanaWalletErrors} from '../Errors/SolanaWalletsErrors';
+import {SolanaWalletErrors} from '../Errors/Solana/SolanaWalletsErrors';
 
 export async function store_secret(
   username: string,

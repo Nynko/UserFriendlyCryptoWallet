@@ -2,10 +2,11 @@ import * as anchor from '@coral-xyz/anchor';
 import {AssetBased} from '../../Anchor_IDL/asset_based';
 import {signTwoAuth} from '../backends/signatures';
 import {TypedError} from '../../Errors/TypedError';
-import {SolanaWalletErrors} from '../../Errors/SolanaWalletsErrors';
+import {SolanaWalletErrors} from '../../Errors/Solana/SolanaWalletsErrors';
 
 export async function transferToken(
   amount: number,
+  decimal: number,
   wrapper_account: anchor.web3.PublicKey,
   source_owner: anchor.web3.Signer,
   source_wrapped_account: anchor.web3.PublicKey,
@@ -19,7 +20,7 @@ export async function transferToken(
   program: anchor.Program<AssetBased>,
 ) {
   const instruction = await program.methods
-    .transfer(new anchor.BN(amount))
+    .transfer(new anchor.BN(amount), decimal)
     .accountsPartial({
       sourceOwner: source_owner.publicKey,
       payer: source_owner.publicKey,
@@ -73,6 +74,7 @@ export async function transferToken(
         ) {
           throw new TypedError(
             SolanaWalletErrors.NotEnoughSolBalanceToPayFees,
+            undefined,
             e,
           );
         } else if (
@@ -101,6 +103,7 @@ export async function transferToken(
 // TODO OLD
 export async function transferTokenNoSignature(
   amount: number,
+  decimals: number,
   wrapper_account: anchor.web3.PublicKey,
   source_owner: anchor.web3.Signer,
   source_wrapped_account: anchor.web3.PublicKey,
@@ -111,7 +114,7 @@ export async function transferTokenNoSignature(
   program: anchor.Program<AssetBased>,
 ) {
   const instruction = await program.methods
-    .transfer(new anchor.BN(amount))
+    .transfer(new anchor.BN(amount), decimals)
     .accountsPartial({
       sourceOwner: source_owner.publicKey,
       payer: source_owner.publicKey,

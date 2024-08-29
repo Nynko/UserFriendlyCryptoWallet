@@ -2,13 +2,21 @@ import {Text, View} from 'react-native';
 import {mainStyle} from '../../../styles/style';
 import {WrapperViewModel} from '../../types/viewModels';
 import {typography} from '../../../styles/typography';
+import {useBalances} from '../../hooks/contexts/useBalances';
+import {DLT} from '../../types/account';
+import {TokenBalance} from './TokenBalances';
 
 export const WrapperBalances = ({
   wrapperViewModel,
 }: {
   wrapperViewModel: WrapperViewModel;
 }) => {
-  console.log(wrapperViewModel.dltAccounts[0].wrapperAddress);
+  const wrapperAddress =
+    wrapperViewModel.dltAccounts[0].wrapperAddress.wrapper.toBase58();
+
+  const balances = useBalances(DLT.SOLANA);
+
+  console.log(balances);
 
   return (
     <View style={mainStyle.container}>
@@ -20,6 +28,9 @@ export const WrapperBalances = ({
               ([name, _mint]) => (
                 <View style={mainStyle.innerContainer} key={name}>
                   <Text>{name}</Text>
+                  <TokenBalance
+                    balance={balances.wrappers[wrapperAddress].EURC.balance}
+                  />
                 </View>
               ),
             )}

@@ -6,7 +6,7 @@ import * as Keychain from 'react-native-keychain';
 import * as anchor from '@coral-xyz/anchor';
 import {store_secret} from '../secrets';
 import {KeychainElements} from '../../types/keychains';
-import {SolanaWalletErrors} from '../../Errors/SolanaWalletsErrors';
+import {SolanaWalletErrors} from '../../Errors/Solana/SolanaWalletsErrors';
 import {TypedError} from '../../Errors/TypedError';
 import {Platform} from 'react-native';
 

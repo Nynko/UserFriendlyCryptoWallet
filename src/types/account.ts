@@ -5,6 +5,7 @@ export interface _WrapperAddress<T extends String | anchor.web3.PublicKey> {
   wrapperName: string;
   wrapper: T;
   wrappedToken: T;
+  approver: T;
   mints: Record<string, _MintAddress<T>>; // Mint address as key
 }
 
@@ -14,6 +15,7 @@ export type WrapperAddress = _WrapperAddress<anchor.web3.PublicKey>;
 export interface _MintAddress<T extends String | anchor.web3.PublicKey> {
   mintAddress: T;
   mintMetadata: T;
+  decimals: number;
 }
 
 export type MintAddress = _MintAddress<anchor.web3.PublicKey>;

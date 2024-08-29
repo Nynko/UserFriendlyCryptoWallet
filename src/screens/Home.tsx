@@ -19,13 +19,7 @@ import {mainStyle} from '../../styles/style';
 let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
 as a side effect*/
-export function Home({
-  isBalanceReloading,
-  reloadBalances,
-}: {
-  isBalanceReloading: boolean;
-  reloadBalances: () => void;
-}) {
+export function Home() {
   enum ActiveComponent {
     Receive,
     Send,

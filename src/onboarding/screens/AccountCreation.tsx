@@ -12,7 +12,8 @@ import {useTranslation} from 'react-i18next';
 import {useMMKV} from 'react-native-mmkv';
 import {saveDltAccount} from '../../functions/accounts/mmkv-utils';
 import {DLT, DltAccount} from '../../types/account';
-import {EURC_MINT, WRAPPER_PDA} from '../../const';
+import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
+import {getMintDecimals} from '../../functions/addresses/getMintDecimals';
 
 type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -58,6 +59,12 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
       },
       anoncredsProgram,
     );
+    const mint = new web3.PublicKey(EURC_MINT);
+
+    const decimal_eurc = await getMintDecimals(
+      mint,
+      program.provider.connection,
+    );
     const dltAccount: DltAccount = {
       dltName: DLT.SOLANA,
       generalAddresses: {
@@ -74,10 +81,12 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
           wrapperName: 'Main',
           wrapper: new web3.PublicKey(WRAPPER_PDA),
           wrappedToken: wrappedAccount,
+          approver: new web3.PublicKey(APPROVER),
           mints: {
             EURC: {
-              mintAddress: new web3.PublicKey(EURC_MINT),
-              mintMetadata: new web3.PublicKey(EURC_MINT), // TODO find the proper mint metadata
+              mintAddress: mint,
+              mintMetadata: mint, // TODO find the proper mint metadata
+              decimals: decimal_eurc,
             },
           },
         },

@@ -41,12 +41,14 @@ export const saveDltAccount = (
           ...value,
           wrapper: serializePublicKey(value.wrapper),
           wrappedToken: serializePublicKey(value.wrappedToken),
+          approver: serializePublicKey(value.approver),
           mints: Object.fromEntries(
             Object.entries(value.mints).map(([mintKey, mintValue]) => [
               mintKey,
               {
-                mint: serializePublicKey(mintValue.mintAddress),
+                mintAddress: serializePublicKey(mintValue.mintAddress),
                 mintMetadata: serializePublicKey(mintValue.mintMetadata),
+                decimals: mintValue.decimals,
               },
             ]),
           ),
@@ -95,12 +97,14 @@ export const loadDltAccount = (
           ...value,
           wrapper: deserializePublicKey(value.wrapper),
           wrappedToken: deserializePublicKey(value.wrappedToken),
+          approver: deserializePublicKey(value.approver),
           mints: Object.fromEntries(
             Object.entries(value.mints).map(([mintKey, mintValue]) => [
               mintKey,
               {
-                mint: deserializePublicKey(mintValue.mintAddress),
+                mintAddress: deserializePublicKey(mintValue.mintAddress),
                 mintMetadata: deserializePublicKey(mintValue.mintMetadata),
+                decimals: mintValue.decimals,
               },
             ]),
           ),
