@@ -15,6 +15,7 @@ import {RefreshView} from '../components/utils/RefreshView';
 import {useAccount} from '../hooks/contexts/useAccount';
 import {Layout} from '../components/utils/Layout';
 import {mainStyle} from '../../styles/style';
+import {useBalancesDispatch} from '../hooks/contexts/useBalancesDispatch';
 
 let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
@@ -36,22 +37,17 @@ export function Home() {
   const pk = dltAccounts.solana.generalAddresses.pubKey;
   console.log('pk', pk);
 
+  const reloadBalances = useBalancesDispatch().reloadAllBalances;
+
   return (
     <Layout otherRefresh={[reloadBalances]}>
       <View style={mainStyle.container}>
-        <HomeBalances isBalanceReloading={isBalanceReloading} />
+        <HomeBalances />
         {activeComponent === ActiveComponent.Send && (
-          <Send
-            isBalanceReloading={isBalanceReloading}
-            reloadBalances={reloadBalances}
-          />
+          <Send reloadBalances={reloadBalances} />
         )}
         {activeComponent === ActiveComponent.Receive && pk && (
-          <Receive
-            isBalanceReloading={isBalanceReloading}
-            reloadBalances={reloadBalances}
-            pk={pk}
-          />
+          <Receive reloadBalances={reloadBalances} pk={pk} />
         )}
         <View style={styles2.buttonContainer}>
           {/* <TouchableOpacity style={styles2.button} onPress={async () => transfer(1, user1.publicKey, program).then(reloadBalances)}> */}

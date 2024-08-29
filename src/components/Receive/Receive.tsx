@@ -11,7 +11,6 @@ import {DLT} from '../../types/account';
 export function Receive({
   pk,
 }: {
-  isBalanceReloading: boolean;
   reloadBalances: () => void;
   pk: anchor.web3.PublicKey;
 }) {

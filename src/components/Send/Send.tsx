@@ -12,7 +12,6 @@ import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo'
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 
 interface SendProps {
-  isBalanceReloading: boolean;
   reloadBalances: () => void;
 }
 

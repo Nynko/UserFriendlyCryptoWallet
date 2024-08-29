@@ -1,6 +1,5 @@
 import {Context, createContext, useContext} from 'react';
 import {DLT} from '../../types/account';
-import {web3 as web3} from '@coral-xyz/anchor';
 import {TypedError} from '../../Errors/TypedError';
 import {CodingErrors} from '../../Errors/CodingError';
 
@@ -16,11 +15,9 @@ export type BalancesMint = Record<string, Mint>;
 
 export interface Mint {
   balance: number;
-  mintAddress: web3.PublicKey;
-  reloadBalance: () => void;
 }
 
-export const balancesContexts = Object.values(DLT).reduce((acc, dlt) => {
+export const BalancesContexts = Object.values(DLT).reduce((acc, dlt) => {
   acc[dlt] = createContext<DltBalancesContextState>(
     {} as DltBalancesContextState,
   );
@@ -28,7 +25,7 @@ export const balancesContexts = Object.values(DLT).reduce((acc, dlt) => {
 }, {} as Record<DLT, Context<DltBalancesContextState>>);
 
 export function useBalances(dlt: DLT): DltBalancesContextState {
-  const BalancesContext = balancesContexts[dlt];
+  const BalancesContext = BalancesContexts[dlt];
   if (!BalancesContext) {
     throw new TypedError(CodingErrors.NoContextFoundForDLT, `DLT: ${dlt}`);
   }

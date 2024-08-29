@@ -5,7 +5,6 @@ import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {Home} from './screens/Home';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
-import {useUpdateBalances} from './hooks/useUpdateBalances';
 import NewModuleButton from './components/ios/NewModuleButton';
 import {Balances} from './screens/Balances';
 
