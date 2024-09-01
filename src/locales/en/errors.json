@@ -7,5 +7,8 @@
   "WrapperAddressAlreadyExist": "Wrapper already exist",
   "WrapperAddressDoesNotExist": "Wrapper does not exist",
   "MintAddressAlreadyExist": "Mint address already exist",
-  "NoMintAccountFound": "No account found"
+  "NoMintAccountFound": "No account found",
+  "TransactionNotFound": "Transaction not found",
+  "CouldntParseInstruction": "Couldn't parse instruction",
+  "CouldntFindTransferInstruction": "Couldn't find transfer instruction"
 }

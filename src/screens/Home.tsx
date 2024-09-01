@@ -1,21 +1,13 @@
 import {useState} from 'react';
-import {
-  Keyboard,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {HomeBalances} from '../components/Balances/HomeBalances';
 import {Receive} from '../components/Receive/Receive';
 import {Send} from '../components/Send/Send';
 import {styles2} from './Style';
-import {RefreshView} from '../components/utils/RefreshView';
 import {useAccount} from '../hooks/contexts/useAccount';
 import {Layout} from '../components/utils/Layout';
 import {mainStyle} from '../../styles/style';
-import {useBalancesDispatch} from '../hooks/contexts/useBalancesDispatch';
+import {useReloadAllBalances} from '../hooks/useReloadAllBalances';
 
 let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
@@ -37,10 +29,10 @@ export function Home() {
   const pk = dltAccounts.solana.generalAddresses.pubKey;
   console.log('pk', pk);
 
-  const reloadBalances = useBalancesDispatch().reloadAllBalances;
+  const reloadBalances = useReloadAllBalances();
 
   return (
-    <Layout otherRefresh={[reloadBalances]}>
+    <Layout otherRefreshAsync={[reloadBalances]}>
       <View style={mainStyle.container}>
         <HomeBalances />
         {activeComponent === ActiveComponent.Send && (

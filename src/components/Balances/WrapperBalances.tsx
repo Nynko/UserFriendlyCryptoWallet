@@ -5,18 +5,16 @@ import {typography} from '../../../styles/typography';
 import {useBalances} from '../../hooks/contexts/useBalances';
 import {DLT} from '../../types/account';
 import {TokenBalance} from './TokenBalances';
+import {TransactionHistory} from './TransactionHistory';
 
 export const WrapperBalances = ({
   wrapperViewModel,
+  wrapperAddress,
 }: {
   wrapperViewModel: WrapperViewModel;
+  wrapperAddress: string;
 }) => {
-  const wrapperAddress =
-    wrapperViewModel.dltAccounts[0].wrapperAddress.wrapper.toBase58();
-
   const balances = useBalances(DLT.SOLANA);
-
-  console.log(balances);
 
   return (
     <View style={mainStyle.container}>
@@ -31,6 +29,7 @@ export const WrapperBalances = ({
                   <TokenBalance
                     balance={balances.wrappers[wrapperAddress].EURC.balance}
                   />
+                  <TransactionHistory />
                 </View>
               ),
             )}

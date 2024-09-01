@@ -1,5 +1,4 @@
-import {web3} from '@coral-xyz/anchor';
-import {DLT, GeneralAddresses, WrapperAddress} from './account';
+import {DLT, GeneralAddresses, Wrappers} from './account';
 
 /** This is use to show the element from a business logic:
  * We have wrappers (same approver) that will be implemented on different chains
@@ -12,6 +11,6 @@ export interface WrapperViewModel {
 
 export interface DltAccountViewModel {
   dltName: DLT;
-  generalAddresses: GeneralAddresses<web3.PublicKey>;
-  wrapperAddress: WrapperAddress;
+  generalAddresses: GeneralAddresses;
+  wrapperAddress: Wrappers;
 }

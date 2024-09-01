@@ -19,8 +19,6 @@ import {getBalance} from '../../../functions/solana/get_account';
 import {BalancesDispatchContextState} from '../../../hooks/contexts/useBalancesDispatch';
 import {produce} from 'immer';
 import {useBoolStateOnce} from '../../../hooks/useBoolState';
-import {updateReloadAll} from './updateReloadAll';
-import {useAccount} from '../../../hooks/contexts/useAccount';
 
 function initWrapperBalance(account: DltAccount): DltBalancesContextState {
   let initWrappers = {} as Record<string, BalancesMint>;
@@ -46,7 +44,6 @@ export const SolanaBalancesProvider: FC<{
   account: DltAccount;
   setDispatchFunctions: Dispatch<SetStateAction<BalancesDispatchContextState>>;
 }> = React.memo(({children, account, setDispatchFunctions}) => {
-  const accounts = useAccount();
   const program = useAnchorProgram().program;
   const [wrappers, setWrappers] = useState<DltBalancesContextState>(() =>
     initWrapperBalance(account),
@@ -84,12 +81,9 @@ export const SolanaBalancesProvider: FC<{
               drafState.dltDispatch[DLT.SOLANA].wrappers[wrapperAddress][
                 mintAddress
               ].reloadBalance = reloadBalance;
-              drafState.reloadAllBalances = updateReloadAll(
-                accounts,
-                drafState,
-              );
             }),
           );
+          reloadBalance(); // Execute it once to get the initial balance
         }
       }
     }

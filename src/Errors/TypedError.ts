@@ -13,8 +13,9 @@ export class TypedError<T extends string> extends Error {
     Object.setPrototypeOf(this, TypedError.prototype);
   }
 
+  /** Make sure this is compatible with translations */
   toString() {
-    return `${this.type} ${this.details ? this.details : ''}`;
+    return `${this.type}${this.details ? ' ' + this.details : ''}`;
   }
 
   toStringComplete() {

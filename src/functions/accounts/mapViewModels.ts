@@ -1,14 +1,14 @@
-import {DltAccount, WrapperAddress} from '../../types/account';
+import {DLT, DltAccount} from '../../types/account';
 import {WrapperViewModel} from '../../types/viewModels';
 
 export function mapToViewModel(
-  dltAccounts: DltAccount[],
+  dltAccounts: Record<DLT, DltAccount>,
 ): Record<string, WrapperViewModel> {
   const wrapperMap: Record<string, WrapperViewModel> = {};
 
-  for (const dltAccount of dltAccounts) {
-    for (const wrapperKey in dltAccount.wrapperAddresses) {
-      const wrapper = dltAccount.wrapperAddresses[wrapperKey];
+  for (const [dlt, dltAccount] of Object.entries(dltAccounts)) {
+    for (const wrapperKey in dltAccount.wrappers) {
+      const wrapper = dltAccount.wrappers[wrapperKey];
 
       if (!wrapperMap[wrapper.wrapperName]) {
         wrapperMap[wrapper.wrapperName] = {
@@ -18,9 +18,9 @@ export function mapToViewModel(
       }
 
       wrapperMap[wrapper.wrapperName].dltAccounts.push({
-        dltName: dltAccount.dltName,
+        dltName: dlt as DLT,
         generalAddresses: dltAccount.generalAddresses,
-        wrapperAddress: wrapper as WrapperAddress,
+        wrapperAddress: wrapper,
       });
     }
   }

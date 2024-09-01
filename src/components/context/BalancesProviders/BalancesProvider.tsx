@@ -10,7 +10,6 @@ import {
   BalancesDispatchContextState,
   DltBalancesDispatchContextState,
 } from '../../../hooks/contexts/useBalancesDispatch';
-import {updateReloadAll} from './updateReloadAll';
 
 function initDispatch(accounts: AccountContextState) {
   let dispatchFunctions = {} as BalancesDispatchContextState;
@@ -34,10 +33,6 @@ function initDispatch(accounts: AccountContextState) {
   }
 
   dispatchFunctions.dltDispatch = dltDispatch;
-  dispatchFunctions.reloadAllBalances = updateReloadAll(
-    accounts,
-    dispatchFunctions,
-  );
   return dispatchFunctions;
 }
 

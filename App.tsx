@@ -6,8 +6,10 @@ import backgroundImage from './assets/background3.png';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './src/languages';
 import {Main} from './src/Main';
+import {useAppStore} from './src/store/zustandStore';
 
 function App(): React.JSX.Element {
+  const store = useAppStore();
   return (
     <>
       <ImageBackground

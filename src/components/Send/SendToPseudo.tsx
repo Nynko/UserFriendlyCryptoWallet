@@ -1,16 +1,10 @@
 import * as anchor from '@coral-xyz/anchor';
 import {ActivityIndicator, Button, TextInput} from 'react-native';
-import {transferToken} from '../../functions/solana/transfer';
-import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
-import {Dispatch, SetStateAction, useState} from 'react';
-import {useAccount} from '../../hooks/contexts/useAccount';
-import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
-import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
-import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
-import {TypedError} from '../../Errors/TypedError';
+import {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo';
-import {DLT} from '../../types/account';
+import {useBoolStateOnce} from '../../hooks/useBoolState';
+import {SendLogic} from './SendLogic';
 
 export function SendToPseudo({
   reloadBalances,
@@ -22,56 +16,19 @@ export function SendToPseudo({
   const [loading, setLoading] = useState<boolean>(false);
   const [value, setValue] = useState<number>(0);
   const [pseudo, setPseudo] = useState<string>('');
+  const [send, setSendTrue] = useBoolStateOnce();
+  const [pk, setPk] = useState<anchor.web3.PublicKey | null>(null);
 
   const program = useAnchorProgram().program;
-  const account = useAccount().dltAccounts[DLT.SOLANA];
-  const mint = new anchor.web3.PublicKey(EURC_MINT);
-  const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
-  const approver = new anchor.web3.PublicKey(APPROVER);
 
-  async function getAndTransfer() {
-    const pk = await getAddressFromPseudo(pseudo, program);
-    console.log('send');
-
-    console.log(pk);
-
-    if (!pk) {
-      setError('Pseudo not found');
-      return;
+  useEffect(() => {
+    if (send) {
+      setLoading(true);
+      getAddressFromPseudo(pseudo, program)
+        .then(setPk)
+        .then(() => setLoading(false));
     }
-    const [destinationWrappedAccount, _destinationIdendity] =
-      await getDeriveAddresses(mint, wrapper, pk, program);
-    setLoading(true);
-    accessSolanaWallet()
-      .then(async signer => {
-        return await transferToken(
-          value,
-          2,
-          wrapper,
-          signer,
-          account.wrapperAddresses[wrapper.toBase58()].wrappedToken,
-          pk,
-          destinationWrappedAccount,
-          account.generalAddresses.twoAuth,
-          account.generalAddresses.twoAuthEntity,
-          mint,
-          approver,
-          TOKEN_PROGRAM_ID,
-          program,
-        ).catch(e => {
-          if (e instanceof TypedError) {
-            setError(e.toString());
-          } else {
-            console.log(e);
-            // Send to us the error
-          }
-        });
-      })
-      .then(() => {
-        reloadBalances();
-        setLoading(false);
-      });
-  }
+  }, [program, pseudo, send]);
 
   return (
     <>
@@ -81,7 +38,15 @@ export function SendToPseudo({
         value={value.toString()}
         onChangeText={v => setValue(Number(v))}
       />
-      <Button title="Confirm" onPress={getAndTransfer} />
+      <Button title="Send?" onPress={setSendTrue} />
+      {send && pk && (
+        <SendLogic
+          pk={pk}
+          reloadBalances={reloadBalances}
+          setError={setError}
+          value={value}
+        />
+      )}
       {loading && <ActivityIndicator />}
     </>
   );

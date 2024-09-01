@@ -1,86 +1,56 @@
-import {useState} from 'react';
-import {
-  Keyboard,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import {HomeBalances} from '../components/Balances/HomeBalances';
-import {Receive} from '../components/Receive/Receive';
-import {Send} from '../components/Send/Send';
-import {styles2} from './Style';
-import {RefreshView} from '../components/utils/RefreshView';
-import {useAccount} from '../hooks/contexts/useAccount';
+import {Button, SafeAreaView} from 'react-native';
+import {useAccount, useAccountDispatch} from '../hooks/contexts/useAccount';
+import NewModuleButton from '../components/ios/NewModuleButton';
+import {DLT} from '../types/account';
+import {useMMKV} from 'react-native-mmkv';
+import {mainStyle} from '../../styles/style';
+import * as anchor from '@coral-xyz/anchor';
+import {useStore} from '../store/zustandStore';
 
-let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
 as a side effect*/
-export function Settings({
-  isBalanceReloading,
-  reloadBalances,
-}: {
-  isBalanceReloading: boolean;
-  reloadBalances: () => void;
-}) {
-  enum ActiveComponent {
-    Receive,
-    Send,
-    None,
-  }
-  const [activeComponent, setActiveComponent] = useState<ActiveComponent>(
-    ActiveComponent.None,
-  );
-
-  counterHome++;
-  console.log(counterHome);
-
-  const {dltAccounts} = useAccount(); // Remove and have a global state
-  const pk = dltAccounts.solana.generalAddresses.pubKey;
-  console.log('pk', pk);
-
+export function Settings() {
+  const mmkv = useMMKV();
+  const account = useAccount();
+  const accountDispatch = useAccountDispatch();
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <RefreshView otherRefresh={[reloadBalances]}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-          }}>
-          <HomeBalances isBalanceReloading={isBalanceReloading} />
-          {activeComponent === ActiveComponent.Send && (
-            <Send
-              isBalanceReloading={isBalanceReloading}
-              reloadBalances={reloadBalances}
-            />
-          )}
-          {activeComponent === ActiveComponent.Receive && pk && (
-            <Receive
-              isBalanceReloading={isBalanceReloading}
-              reloadBalances={reloadBalances}
-              pk={pk}
-            />
-          )}
-          <View style={styles2.buttonContainer}>
-            {/* <TouchableOpacity style={styles2.button} onPress={async () => transfer(1, user1.publicKey, program).then(reloadBalances)}> */}
-            <TouchableOpacity
-              style={styles2.button}
-              onPress={() => setActiveComponent(ActiveComponent.Send)}>
-              <Text style={styles2.buttonText}>Envoyer</Text>
-            </TouchableOpacity>
-            {/* <TouchableOpacity style={styles2.button} onPress={async () => accessAddress('PublicKey').then(async publicKey =>
-                airdropToken(publicKey, program),
-            ).then(reloadBalances)}> */}
-            <TouchableOpacity
-              style={styles2.button}
-              onPress={() => setActiveComponent(ActiveComponent.Receive)}>
-              <Text style={styles2.buttonText}>Recevoir</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </RefreshView>
-    </TouchableWithoutFeedback>
+    <SafeAreaView style={mainStyle.safeArea}>
+      <NewModuleButton />
+      <Button
+        title="Test"
+        onPress={() => {
+          console.log('Test');
+          const newPublicKey =
+            account.dltAccounts[DLT.SOLANA].generalAddresses.pubKey;
+          console.log(newPublicKey);
+
+          // console.log(newPublicKey);
+          // console.log(newPublicKey.toJSON());
+          const superjson = require('superjson');
+          const serialized = superjson.serialize({truc: {pk: newPublicKey}});
+          console.log(serialized);
+          const deserialized: {truc: {pk: anchor.web3.PublicKey}} =
+            superjson.deserialize(serialized);
+          console.log(deserialized);
+          console.log(deserialized.truc.pk.equals(newPublicKey));
+          console.log(deserialized.truc.pk.toBase58());
+        }}
+      />
+      <Button
+        title="Delete Account"
+        onPress={() => {
+          mmkv.delete(DLT.SOLANA);
+          const init = useStore.getInitialState();
+          useStore.setState(init);
+          accountDispatch.updateDltAccount(
+            account.dltAccounts[DLT.SOLANA],
+            DLT.SOLANA,
+            {
+              dltAccounts: {} as any,
+            },
+          );
+        }}
+      />
+    </SafeAreaView>
   );
 }

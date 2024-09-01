@@ -9,11 +9,11 @@ import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {create_account} from '../functions/create_solana_account';
 import {styles} from './styles';
 import {useTranslation} from 'react-i18next';
-import {useMMKV} from 'react-native-mmkv';
-import {saveDltAccount} from '../../functions/accounts/mmkv-utils';
-import {DLT, DltAccount} from '../../types/account';
 import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
 import {getMintDecimals} from '../../functions/addresses/getMintDecimals';
+import {appStore} from '../../store/zustandStore';
+import {DLT, DltAccount} from '../../types/account';
+import {produce} from 'immer';
 
 type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -37,7 +37,6 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
   const program = programs.program;
   const {identification} = route.params;
   const {t} = useTranslation();
-  const mmkv = useMMKV();
 
   const onClick = async () => {
     const {
@@ -65,34 +64,52 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
       mint,
       program.provider.connection,
     );
+
     const dltAccount: DltAccount = {
-      dltName: DLT.SOLANA,
+      pseudo,
       generalAddresses: {
         pubKey: pk,
-        pseudo,
         pseudoAccount,
         idendity,
         recovery: recoveryAccount,
         twoAuth,
         twoAuthEntity,
       },
-      wrapperAddresses: {
+      transactions: [],
+      nativeBalance: 0,
+      wrapperBalances: {
+        [WRAPPER_PDA]: {
+          [mint.toBase58()]: {
+            decimals: decimal_eurc,
+            balance: 0,
+          },
+        },
+      },
+      wrappers: {
         [WRAPPER_PDA]: {
           wrapperName: 'Main',
-          wrapper: new web3.PublicKey(WRAPPER_PDA),
-          wrappedToken: wrappedAccount,
-          approver: new web3.PublicKey(APPROVER),
+          addresses: {
+            approver: new web3.PublicKey(APPROVER),
+            wrapper: new web3.PublicKey(WRAPPER_PDA),
+          },
           mints: {
-            EURC: {
-              mintAddress: mint,
-              mintMetadata: mint, // TODO find the proper mint metadata
-              decimals: decimal_eurc,
+            [mint.toBase58()]: {
+              name: 'EURC',
+              addresses: {
+                wrappedToken: wrappedAccount,
+                mintAddress: mint,
+                mintMetadata: web3.PublicKey.default, // TODO find the proper mint metadata
+              },
             },
           },
         },
       },
     };
-    saveDltAccount(DLT.SOLANA, dltAccount, mmkv);
+    appStore.setState(state =>
+      produce(state, draftState => {
+        draftState.dlts[DLT.SOLANA] = dltAccount;
+      }),
+    );
     reload();
   };
 

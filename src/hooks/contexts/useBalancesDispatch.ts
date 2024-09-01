@@ -3,7 +3,6 @@ import {DLT} from '../../types/account';
 
 export interface BalancesDispatchContextState {
   dltDispatch: Record<DLT, DltBalancesDispatchContextState>;
-  reloadAllBalances: () => Promise<void>;
 }
 
 type WrapperAddress = string;

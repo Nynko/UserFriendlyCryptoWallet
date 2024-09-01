@@ -4,13 +4,15 @@ import {transferToken} from '../../functions/solana/transfer';
 import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {useAccount} from '../../hooks/contexts/useAccount';
 import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
 import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 import {TypedError} from '../../Errors/TypedError';
-import {DLT} from '../../types/account';
-
+import {DLT, Transaction} from '../../types/account';
+import {useTranslation} from 'react-i18next';
+import {appStore} from '../../store/zustandStore';
+import {produce} from 'immer';
+import {useDltAccount} from '../../store/selectors';
 export function SendLogic({
   pk,
   value,
@@ -23,9 +25,16 @@ export function SendLogic({
   setError: Dispatch<SetStateAction<string | null>>;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-
+  const {t} = useTranslation();
   const program = useAnchorProgram().program;
-  const account = useAccount().dltAccounts[DLT.SOLANA];
+  const account = useDltAccount(DLT.SOLANA);
+
+  const setTransactions = (transaction: Transaction) =>
+    appStore.setState(state =>
+      produce(state, draftState => {
+        draftState.dlts[DLT.SOLANA].transactions.push(transaction);
+      }),
+    );
 
   const mint = new anchor.web3.PublicKey(EURC_MINT);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
@@ -42,7 +51,8 @@ export function SendLogic({
           2,
           wrapper,
           signer,
-          account.wrapperAddresses[wrapper.toBase58()].wrappedToken,
+          account.wrappers[wrapper.toBase58()].mints[mint.toBase58()].addresses
+            .wrappedToken,
           pk,
           destinationWrappedAccount,
           account.generalAddresses.twoAuth,
@@ -51,20 +61,22 @@ export function SendLogic({
           approver,
           TOKEN_PROGRAM_ID,
           program,
-        ).catch(e => {
-          if (e instanceof TypedError) {
-            console.log(e.toStringComplete());
-
-            setError(e.toString());
-          } else {
-            console.log(e);
-            // Send to us the error
-          }
-        });
+        );
       })
-      .then(() => {
+      .then(tx => {
         reloadBalances();
+        setTransactions(tx);
         setLoading(false);
+      })
+      .catch(e => {
+        if (e instanceof TypedError) {
+          console.log(e.toStringComplete());
+
+          setError(t(e.toString()));
+        } else {
+          console.log(e);
+          // Send to us the error
+        }
       });
   }
 

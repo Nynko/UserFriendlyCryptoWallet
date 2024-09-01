@@ -6,10 +6,15 @@ import {mainStyle} from '../../../styles/style';
 export interface RefreshViewProps {
   children: ReactNode;
   otherRefresh?: (() => void)[] | undefined;
+  otherRefreshAsync?: (() => Promise<void>)[] | undefined;
 }
 
-export function RefreshView({children, otherRefresh}: RefreshViewProps) {
-  const [refreshing, onRefresh] = useRefresh(otherRefresh);
+export function RefreshView({
+  children,
+  otherRefresh,
+  otherRefreshAsync,
+}: RefreshViewProps) {
+  const [refreshing, onRefresh] = useRefresh(otherRefresh, otherRefreshAsync);
 
   return (
     <ScrollView

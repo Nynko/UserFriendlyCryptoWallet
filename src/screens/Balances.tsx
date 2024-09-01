@@ -1,33 +1,26 @@
-import {useAccount} from '../hooks/contexts/useAccount';
 import {WrapperBalances} from '../components/Balances/WrapperBalances';
 import {mapToViewModel} from '../functions/accounts/mapViewModels';
 import {Layout} from '../components/utils/Layout';
-import {useBalances} from '../hooks/contexts/useBalances';
-import {DLT} from '../types/account';
-import {Button} from 'react-native';
-import {useMMKV} from 'react-native-mmkv';
-import {useBalancesDispatch} from '../hooks/contexts/useBalancesDispatch';
+import {useDltAccounts} from '../store/selectors';
+import {reloadAllBalancesSolana} from '../store/actions';
+import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
 
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
 as a side effect*/
 export function Balances() {
-  const {dltAccounts} = useAccount(); // Remove and have a global state
-  const wrapperViewModels = mapToViewModel(Object.values(dltAccounts));
-  const sol_balances = useBalances(DLT.SOLANA);
-  const mmkv = useMMKV();
-  console.log('sol_balances', sol_balances);
-
-  const reloadAllBalances = useBalancesDispatch().reloadAllBalances;
+  const dltAccounts = useDltAccounts();
+  const wrapperViewModels = mapToViewModel(dltAccounts);
+  const program = useAnchorProgram().program;
+  const reloadAllBalances = () => reloadAllBalancesSolana(program);
 
   return (
-    <Layout otherRefresh={[reloadAllBalances]}>
-      <WrapperBalances wrapperViewModel={wrapperViewModels.Main} />
-      <Button
-        title="Delete Account"
-        onPress={() => {
-          mmkv.delete(DLT.SOLANA);
-        }}
-      />
+    <Layout otherRefreshAsync={[reloadAllBalances]}>
+      {Object.keys(wrapperViewModels).map(wrapperAddress => (
+        <WrapperBalances
+          wrapperViewModel={wrapperViewModels[wrapperAddress]}
+          wrapperAddress={wrapperAddress}
+        />
+      ))}
     </Layout>
   );
 }

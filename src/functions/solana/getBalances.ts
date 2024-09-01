@@ -1,3 +1,5 @@
+import {Program} from '@coral-xyz/anchor';
+import {AssetBased} from '../../Anchor_IDL/asset_based';
 import * as anchor from '@coral-xyz/anchor';
 
 export async function getBalance(
@@ -16,4 +18,14 @@ export async function getMinimumRent(
     (await connection.getMinimumBalanceForRentExemption(dataSize)) /
     anchor.web3.LAMPORTS_PER_SOL
   );
+}
+
+export async function getWrappedAccount(
+  wrappedAccount: anchor.web3.PublicKey,
+  program: Program<AssetBased>,
+) {
+  const fetchedAccount =
+    await program.provider.connection.getTokenAccountBalance(wrappedAccount);
+
+  return Number(fetchedAccount.value.amount);
 }

@@ -1,29 +1,12 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {Home} from './screens/Home';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-
-import NewModuleButton from './components/ios/NewModuleButton';
 import {Balances} from './screens/Balances';
+import {Settings} from './screens/Settings';
 
 const Tab = createMaterialTopTabNavigator();
 
-function DetailsScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-      }}>
-      <Text>Details Screen</Text>
-      <NewModuleButton />
-    </View>
-  );
-}
 const navTheme = {
   ...DefaultTheme,
   colors: {
@@ -46,7 +29,7 @@ function MainConnected(): React.JSX.Element {
               backgroundColor: 'transparent',
             },
           }}>
-          <Tab.Screen name="Details2" component={DetailsScreen} />
+          <Tab.Screen name="Settings" component={Settings} />
           <Tab.Screen name="Home" component={Home} />
           <Tab.Screen name="Balances" component={Balances} />
         </Tab.Navigator>
