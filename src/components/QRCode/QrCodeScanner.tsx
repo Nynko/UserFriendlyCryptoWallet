@@ -19,7 +19,7 @@ export function QrCodeScanner({
   const {hasPermission, requestPermission} = useCameraPermission();
   const [_reloaded, reload] = useBoolState(false);
   const codeScanner = useCodeScanner({
-    codeTypes: ['qr', 'ean-13'],
+    codeTypes: ['qr'],
     onCodeScanned: codes => {
       setValue(codes[0].value || '');
       exit();

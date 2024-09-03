@@ -8,20 +8,17 @@ import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
 import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 import {TypedError} from '../../Errors/TypedError';
-import {DLT, Transaction} from '../../types/account';
+import {DLT} from '../../types/account';
 import {useTranslation} from 'react-i18next';
-import {appStore} from '../../store/zustandStore';
-import {produce} from 'immer';
 import {useDltAccount} from '../../store/selectors';
+
 export function SendLogic({
   pk,
   value,
-  reloadBalances,
   setError,
 }: {
   pk: anchor.web3.PublicKey;
   value: number;
-  reloadBalances: () => void;
   setError: Dispatch<SetStateAction<string | null>>;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,21 +26,13 @@ export function SendLogic({
   const program = useAnchorProgram().program;
   const account = useDltAccount(DLT.SOLANA);
 
-  const setTransactions = (transaction: Transaction) =>
-    appStore.setState(state =>
-      produce(state, draftState => {
-        draftState.dlts[DLT.SOLANA].transactions.push(transaction);
-      }),
-    );
-
   const mint = new anchor.web3.PublicKey(EURC_MINT);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
   const approver = new anchor.web3.PublicKey(APPROVER);
   async function getAndTransfer() {
     const [destinationWrappedAccount, _destinationIdendity] =
-      await getDeriveAddresses(mint, wrapper, pk, program);
+      getDeriveAddresses(mint, wrapper, pk, program);
     setLoading(true);
-    setError(null);
     accessSolanaWallet()
       .then(async signer => {
         return await transferToken(
@@ -63,15 +52,12 @@ export function SendLogic({
           program,
         );
       })
-      .then(tx => {
-        reloadBalances();
-        setTransactions(tx);
+      .then(() => {
         setLoading(false);
       })
       .catch(e => {
         if (e instanceof TypedError) {
           console.log(e.toStringComplete());
-
           setError(t(e.toString()));
         } else {
           console.log(e);

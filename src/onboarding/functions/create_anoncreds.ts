@@ -26,7 +26,6 @@ interface GetCredentialResponse {
 async function get_credential_offer(): Promise<GetCredentialResponse> {
   try {
     const backend_url = BACKEND_ID_URL;
-    console.log();
 
     const response = await fetch(`${backend_url}/get-credential-offer`, {
       method: 'GET',

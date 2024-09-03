@@ -13,7 +13,6 @@ import 'react-native-get-random-values';
 import {Buffer} from 'buffer';
 if (typeof global.Buffer !== 'object') {
   global.Buffer = Buffer;
-
   Buffer.prototype.subarray = function subarray(
     begin: number | undefined,
     end: number | undefined,

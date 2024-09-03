@@ -4,6 +4,7 @@ export enum SolanaWalletErrors {
   NotEnoughTokenBalance = 'errors:NotEnoughTokenBalance',
   TransactionNotFound = 'errors:TransactionNotFound',
   CouldntParseInstruction = 'errors:CouldntParseInstruction',
+  WrongTransactionReceiverSender = 'errors:WrongTransactionReceiverSender',
 }
 
 export enum IdlErrors {

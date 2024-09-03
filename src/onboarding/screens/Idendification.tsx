@@ -74,7 +74,6 @@ export function Idendification({navigation}: PersonalInfoScreenProps) {
                   style={[styles.input, styles.dateInput]}
                   value={value ? value.toLocaleDateString() : t('clickHere')}
                   onPress={() => {
-                    console.log('teest');
                     setOpen(true);
                   }}
                 />

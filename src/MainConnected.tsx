@@ -1,4 +1,3 @@
-import React from 'react';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {Home} from './screens/Home';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
@@ -16,7 +15,6 @@ const navTheme = {
 };
 
 function MainConnected(): React.JSX.Element {
-  // const balances = useBalances();
   return (
     <>
       <NavigationContainer theme={navTheme}>

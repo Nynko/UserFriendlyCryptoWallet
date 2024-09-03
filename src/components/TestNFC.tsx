@@ -5,6 +5,8 @@ import NfcManager, {NfcTech} from 'react-native-nfc-manager';
 NfcManager.start();
 
 function NFC() {
+  console.log('NFC component');
+
   async function readNdef() {
     try {
       // register for the NFC tag with NDEF in it

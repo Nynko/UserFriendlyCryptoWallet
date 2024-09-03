@@ -3,8 +3,6 @@ import {AssetBased} from '../../Anchor_IDL/asset_based';
 import {signTwoAuth} from '../backends/signatures';
 import {TypedError} from '../../Errors/TypedError';
 import {SolanaWalletErrors} from '../../Errors/Solana/SolanaWalletsErrors';
-import {parseSolanaTransaction} from './parseTransaction';
-import {Transaction} from '../../store/zustandStore';
 
 export async function transferToken(
   amount: number,
@@ -20,7 +18,7 @@ export async function transferToken(
   approver: anchor.web3.PublicKey,
   tokenProgram: anchor.web3.PublicKey,
   program: anchor.Program<AssetBased>,
-): Promise<Transaction> {
+) {
   const instruction = await program.methods
     .transfer(new anchor.BN(amount), decimal)
     .accountsPartial({
@@ -102,16 +100,16 @@ export async function transferToken(
 
   console.log(`Transfer (wrapped) raw tx : ${txSig}`);
 
-  const txResponse = await program.provider.connection.getTransaction(txSig, {
-    commitment: 'confirmed',
-  });
+  // const txResponse = await program.provider.connection.getTransaction(txSig, {
+  //   commitment: 'confirmed',
+  // });
 
-  if (!txResponse) {
-    throw new TypedError(SolanaWalletErrors.TransactionNotFound);
-  }
-  const tx = parseSolanaTransaction(txSig, txResponse);
+  // if (!txResponse) {
+  //   throw new TypedError(SolanaWalletErrors.TransactionNotFound);
+  // }
+  // const tx = parseSolanaTransaction(txSig, txResponse);
 
-  return tx;
+  // return tx;
 }
 // TODO OLD
 export async function transferTokenNoSignature(

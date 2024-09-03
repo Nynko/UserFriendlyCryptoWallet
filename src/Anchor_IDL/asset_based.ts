@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/asset_based.json`.
  */
 export type AssetBased = {
-  "address": "DTnwFQeHGnp6QNWnvma8q8pxwcpzM8GTxeEG5JMhS3JS",
+  "address": "HQ94ihD6VbYC8G6mytYJS8z2GPmZh77J3bJWMh2ys9ko",
   "metadata": {
     "name": "assetBased",
     "version": "0.1.0",
@@ -1617,48 +1617,23 @@ export type AssetBased = {
   "errors": [
     {
       "code": 6000,
-      "name": "idendityAlreadyExists",
-      "msg": "Idendity already exists"
+      "name": "notAuthorized",
+      "msg": "Not authorized to approve this transaction"
     },
     {
       "code": 6001,
-      "name": "idendityNotActive",
-      "msg": "Idendity is not active"
+      "name": "needTwoAuthApproval",
+      "msg": "Need the two auth entity approval"
     },
     {
       "code": 6002,
-      "name": "idendityExpired",
-      "msg": "Idendity expired"
+      "name": "wrongApproval",
+      "msg": "The provided two_auth entity is wrong"
     },
     {
       "code": 6003,
-      "name": "idendityRecovered",
-      "msg": "Idendity recovered"
-    },
-    {
-      "code": 6004,
-      "name": "idendityAlreadyRecovered",
-      "msg": "Idendity already recovered"
-    },
-    {
-      "code": 6005,
-      "name": "issuerNotApproved",
-      "msg": "Issuer is not approved"
-    },
-    {
-      "code": 6006,
-      "name": "invalidIdendity",
-      "msg": "No approved issuer found or inactive/expired issuer"
-    },
-    {
-      "code": 6007,
-      "name": "pseudoAlreadyExist",
-      "msg": "A pseudo already exist, please use the update method"
-    },
-    {
-      "code": 6008,
-      "name": "pseudoDontExist",
-      "msg": "The old pseudo doesn't exist, please use the add method"
+      "name": "expiredApproval",
+      "msg": "The Approval has expired"
     }
   ],
   "types": [
@@ -1808,6 +1783,10 @@ export type AssetBased = {
           {
             "name": "owner",
             "type": "pubkey"
+          },
+          {
+            "name": "pseudo",
+            "type": "string"
           }
         ]
       }

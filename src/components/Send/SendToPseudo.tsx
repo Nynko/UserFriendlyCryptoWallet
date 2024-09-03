@@ -7,10 +7,8 @@ import {useBoolStateOnce} from '../../hooks/useBoolState';
 import {SendLogic} from './SendLogic';
 
 export function SendToPseudo({
-  reloadBalances,
   setError,
 }: {
-  reloadBalances: () => void;
   setError: Dispatch<SetStateAction<string | null>>;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,12 +38,7 @@ export function SendToPseudo({
       />
       <Button title="Send?" onPress={setSendTrue} />
       {send && pk && (
-        <SendLogic
-          pk={pk}
-          reloadBalances={reloadBalances}
-          setError={setError}
-          value={value}
-        />
+        <SendLogic pk={pk} setError={setError} value={value * 10 ** 2} /> // TODO decimals
       )}
       {loading && <ActivityIndicator />}
     </>

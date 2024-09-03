@@ -1,14 +1,14 @@
 import {Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
-import {getMinimumRent} from '../../functions/solana/get_account';
-
+import * as anchor from '@coral-xyz/anchor';
 import {typography} from '../../../styles/typography';
 import {mainStyle} from '../../../styles/style';
 import {SolToEur} from '../../functions/prices/get_prices';
 import {DLT} from '../../types/account';
-import {WRAPPER_PDA} from '../../const';
-import {useBalances} from '../../hooks/contexts/useBalances';
+import {EURC_MINT, WRAPPER_PDA} from '../../const';
+import {getMinimumRent} from '../../functions/solana/getBalances';
+import {useMintBalance, useNativeBalance} from '../../store/selectors';
 
 const cutThreshold = (
   amount: number,
@@ -27,11 +27,13 @@ const cutThreshold = (
 export const HomeBalances = () => {
   const program = useAnchorProgram().program;
 
-  const balances = useBalances(DLT.SOLANA);
-  const eurcBalance = balances.wrappers[WRAPPER_PDA].EURC.balance;
+  const balances = useMintBalance(DLT.SOLANA, WRAPPER_PDA, EURC_MINT);
+  const eurcBalance = Number(balances.balance) / 10 ** balances.decimals;
+  const nativeBalance =
+    Number(useNativeBalance(DLT.SOLANA)) / anchor.web3.LAMPORTS_PER_SOL;
   const [rentMinimum, setRentMinimum] = useState<number | null>(null);
   const adjustedSolBalance = rentMinimum
-    ? cutThreshold(balances.nativeBalance, rentMinimum)
+    ? cutThreshold(nativeBalance, rentMinimum)
     : 0;
 
   useEffect(() => {

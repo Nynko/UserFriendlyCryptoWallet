@@ -1,54 +1,23 @@
-import {useEffect, useState} from 'react';
+import {SolanaSubscriptionLogic} from './components/SolanaSubscriptionLogic';
 import MainConnected from './MainConnected';
 import {OnboardingMain} from './onboarding/OnboardingMain';
-import {AccountContext, AccountContextState} from './hooks/contexts/useAccount';
-import {useBoolState} from './hooks/useBoolState';
-import {useMMKV} from 'react-native-mmkv';
-import {AccountDispatchProvider} from './components/context/AccountDispatchProvider';
-import {loadDltAccount} from './functions/accounts/mmkv-utils';
-import {DLT} from './types/account';
-import {BalancesProvider} from './components/context/BalancesProviders/BalancesProvider';
+import {useIsStoreInitialized} from './store/selectors';
 
 export function Main() {
-  const [accounts, setAccounts] = useState<
-    AccountContextState | null | undefined
-  >(undefined);
-  const [reloaded, reload] = useBoolState();
-  const mmkv = useMMKV();
+  const initialized = useIsStoreInitialized();
 
-  // TODO: Check if mmkv contain data and if not, show onboarding
-
-  useEffect(() => {
-    const dltAccount = loadDltAccount(DLT.SOLANA, mmkv);
-    const _dltAccounts: AccountContextState | null = dltAccount
-      ? {
-          dltAccounts: {
-            [DLT.SOLANA]: dltAccount,
-          },
-        }
-      : null;
-    setAccounts(_dltAccounts);
-  }, [reloaded, mmkv]);
-
-  if (accounts === undefined) {
-    return <>{/* LOADING */}</>;
-  }
-
-  if (accounts === null) {
+  if (!initialized) {
     return (
       <>
-        <OnboardingMain reload={reload} />
+        <OnboardingMain />
       </>
     );
   } else {
     return (
-      <AccountContext.Provider value={accounts}>
-        <AccountDispatchProvider>
-          <BalancesProvider>
-            <MainConnected />
-          </BalancesProvider>
-        </AccountDispatchProvider>
-      </AccountContext.Provider>
+      <>
+        <SolanaSubscriptionLogic />
+        <MainConnected />
+      </>
     );
   }
 }

@@ -6,7 +6,7 @@ import {
   IdlErrors,
   SolanaWalletErrors,
 } from '../../Errors/Solana/SolanaWalletsErrors';
-import {Transaction} from '../../store/zustandStore';
+import {SenderReiceiver, Transaction} from '../../types/account';
 
 interface TransferData {
   amount: bigint;
@@ -15,6 +15,7 @@ interface TransferData {
 
 export function parseSolanaTransaction(
   txSig: string,
+  account: anchor.web3.PublicKey,
   txResponse: anchor.web3.TransactionResponse,
 ): Transaction {
   const coder = new anchor.BorshCoder(IDL as AssetBased);
@@ -56,17 +57,24 @@ export function parseSolanaTransaction(
   const mint = accountMetas[mintIndex].pubkey;
   const wrapper = accountMetas[wrapperIndex].pubkey;
 
-  console.log('testtttt');
-
-  console.log(wrapper instanceof anchor.web3.PublicKey);
-  console.log(wrapper);
-  console.log(wrapper.toBase58());
-
   const args = ix.data as TransferData;
+
+  let senderReceiver: SenderReiceiver;
+
+  if (account.equals(sender_owner) && account.equals(receiver_owner)) {
+    senderReceiver = SenderReiceiver.SELF_TRANSFER;
+  } else if (account.equals(sender_owner)) {
+    senderReceiver = SenderReiceiver.SENDER;
+  } else if (account.equals(receiver_owner)) {
+    senderReceiver = SenderReiceiver.RECEIVER;
+  } else {
+    throw new TypedError(SolanaWalletErrors.WrongTransactionReceiverSender);
+  }
 
   const tx: Transaction = {
     txSig,
     timestamp: Number(txResponse.blockTime),
+    senderReceiver,
     from: sender_owner,
     to: receiver_owner,
     amount: Number(args.amount),

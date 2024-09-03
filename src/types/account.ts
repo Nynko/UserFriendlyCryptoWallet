@@ -12,7 +12,7 @@ export enum DLT {
 export interface DltAccount {
   pseudo: string;
   generalAddresses: GeneralAddresses;
-  nativeBalance: number;
+  nativeBalance: bigint;
   wrapperBalances: Record<string, WrapperBalances>;
   wrappers: Record<string, Wrappers>;
   transactions: Transaction[];
@@ -40,7 +40,7 @@ export interface Wrappers {
 export type WrapperBalances = Record<string, MintBalance>;
 export interface MintBalance {
   decimals: number;
-  balance: number;
+  balance: bigint;
 }
 
 export interface MintAddresses {
@@ -54,9 +54,16 @@ export interface Mint {
   addresses: MintAddresses;
 }
 
+export enum SenderReiceiver {
+  SENDER,
+  RECEIVER,
+  SELF_TRANSFER,
+}
+
 export interface Transaction {
   txSig: string;
   timestamp: number;
+  senderReceiver: SenderReiceiver;
   from: anchor.web3.PublicKey;
   to: anchor.web3.PublicKey;
   amount: number;

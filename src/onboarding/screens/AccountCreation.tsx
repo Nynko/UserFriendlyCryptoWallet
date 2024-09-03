@@ -28,10 +28,9 @@ type PersonalInfoScreenRouteProp = RouteProp<
 interface AccountCreationProps {
   navigation: PersonalInfoScreenNavigationProp;
   route: PersonalInfoScreenRouteProp;
-  reload: () => void;
 }
 
-export function AccountCreation({route, reload}: AccountCreationProps) {
+export function AccountCreation({route}: AccountCreationProps) {
   const programs = useAnchorProgram();
   const anoncredsProgram = programs.anoncredsProgram;
   const program = programs.program;
@@ -76,12 +75,12 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
         twoAuthEntity,
       },
       transactions: [],
-      nativeBalance: 0,
+      nativeBalance: 0n,
       wrapperBalances: {
         [WRAPPER_PDA]: {
           [mint.toBase58()]: {
             decimals: decimal_eurc,
-            balance: 0,
+            balance: 0n,
           },
         },
       },
@@ -107,10 +106,10 @@ export function AccountCreation({route, reload}: AccountCreationProps) {
     };
     appStore.setState(state =>
       produce(state, draftState => {
+        draftState.initialized = true;
         draftState.dlts[DLT.SOLANA] = dltAccount;
       }),
     );
-    reload();
   };
 
   return (

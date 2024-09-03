@@ -4,7 +4,7 @@ import {AssetBased} from '../Anchor_IDL/asset_based';
 import {getBalance, getWrappedAccount} from '../functions/solana/getBalances';
 import {appStore} from './zustandStore';
 import {produce} from 'immer';
-import {DLT} from '../types/account';
+import {DLT, Transaction} from '../types/account';
 
 export async function reloadBalanceSolana(
   wrappedAccount: anchor.web3.PublicKey,
@@ -18,8 +18,8 @@ export async function reloadBalanceSolana(
     program.provider.connection,
     pubkey,
   );
-
-  appStore.setState(state =>
+  const state = appStore.getState();
+  appStore.setState(
     produce(state, draftState => {
       draftState.dlts[DLT.SOLANA].nativeBalance = fetchedNativeBalance;
       draftState.dlts[DLT.SOLANA].wrapperBalances[wrapper][mint].balance =
@@ -28,29 +28,66 @@ export async function reloadBalanceSolana(
   );
 }
 
+export async function setBalance(
+  balance: bigint,
+  wrapper: string,
+  mint: string,
+) {
+  const state = appStore.getState();
+  appStore.setState(
+    produce(state, draftState => {
+      draftState.dlts[DLT.SOLANA].wrapperBalances[wrapper][mint].balance =
+        balance;
+    }),
+  );
+}
+
 export async function reloadAllBalancesSolana(program: Program<AssetBased>) {
-  const newState = appStore(state => state.dlts[DLT.SOLANA]);
+  const state = appStore.getState();
+  const dltState = state.dlts[DLT.SOLANA];
 
   const fetchedNativeBalance = await getBalance(
     program.provider.connection,
-    newState.generalAddresses.pubKey,
+    dltState.generalAddresses.pubKey,
   );
 
-  newState.nativeBalance = fetchedNativeBalance;
+  const wrapperBalances: Record<string, Record<string, bigint>> = {};
 
-  for (const wrapper of Object.keys(newState.wrappers)) {
-    for (const mint of Object.keys(newState.wrappers[wrapper])) {
+  for (const wrapper of Object.keys(dltState.wrappers)) {
+    wrapperBalances[wrapper] = {};
+    for (const mint of Object.keys(dltState.wrappers[wrapper].mints)) {
       const fetchedBalance = await getWrappedAccount(
-        newState.wrappers[wrapper].mints[mint].addresses.wrappedToken,
+        dltState.wrappers[wrapper].mints[mint].addresses.wrappedToken,
         program,
       );
-      newState.wrapperBalances[wrapper][mint].balance = fetchedBalance;
+      wrapperBalances[wrapper][mint] = fetchedBalance;
     }
   }
 
-  appStore.setState(state =>
-    produce(state, draftState => {
-      draftState.dlts[DLT.SOLANA] = newState;
-    }),
-  );
+  // Create a new state object immutably
+  const newState = produce(state, draftState => {
+    draftState.dlts[DLT.SOLANA].nativeBalance = fetchedNativeBalance;
+    for (const wrapper of Object.keys(wrapperBalances)) {
+      for (const mint of Object.keys(wrapperBalances[wrapper])) {
+        draftState.dlts[DLT.SOLANA].wrapperBalances[wrapper][mint].balance =
+          wrapperBalances[wrapper][mint];
+      }
+    }
+  });
+  appStore.setState(newState);
+}
+
+export function getSetTransaction(dlt: DLT) {
+  return (transaction: Transaction) =>
+    appStore.setState(state =>
+      produce(state, draftState => {
+        if (
+          state.dlts[dlt].transactions.filter(
+            tx => tx.txSig === transaction.txSig,
+          ).length === 0
+        ) {
+          draftState.dlts[dlt].transactions.push(transaction);
+        }
+      }),
+    );
 }

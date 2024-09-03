@@ -10,14 +10,14 @@ export function mapToViewModel(
     for (const wrapperKey in dltAccount.wrappers) {
       const wrapper = dltAccount.wrappers[wrapperKey];
 
-      if (!wrapperMap[wrapper.wrapperName]) {
-        wrapperMap[wrapper.wrapperName] = {
+      if (!wrapperMap[wrapperKey]) {
+        wrapperMap[wrapperKey] = {
           wrapperName: wrapper.wrapperName,
           dltAccounts: [],
         };
       }
 
-      wrapperMap[wrapper.wrapperName].dltAccounts.push({
+      wrapperMap[wrapperKey].dltAccounts.push({
         dltName: dlt as DLT,
         generalAddresses: dltAccount.generalAddresses,
         wrapperAddress: wrapper,

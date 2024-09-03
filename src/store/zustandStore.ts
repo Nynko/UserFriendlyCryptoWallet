@@ -6,9 +6,12 @@ import {PersistStorage, persist} from 'zustand/middleware';
 import {MMKV} from 'react-native-mmkv';
 import superjson from 'superjson';
 
+export type PublicKeyString = string;
+
 export interface AppStore {
   dlts: Record<DLT, DltAccount>;
-  knownPseudos: Record<string, anchor.web3.PublicKey>;
+  knownPseudos: Record<PublicKeyString, string>; // PublicKey as key and pseudo as value
+  initialized: boolean;
 }
 
 const storage = new MMKV();
@@ -25,14 +28,10 @@ superjson.registerCustom<anchor.web3.PublicKey, string>(
 
 const zustandStorage: PersistStorage<AppStore> = {
   setItem: (name, value) => {
-    console.log(superjson.stringify(value));
-
     return storage.set(name, superjson.stringify(value));
   },
   getItem: name => {
     const value = storage.getString(name);
-    console.log(value);
-
     return value ? superjson.parse(value) : null;
   },
   removeItem: name => {
@@ -43,6 +42,7 @@ const zustandStorage: PersistStorage<AppStore> = {
 export const appStore = create<AppStore>()(
   persist(
     (_set, _get) => ({
+      initialized: false,
       knownPseudos: {},
       dlts: {
         [DLT.SOLANA]: {
@@ -56,12 +56,12 @@ export const appStore = create<AppStore>()(
             twoAuth: anchor.web3.PublicKey.default,
             twoAuthEntity: anchor.web3.PublicKey.default,
           },
-          nativeBalance: 0,
+          nativeBalance: 0n,
           wrapperBalances: {
             [WRAPPER_PDA]: {
               [EURC_MINT]: {
                 decimals: 0,
-                balance: 0,
+                balance: 0n,
               },
             },
           },

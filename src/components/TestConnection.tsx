@@ -8,8 +8,7 @@ const handleClick = async (
   connection: anchor.web3.Connection,
   mint: anchor.web3.PublicKey,
 ) => {
-  let decimals = await getMintDecimals(mint, connection);
-  console.log('decimals', decimals);
+  let _decimals = await getMintDecimals(mint, connection);
   // const connection = new anchor.web3.Connection("https://api.devnet.solana.com");
   // const connection = new anchor.web3.Connection("http://localhost:8899");
   // getWrappedTokenAccounts(new anchor.web3.PublicKey(WRAPPER_PDA), connection);

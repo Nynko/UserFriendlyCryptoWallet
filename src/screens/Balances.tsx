@@ -5,6 +5,7 @@ import {useDltAccounts} from '../store/selectors';
 import {reloadAllBalancesSolana} from '../store/actions';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
 
+let counter = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
 as a side effect*/
 export function Balances() {
@@ -13,10 +14,14 @@ export function Balances() {
   const program = useAnchorProgram().program;
   const reloadAllBalances = () => reloadAllBalancesSolana(program);
 
+  counter++;
+  console.log('Balances Counter', counter);
+
   return (
     <Layout otherRefreshAsync={[reloadAllBalances]}>
       {Object.keys(wrapperViewModels).map(wrapperAddress => (
         <WrapperBalances
+          key={wrapperAddress}
           wrapperViewModel={wrapperViewModels[wrapperAddress]}
           wrapperAddress={wrapperAddress}
         />
