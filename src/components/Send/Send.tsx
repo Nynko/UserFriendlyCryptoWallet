@@ -23,6 +23,8 @@ export function Send() {
     ? JSON.parse(reiceved)
     : null;
 
+  console.log(data);
+
   const pk = useMemo(
     () => (data ? new anchor.web3.PublicKey(data.pk) : null),
     [data],

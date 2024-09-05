@@ -17,6 +17,7 @@ import {useState} from 'react';
 import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {mainStyle} from '../../../styles/style';
+import {TypedError} from '../../Errors/TypedError';
 
 type PersonalInfoScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -36,13 +37,21 @@ export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
       setError(t('pseudoTooLong'));
       return;
     }
-    const addr = await getAddressFromPseudo(data.pseudo, program);
-    if (addr) {
-      setError(t('pseudoAlreadyTaken'));
-    } else {
-      navigation.navigate('AccountCreation', {
-        identification: {...identification, ...data},
-      });
+    try {
+      const addr = await getAddressFromPseudo(data.pseudo, program);
+      if (addr) {
+        setError(t('pseudoAlreadyTaken'));
+      } else {
+        navigation.navigate('AccountCreation', {
+          identification: {...identification, ...data},
+        });
+      }
+    } catch (e) {
+      if (e instanceof TypedError) {
+        setError(t(e.toString()));
+      } else {
+        setError((e as Error).message);
+      }
     }
   };
 

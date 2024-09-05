@@ -6,7 +6,7 @@ import {
   IdlErrors,
   SolanaWalletErrors,
 } from '../../Errors/Solana/SolanaWalletsErrors';
-import {SenderReiceiver, Transaction} from '../../types/account';
+import {Direction, Transaction, TransactionType} from '../../types/account';
 
 interface TransferData {
   amount: bigint;
@@ -17,7 +17,7 @@ export function parseSolanaTransaction(
   txSig: string,
   account: anchor.web3.PublicKey,
   txResponse: anchor.web3.TransactionResponse,
-): Transaction {
+): Transaction | undefined {
   const coder = new anchor.BorshCoder(IDL as AssetBased);
   const ix = coder.instruction.decode(
     txResponse.transaction.message.instructions[0].data,
@@ -35,52 +35,70 @@ export function parseSolanaTransaction(
       isWritable: txResponse.transaction.message.isAccountWritable(idx),
     }));
 
-  const transferAccounts = IDL.instructions.find(
-    instruct => instruct.name === 'transfer',
-  )?.accounts;
+  const formatted = coder.instruction.format(ix, accountMetas);
+  console.log('ix', ix);
 
-  if (!transferAccounts) {
-    throw new TypedError(IdlErrors.CouldntFindTransferInstruction);
+  let sender_owner_name: string;
+  let receiver_owner_name: string;
+  switch (ix.name) {
+    case 'transfer':
+      sender_owner_name = 'source_owner';
+      receiver_owner_name = 'destination_owner';
+      break;
+    case 'wrap_tokens':
+      sender_owner_name = 'owner_from_token_account';
+      receiver_owner_name = 'owner_to_account';
+      break;
+    case 'initialize_id':
+      return;
+    default:
+      throw new TypedError(IdlErrors.UnknownInstruction);
   }
-  const senderIndex = transferAccounts.findIndex(
-    elem => elem.name === 'source_owner',
-  );
-  const receiverIndex = transferAccounts.findIndex(
-    elem => elem.name === 'destination_owner',
-  );
-  const mintIndex = transferAccounts.findIndex(elem => elem.name === 'mint');
-  const wrapperIndex = transferAccounts.findIndex(
-    elem => elem.name === 'wrapper_account',
-  );
-  const sender_owner = accountMetas[senderIndex].pubkey;
-  const receiver_owner = accountMetas[receiverIndex].pubkey;
-  const mint = accountMetas[mintIndex].pubkey;
-  const wrapper = accountMetas[wrapperIndex].pubkey;
+
+  console.log('formatted', formatted);
+
+  const sender_owner = formatted?.accounts.find(
+    elem => elem.name?.toLowerCase() === sender_owner_name,
+  )?.pubkey;
+  const receiver_owner = formatted?.accounts.find(
+    elem => elem.name?.toLowerCase() === receiver_owner_name,
+  )?.pubkey;
+  const mint = formatted?.accounts.find(
+    elem => elem.name?.toLowerCase() === 'mint',
+  )?.pubkey;
+  const wrapper = formatted?.accounts.find(
+    elem => elem.name?.toLowerCase() === 'wrapper_account',
+  )?.pubkey;
+
+  if (!sender_owner || !receiver_owner || !mint || !wrapper) {
+    throw new TypedError(SolanaWalletErrors.ErrorParsingTransaction);
+  }
 
   const args = ix.data as TransferData;
 
-  let senderReceiver: SenderReiceiver;
-
+  let senderReceiver: Direction;
+  let address = account;
   if (account.equals(sender_owner) && account.equals(receiver_owner)) {
-    senderReceiver = SenderReiceiver.SELF_TRANSFER;
+    senderReceiver = Direction.SELF_TRANSFER;
   } else if (account.equals(sender_owner)) {
-    senderReceiver = SenderReiceiver.SENDER;
+    senderReceiver = Direction.OUTGOING;
+    address = receiver_owner;
   } else if (account.equals(receiver_owner)) {
-    senderReceiver = SenderReiceiver.RECEIVER;
+    senderReceiver = Direction.INCOMING;
+    address = sender_owner;
   } else {
-    throw new TypedError(SolanaWalletErrors.WrongTransactionReceiverSender);
+    throw new TypedError(SolanaWalletErrors.WrongTransactionDirection);
   }
 
   const tx: Transaction = {
+    discriminator: TransactionType.Transaction,
     txSig,
     timestamp: Number(txResponse.blockTime),
-    senderReceiver,
-    from: sender_owner,
-    to: receiver_owner,
+    direction: senderReceiver,
+    address,
     amount: Number(args.amount),
     mint,
     wrapper,
-    native: false,
     decimals: args.decimals,
   };
 

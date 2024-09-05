@@ -22,6 +22,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@solana/wallet-adapter-ledger": "^0.9.25",
     "@solana/wallet-adapter-react": "^0.15.35",
+    "@tamagui/config": "^1.110.1",
     "@ungap/structured-clone": "^1.2.0",
     "buffer": "^6.0.3",
     "entropy-string": "^4.2.0",
@@ -48,6 +49,7 @@
     "react-native-worklets-core": "^1.3.3",
     "redux": "^5.0.1",
     "superjson": "^2.2.1",
+    "tamagui": "^1.110.1",
     "uuid": "^10.0.0",
     "zustand": "^4.5.5"
   },

@@ -8,7 +8,10 @@ export async function getPseudo(
   program: Program<AssetBased>,
 ): Promise<string | null> {
   const idAddress = getIdendityAddress(address, program);
-  const idAccount = await program.account.idAccount.fetch(idAddress);
+  const idAccount = await program.account.idAccount.fetchNullable(idAddress);
+  if (!idAccount) {
+    return null;
+  }
   if (!idAccount.associatedPseudo) {
     return null;
   }

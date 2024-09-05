@@ -4,12 +4,12 @@ import {HomeBalances} from '../components/Balances/HomeBalances';
 import {Receive} from '../components/Receive/Receive';
 import {Send} from '../components/Send/Send';
 import {styles2} from './Style';
-import {Layout} from '../components/utils/Layout';
 import {mainStyle} from '../../styles/style';
 import {appStore} from '../store/zustandStore';
 import {DLT} from '../types/account';
 import {reloadAllBalancesSolana} from '../store/actions';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
+import {RefreshView} from '../components/utils/RefreshView';
 
 let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
@@ -34,7 +34,7 @@ export function Home() {
   console.log('pk', pk);
 
   return (
-    <Layout otherRefreshAsync={[reloadBalances]}>
+    <RefreshView otherRefreshAsync={[reloadBalances]}>
       <View style={mainStyle.container}>
         <HomeBalances />
         {activeComponent === ActiveComponent.Send && <Send />}
@@ -58,6 +58,6 @@ export function Home() {
           </TouchableOpacity>
         </View>
       </View>
-    </Layout>
+    </RefreshView>
   );
 }

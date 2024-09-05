@@ -6,6 +6,8 @@ import commonEn from './locales/en/common.json';
 import commonFr from './locales/fr/common.json';
 import errorsEn from './locales/en/errors.json';
 import errorsFr from './locales/fr/errors.json';
+import transactionsEn from './locales/en/transactions.json';
+import transactionsFr from './locales/fr/transactions.json';
 
 i18n
   .use(RNLanguageDetector)
@@ -15,7 +17,7 @@ i18n
     fallbackLng: 'en',
     debug: true,
     supportedLngs: ['en', 'fr'],
-    ns: ['common', 'errors'],
+    ns: ['common', 'errors', 'transactions'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
@@ -24,10 +26,12 @@ i18n
       en: {
         common: commonEn,
         errors: errorsEn,
+        transactions: transactionsEn,
       },
       fr: {
         common: commonFr,
         errors: errorsFr,
+        transactions: transactionsFr,
       },
     },
   });

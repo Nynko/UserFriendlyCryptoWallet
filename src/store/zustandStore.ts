@@ -5,7 +5,7 @@ import * as anchor from '@coral-xyz/anchor';
 import {PersistStorage, persist} from 'zustand/middleware';
 import {MMKV} from 'react-native-mmkv';
 import superjson from 'superjson';
-
+import {NATIVE_MINT} from '../const';
 export type PublicKeyString = string;
 
 export interface AppStore {
@@ -63,6 +63,10 @@ export const appStore = create<AppStore>()(
                 decimals: 0,
                 balance: 0n,
               },
+              [NATIVE_MINT.toBase58()]: {
+                decimals: 0,
+                balance: 0n,
+              },
             },
           },
           wrappers: {
@@ -78,6 +82,14 @@ export const appStore = create<AppStore>()(
                   addresses: {
                     wrappedToken: anchor.web3.PublicKey.default,
                     mintAddress: new anchor.web3.PublicKey(EURC_MINT),
+                    mintMetadata: anchor.web3.PublicKey.default,
+                  },
+                },
+                [NATIVE_MINT.toBase58()]: {
+                  name: 'SOL',
+                  addresses: {
+                    wrappedToken: anchor.web3.PublicKey.default,
+                    mintAddress: NATIVE_MINT,
                     mintMetadata: anchor.web3.PublicKey.default,
                   },
                 },

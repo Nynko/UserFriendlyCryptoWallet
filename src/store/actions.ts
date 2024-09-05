@@ -91,3 +91,11 @@ export function getSetTransaction(dlt: DLT) {
       }),
     );
 }
+
+export function deleteTransactions(dlt: DLT) {
+  return appStore.setState(state =>
+    produce(state, draftState => {
+      draftState.dlts[dlt].transactions = [];
+    }),
+  );
+}

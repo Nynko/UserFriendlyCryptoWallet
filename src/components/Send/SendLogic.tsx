@@ -4,7 +4,7 @@ import {transferToken} from '../../functions/solana/transfer';
 import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
+import {APPROVER, EURC_MINT, NATIVE_MINT, WRAPPER_PDA} from '../../const';
 import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 import {TypedError} from '../../Errors/TypedError';
@@ -26,7 +26,7 @@ export function SendLogic({
   const program = useAnchorProgram().program;
   const account = useDltAccount(DLT.SOLANA);
 
-  const mint = new anchor.web3.PublicKey(EURC_MINT);
+  const mint = new anchor.web3.PublicKey(NATIVE_MINT);
   const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
   const approver = new anchor.web3.PublicKey(APPROVER);
   async function getAndTransfer() {
@@ -37,7 +37,7 @@ export function SendLogic({
       .then(async signer => {
         return await transferToken(
           value,
-          2,
+          9,
           wrapper,
           signer,
           account.wrappers[wrapper.toBase58()].mints[mint.toBase58()].addresses

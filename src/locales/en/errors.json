@@ -10,5 +10,8 @@
   "NoMintAccountFound": "No account found",
   "TransactionNotFound": "Transaction not found",
   "CouldntParseInstruction": "Couldn't parse instruction",
-  "CouldntFindTransferInstruction": "Couldn't find transfer instruction"
+  "CouldntFindTransferInstruction": "Couldn't find transfer instruction",
+  "NetworkFailError": "Network error: Are you connected to the internet ?",
+  "UnknownInstruction": "The transaction received is not a known instruction",
+  "ErrorParsingTransaction": "Error parsing transaction"
 }

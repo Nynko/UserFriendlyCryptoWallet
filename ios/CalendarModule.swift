@@ -33,6 +33,7 @@ class CalendarModule: NSObject {
             guard NFCReaderSession.readingAvailable,
                 CardSession.isSupported,
                 await CardSession.isEligible else {
+                print("CardSession is not supported or not eligible.")
                 return
             }
         

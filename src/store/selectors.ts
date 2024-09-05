@@ -1,4 +1,11 @@
-import {DLT, DltAccount, MintBalance, WrapperBalances} from '../types/account';
+import {
+  DLT,
+  DltAccount,
+  Mint,
+  MintBalance,
+  TransactionType,
+  WrapperBalances,
+} from '../types/account';
 import {appStore} from './zustandStore';
 
 export function useIsStoreInitialized() {
@@ -12,7 +19,10 @@ export function useTransactions(dlt: DLT) {
 export function useMintTransactions(dlt: DLT, wrapper: string, mint: string) {
   return appStore(state =>
     state.dlts[dlt].transactions.filter(
-      tx => tx.mint?.toBase58() === mint && tx.wrapper?.toBase58() === wrapper,
+      tx =>
+        tx.discriminator === TransactionType.Transaction &&
+        tx.mint.toBase58() === mint &&
+        tx.wrapper.toBase58() === wrapper,
     ),
   );
 }
@@ -25,10 +35,18 @@ export function useDltAccount(dlt: DLT): DltAccount {
   return appStore(state => state.dlts[dlt]);
 }
 
-export function useDltAccountAddresses(
+export function useDltAccountBalances(
   dlt: DLT,
 ): Record<string, WrapperBalances> {
   return appStore(state => state.dlts[dlt].wrapperBalances);
+}
+
+export function useMintAddresses(
+  dlt: DLT,
+  wrapper: string,
+  mint: string,
+): Mint {
+  return appStore(state => state.dlts[dlt].wrappers[wrapper].mints[mint]);
 }
 
 export function useWrapperBalances(

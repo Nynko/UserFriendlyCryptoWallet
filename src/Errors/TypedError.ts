@@ -6,7 +6,7 @@ export class TypedError<T extends string> extends Error {
    * @argument details: string - Runtime details about the error
    */
   constructor(type: T, details?: string, e?: Error) {
-    super(e?.message);
+    super(e ? e.message : type.toString());
     this.name = 'TypedError';
     this.type = type;
     this.details = details;

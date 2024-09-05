@@ -2,8 +2,9 @@ import {useEffect} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
 import {useDltAccount, useTransactions} from '../store/selectors';
 import {getSetTransaction, setBalance} from '../store/actions';
-import {DLT} from '../types/account';
+import {DLT, TransactionType} from '../types/account';
 import {parseSolanaTransaction} from '../functions/solana/parseTransaction';
+import {sortSignatures} from '../functions/solana/utils';
 
 export function SolanaSubscriptionLogic() {
   const program = useAnchorProgram().program;
@@ -38,6 +39,7 @@ export function SolanaSubscriptionLogic() {
             // Get related transactions
             const filteredTxs = transactions.filter(
               tx =>
+                tx.discriminator === TransactionType.Transaction &&
                 tx.wrapper?.toBase58() === wrapperAddress &&
                 tx.mint?.toBase58() === mintAddress,
             );
@@ -50,23 +52,28 @@ export function SolanaSubscriptionLogic() {
                 until: lastSig,
               })
               .then(signatures => {
-                for (const sig of signatures) {
-                  // sig.signature
-                  program.provider.connection
-                    .getTransaction(sig.signature, {
-                      commitment: 'confirmed',
-                    })
-                    .then(tx => {
-                      if (tx) {
-                        const transaction = parseSolanaTransaction(
-                          sig.signature,
-                          account.generalAddresses.pubKey,
-                          tx,
-                        );
-                        setTransactions(transaction);
-                      }
-                    });
-                }
+                const sortedSignatures = signatures.sort(sortSignatures);
+                const setTxs = async () => {
+                  for (const sig of sortedSignatures) {
+                    await program.provider.connection
+                      .getTransaction(sig.signature, {
+                        commitment: 'confirmed',
+                      })
+                      .then(tx => {
+                        if (tx) {
+                          const transaction = parseSolanaTransaction(
+                            sig.signature,
+                            account.generalAddresses.pubKey,
+                            tx,
+                          );
+                          if (transaction) {
+                            setTransactions(transaction);
+                          }
+                        }
+                      });
+                  }
+                };
+                setTxs();
               });
           },
         );
@@ -79,7 +86,13 @@ export function SolanaSubscriptionLogic() {
         program.provider.connection.removeAccountChangeListener(subId);
       }
     };
-  }, [account.wrappers, program, setTransactions, transactions]);
+  }, [
+    account.generalAddresses.pubKey,
+    account.wrappers,
+    program,
+    setTransactions,
+    transactions,
+  ]);
 
   return <></>;
 }

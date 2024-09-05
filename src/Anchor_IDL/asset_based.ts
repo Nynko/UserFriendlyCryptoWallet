@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/asset_based.json`.
  */
 export type AssetBased = {
-  "address": "HQ94ihD6VbYC8G6mytYJS8z2GPmZh77J3bJWMh2ys9ko",
+  "address": "GWceSREg4H34gWhTXy3sY9KeRgcviAz8FFSmWaoooGop",
   "metadata": {
     "name": "assetBased",
     "version": "0.1.0",
@@ -30,32 +30,6 @@ export type AssetBased = {
           "name": "issuer",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "wrapperAccount",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  114,
-                  97,
-                  112,
-                  112,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "approver"
-              }
-            ]
-          }
-        },
-        {
-          "name": "approver"
         },
         {
           "name": "idendity",
@@ -254,32 +228,6 @@ export type AssetBased = {
       ],
       "accounts": [
         {
-          "name": "wrapperAccount",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  114,
-                  97,
-                  112,
-                  112,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "approver"
-              }
-            ]
-          }
-        },
-        {
-          "name": "approver"
-        },
-        {
           "name": "issuer",
           "signer": true
         },
@@ -371,32 +319,6 @@ export type AssetBased = {
           "name": "payer",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "wrapperAccount",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  114,
-                  97,
-                  112,
-                  112,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "approver"
-              }
-            ]
-          }
-        },
-        {
-          "name": "approver"
         },
         {
           "name": "owner",
@@ -1617,23 +1539,18 @@ export type AssetBased = {
   "errors": [
     {
       "code": 6000,
-      "name": "notAuthorized",
-      "msg": "Not authorized to approve this transaction"
+      "name": "insufficientFunds",
+      "msg": "The source account does not have enough funds to transfer"
     },
     {
       "code": 6001,
-      "name": "needTwoAuthApproval",
-      "msg": "Need the two auth entity approval"
+      "name": "invalidDecimals",
+      "msg": "Decimal provided does not match the mint's decimal value"
     },
     {
       "code": 6002,
-      "name": "wrongApproval",
-      "msg": "The provided two_auth entity is wrong"
-    },
-    {
-      "code": 6003,
-      "name": "expiredApproval",
-      "msg": "The Approval has expired"
+      "name": "overflow",
+      "msg": "Overflow when adding the amount to the destination account"
     }
   ],
   "types": [

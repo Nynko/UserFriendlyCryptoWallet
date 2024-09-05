@@ -1,5 +1,5 @@
 {
-  "address": "HQ94ihD6VbYC8G6mytYJS8z2GPmZh77J3bJWMh2ys9ko",
+  "address": "GWceSREg4H34gWhTXy3sY9KeRgcviAz8FFSmWaoooGop",
   "metadata": {
     "name": "asset_based",
     "version": "0.1.0",
@@ -24,32 +24,6 @@
           "name": "issuer",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "wrapper_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  114,
-                  97,
-                  112,
-                  112,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "approver"
-              }
-            ]
-          }
-        },
-        {
-          "name": "approver"
         },
         {
           "name": "idendity",
@@ -248,32 +222,6 @@
       ],
       "accounts": [
         {
-          "name": "wrapper_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  114,
-                  97,
-                  112,
-                  112,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "approver"
-              }
-            ]
-          }
-        },
-        {
-          "name": "approver"
-        },
-        {
           "name": "issuer",
           "signer": true
         },
@@ -365,32 +313,6 @@
           "name": "payer",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "wrapper_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  114,
-                  97,
-                  112,
-                  112,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "approver"
-              }
-            ]
-          }
-        },
-        {
-          "name": "approver"
         },
         {
           "name": "owner",
@@ -1611,23 +1533,18 @@
   "errors": [
     {
       "code": 6000,
-      "name": "NotAuthorized",
-      "msg": "Not authorized to approve this transaction"
+      "name": "InsufficientFunds",
+      "msg": "The source account does not have enough funds to transfer"
     },
     {
       "code": 6001,
-      "name": "NeedTwoAuthApproval",
-      "msg": "Need the two auth entity approval"
+      "name": "InvalidDecimals",
+      "msg": "Decimal provided does not match the mint's decimal value"
     },
     {
       "code": 6002,
-      "name": "WrongApproval",
-      "msg": "The provided two_auth entity is wrong"
-    },
-    {
-      "code": 6003,
-      "name": "ExpiredApproval",
-      "msg": "The Approval has expired"
+      "name": "Overflow",
+      "msg": "Overflow when adding the amount to the destination account"
     }
   ],
   "types": [

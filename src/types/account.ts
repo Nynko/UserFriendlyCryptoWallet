@@ -15,7 +15,7 @@ export interface DltAccount {
   nativeBalance: bigint;
   wrapperBalances: Record<string, WrapperBalances>;
   wrappers: Record<string, Wrappers>;
-  transactions: Transaction[];
+  transactions: (Transaction | NativeTransaction)[];
 }
 
 export interface GeneralAddresses {
@@ -54,21 +54,29 @@ export interface Mint {
   addresses: MintAddresses;
 }
 
-export enum SenderReiceiver {
-  SENDER,
-  RECEIVER,
+export enum Direction {
+  OUTGOING,
+  INCOMING,
   SELF_TRANSFER,
 }
 
-export interface Transaction {
+export enum TransactionType {
+  NativeTransaction,
+  Transaction,
+}
+
+export interface NativeTransaction {
+  discriminator: TransactionType.NativeTransaction;
   txSig: string;
   timestamp: number;
-  senderReceiver: SenderReiceiver;
-  from: anchor.web3.PublicKey;
-  to: anchor.web3.PublicKey;
+  direction: Direction;
+  address: anchor.web3.PublicKey;
   amount: number;
-  native: boolean;
-  wrapper?: anchor.web3.PublicKey;
-  mint?: anchor.web3.PublicKey;
   decimals: number;
+}
+
+export interface Transaction extends Omit<NativeTransaction, 'discriminator'> {
+  discriminator: TransactionType.Transaction;
+  wrapper: anchor.web3.PublicKey;
+  mint: anchor.web3.PublicKey;
 }

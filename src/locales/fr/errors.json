@@ -10,5 +10,8 @@
   "NoMintAccountFound": "Aucun compte Mint trouvé",
   "TransactionNotFound": "Transaction introuvable",
   "CouldntParseInstruction": "Impossible de parser l'instruction",
-  "CouldntFindTransferInstruction": "Impossible de trouver l'instruction 'transfer'"
+  "CouldntFindTransferInstruction": "Impossible de trouver l'instruction 'transfer'",
+  "NetworkFailError": "Erreur réseau : êtes-vous connecté à internet ?",
+  "UnknownInstruction": "La transaction reçue n'est pas une instruction connue",
+  "ErrorParsingTransaction": "Erreur lors du parsing de la transaction"
 }

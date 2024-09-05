@@ -208,9 +208,7 @@ async function initialize_recovery_account_instruction(
     .accountsPartial({
       payer: payer,
       owner: owner.publicKey,
-      approver: approver,
       mint: mint,
-      wrapperAccount: wrapper,
       recoveryAuthority: recovery_account,
     })
     .instruction();
@@ -345,8 +343,6 @@ async function issue_idendity_instruction(
   const instruction = await program.methods
     .initializeId(new anchor.BN(validity_duration))
     .accountsPartial({
-      approver: approver,
-      wrapperAccount: wrapper,
       issuer: issuer,
       owner: owner.publicKey,
       payer: payer,
