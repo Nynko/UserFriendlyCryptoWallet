@@ -10,7 +10,16 @@ export const mainStyle = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
   },
-  container: {
+  centered: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  flexYcentered: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  flexCentered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

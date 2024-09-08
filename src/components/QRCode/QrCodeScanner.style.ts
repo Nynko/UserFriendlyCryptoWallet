@@ -9,9 +9,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   camera: {
-    width: width * 0.8, // Width of the camera view relative to the screen width
-    height: width * 0.8, // Height of the camera view relative to the screen width
-    borderRadius: 10, // Optional: to make the corners rounded
+    width: width * 0.75, // Width of the camera view relative to the screen width
+    height: width * 0.75, // Height of the camera view relative to the screen width
   },
 });
 

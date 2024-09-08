@@ -1,8 +1,9 @@
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {Home} from './screens/Home';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {Balances} from './screens/Balances';
 import {Settings} from './screens/Settings';
+import {Transactions} from './screens/Transactions';
+import {Dimensions} from 'react-native';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -13,6 +14,8 @@ const navTheme = {
     background: 'transparent',
   },
 };
+
+const {width: screenWidth} = Dimensions.get('window');
 
 function MainConnected(): React.JSX.Element {
   return (
@@ -26,10 +29,13 @@ function MainConnected(): React.JSX.Element {
               borderColor: '#88C8F4',
               backgroundColor: 'transparent',
             },
+            tabBarLabelStyle: {
+              width: screenWidth / 3, // Adjust the width as needed
+            },
           }}>
           <Tab.Screen name="Settings" component={Settings} />
           <Tab.Screen name="Home" component={Home} />
-          <Tab.Screen name="Balances" component={Balances} />
+          <Tab.Screen name="Transactions" component={Transactions} />
         </Tab.Navigator>
       </NavigationContainer>
     </>

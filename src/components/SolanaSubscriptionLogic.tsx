@@ -1,7 +1,11 @@
 import {useEffect} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
 import {useDltAccount, useTransactions} from '../store/selectors';
-import {getSetTransaction, setBalance} from '../store/actions';
+import {
+  getSetTransaction,
+  setBalance,
+  setNativeBalance,
+} from '../store/actions';
 import {DLT, TransactionType} from '../types/account';
 import {parseSolanaTransaction} from '../functions/solana/parseTransaction';
 import {sortSignatures} from '../functions/solana/utils';
@@ -13,6 +17,19 @@ export function SolanaSubscriptionLogic() {
   const setTransactions = getSetTransaction(DLT.SOLANA);
   useEffect(() => {
     const subIds: number[] = [];
+
+    // For the native account
+    const subscriptionIdNative = program.provider.connection.onAccountChange(
+      account.generalAddresses.pubKey,
+      // callback for when the account changes
+      accountInfo => {
+        setNativeBalance(DLT.SOLANA, BigInt(accountInfo.lamports));
+      },
+    );
+    console.log('Connected with subscriptionIdNative: ', subscriptionIdNative);
+
+    subIds.push(subscriptionIdNative);
+
     for (const [wrapperAddress, wrapper] of Object.entries(account.wrappers)) {
       for (const [mintAddress, mint] of Object.entries(wrapper.mints)) {
         const subscriptionId = program.provider.connection.onAccountChange(
@@ -76,6 +93,10 @@ export function SolanaSubscriptionLogic() {
                 setTxs();
               });
           },
+        );
+        console.log(
+          `Connected for wrapper: ${wrapper.wrapperName} and ${mint.name}: `,
+          subscriptionId,
         );
         subIds.push(subscriptionId);
       }

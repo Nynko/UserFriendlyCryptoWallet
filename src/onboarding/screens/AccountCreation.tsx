@@ -6,14 +6,18 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../OnboardingMain';
 import {create_anoncreds} from '../functions/create_anoncreds';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
-import {create_account} from '../functions/create_solana_account';
+import {
+  commitAccount,
+  create_account,
+} from '../functions/create_solana_account';
 import {styles} from './styles';
 import {useTranslation} from 'react-i18next';
-import {APPROVER, EURC_MINT, WRAPPER_PDA} from '../../const';
+import {APPROVER, EURC_MINT, NATIVE_MINT, WRAPPER_PDA} from '../../const';
 import {getMintDecimals} from '../../functions/addresses/getMintDecimals';
 import {appStore} from '../../store/zustandStore';
 import {DLT, DltAccount} from '../../types/account';
 import {produce} from 'immer';
+import {getWrappedTokenAddress} from '../../functions/solana/getDerivedAddresses';
 
 type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -39,6 +43,8 @@ export function AccountCreation({route}: AccountCreationProps) {
 
   const onClick = async () => {
     const {
+      transaction,
+      signer,
       pk,
       idendity,
       wrappedAccount,
@@ -64,8 +70,19 @@ export function AccountCreation({route}: AccountCreationProps) {
       program.provider.connection,
     );
 
+    const nativeWrappedToken = getWrappedTokenAddress(
+      NATIVE_MINT,
+      new web3.PublicKey(WRAPPER_PDA),
+      pk,
+      program,
+    );
+
     const dltAccount: DltAccount = {
       pseudo,
+      prices: {
+        [EURC_MINT]: 1,
+        [NATIVE_MINT.toBase58()]: 0,
+      },
       generalAddresses: {
         pubKey: pk,
         pseudoAccount,
@@ -76,10 +93,15 @@ export function AccountCreation({route}: AccountCreationProps) {
       },
       transactions: [],
       nativeBalance: 0n,
+      nativeTokenName: 'SOL',
       wrapperBalances: {
         [WRAPPER_PDA]: {
           [mint.toBase58()]: {
             decimals: decimal_eurc,
+            balance: 0n,
+          },
+          [NATIVE_MINT.toBase58()]: {
+            decimals: 9,
             balance: 0n,
           },
         },
@@ -100,16 +122,33 @@ export function AccountCreation({route}: AccountCreationProps) {
                 mintMetadata: web3.PublicKey.default, // TODO find the proper mint metadata
               },
             },
+            [NATIVE_MINT.toBase58()]: {
+              name: 'SOL',
+              addresses: {
+                wrappedToken: nativeWrappedToken,
+                mintAddress: NATIVE_MINT,
+                mintMetadata: web3.PublicKey.default,
+              },
+            },
           },
         },
       },
     };
+
     appStore.setState(state =>
       produce(state, draftState => {
         draftState.initialized = true;
         draftState.dlts[DLT.SOLANA] = dltAccount;
       }),
     );
+
+    commitAccount(transaction, signer, twoAuthEntity, program).catch(e => {
+      console.log(e);
+      // Rollback state if the commit fails
+      const init = appStore.getInitialState();
+      appStore.setState(init);
+      throw e;
+    });
   };
 
   return (

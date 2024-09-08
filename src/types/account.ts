@@ -13,9 +13,11 @@ export interface DltAccount {
   pseudo: string;
   generalAddresses: GeneralAddresses;
   nativeBalance: bigint;
+  nativeTokenName: string;
   wrapperBalances: Record<string, WrapperBalances>;
   wrappers: Record<string, Wrappers>;
   transactions: (Transaction | NativeTransaction)[];
+  prices: Record<string, number>; // Mint as key and price as value
 }
 
 export interface GeneralAddresses {

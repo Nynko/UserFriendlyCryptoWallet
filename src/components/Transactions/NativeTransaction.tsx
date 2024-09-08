@@ -68,7 +68,7 @@ export function NativeTransaction({transaction}: TransactionProps) {
     <ListItem
       title={`${t(title)} ${
         transaction.amount / 10 ** transaction.decimals
-      } ${symbol}`}
+      } ${symbol} (Native)`}
       subTitle={toDate(transaction.timestamp).toLocaleString()}>
       <Text>Amount: {transaction.amount / 10 ** transaction.decimals}</Text>
     </ListItem>

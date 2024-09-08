@@ -1,46 +1,122 @@
 import * as anchor from '@coral-xyz/anchor';
-import {ActivityIndicator, Button, TextInput} from 'react-native';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
-import {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo';
-import {useBoolStateOnce} from '../../hooks/useBoolState';
-import {SendLogic} from './SendLogic';
+import {NumericInput} from '../inputs/NumericInput';
+import {SelectedMint} from '../../functions/dlts/SelectedMint';
+import {useDltAccount, useMintDecimals} from '../../store/selectors';
+import {Button, Input, Spinner, YStack} from 'tamagui';
+import {useTranslation} from 'react-i18next';
+import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
+import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
+import {transferToken} from '../../functions/solana/transfer';
+import {DLT} from '../../types/account';
+import {TypedError} from '../../Errors/TypedError';
+import {TOKEN_PROGRAM_ID} from '../../const';
 
 export function SendToPseudo({
+  error,
   setError,
+  selectedMint,
+  status,
+  setStatus,
 }: {
+  error: string | null;
   setError: Dispatch<SetStateAction<string | null>>;
+  selectedMint: SelectedMint;
+  status: 'off' | 'submitting' | 'submitted';
+  setStatus: Dispatch<SetStateAction<'off' | 'submitting' | 'submitted'>>;
 }) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<string>('');
   const [pseudo, setPseudo] = useState<string>('');
-  const [send, setSendTrue] = useBoolStateOnce();
-  const [pk, setPk] = useState<anchor.web3.PublicKey | null>(null);
+  const {t} = useTranslation();
+  const decimals = useMintDecimals(
+    selectedMint.dlt,
+    selectedMint.wrapper,
+    selectedMint.mint,
+  );
 
   const program = useAnchorProgram().program;
+  const account = useDltAccount(DLT.SOLANA);
+  const mintPk = new anchor.web3.PublicKey(selectedMint.mint);
+  const wrapperPk = new anchor.web3.PublicKey(selectedMint.wrapper);
+  const approver = account.wrappers[wrapperPk.toBase58()].addresses.approver;
 
-  useEffect(() => {
-    if (send) {
-      setLoading(true);
-      getAddressFromPseudo(pseudo, program)
-        .then(setPk)
-        .then(() => setLoading(false));
+  async function getAndTransfer(val: number) {
+    const pubk = await getAddressFromPseudo(pseudo, program);
+    if (!pubk) {
+      setError(t('Pseudo not found'));
+      setStatus('off');
+      return;
     }
-  }, [program, pseudo, send]);
+    const [destinationWrappedAccount, _destinationIdendity] =
+      getDeriveAddresses(mintPk, wrapperPk, pubk, program);
+    setStatus('submitting');
+    accessSolanaWallet()
+      .then(async signer => {
+        return await transferToken(
+          val,
+          account.wrapperBalances[selectedMint.wrapper][selectedMint.mint]
+            .decimals,
+          wrapperPk,
+          signer,
+          account.wrappers[wrapperPk.toBase58()].mints[mintPk.toBase58()]
+            .addresses.wrappedToken,
+          pubk,
+          destinationWrappedAccount,
+          account.generalAddresses.twoAuth,
+          account.generalAddresses.twoAuthEntity,
+          mintPk,
+          approver,
+          TOKEN_PROGRAM_ID,
+          program,
+        );
+      })
+      .then(() => {
+        setStatus('submitted');
+      })
+      .catch(e => {
+        setStatus('off');
+        if (e instanceof TypedError) {
+          console.log(e.toStringComplete());
+          setError(t(e.toString()));
+        } else {
+          console.log(e);
+          setError(t('An error occured'));
+
+          // Send to us the error
+        }
+      });
+  }
 
   return (
-    <>
-      <TextInput placeholder="Pseudo" value={pseudo} onChangeText={setPseudo} />
-      <TextInput
-        placeholder="Amount"
-        value={value.toString()}
-        onChangeText={v => setValue(Number(v))}
+    <YStack padding="$1" gap="$4">
+      <Input
+        placeholder="Pseudo"
+        value={pseudo}
+        onChangeText={text => {
+          setPseudo(text);
+          if (error) {
+            setError(null);
+          }
+        }}
       />
-      <Button title="Send?" onPress={setSendTrue} />
-      {send && pk && (
-        <SendLogic pk={pk} setError={setError} value={value * 10 ** 2} /> // TODO decimals
+      <NumericInput
+        value={value}
+        setValue={text => {
+          setValue(text);
+          if (error) {
+            setError(null);
+          }
+        }}
+      />
+      {value && (
+        <Button
+          icon={status === 'submitting' ? () => <Spinner /> : undefined}
+          onPress={() => getAndTransfer(Number(value) * 10 ** decimals)}>
+          {t('Send')}
+        </Button>
       )}
-      {loading && <ActivityIndicator />}
-    </>
+    </YStack>
   );
 }

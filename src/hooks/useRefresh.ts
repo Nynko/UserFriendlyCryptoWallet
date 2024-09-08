@@ -14,7 +14,7 @@ export function useRefresh(
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, []);
+  }, [otherRefresh, otherRefreshAsync]);
 
   return [refreshing, onRefresh];
 }

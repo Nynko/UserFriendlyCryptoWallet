@@ -48,6 +48,10 @@ export const appStore = create<AppStore>()(
         [DLT.SOLANA]: {
           pseudo: '',
           transactions: [],
+          prices: {
+            [EURC_MINT]: 1,
+            [NATIVE_MINT.toBase58()]: 0,
+          },
           generalAddresses: {
             pubKey: anchor.web3.PublicKey.default,
             pseudoAccount: anchor.web3.PublicKey.default,
@@ -57,6 +61,7 @@ export const appStore = create<AppStore>()(
             twoAuthEntity: anchor.web3.PublicKey.default,
           },
           nativeBalance: 0n,
+          nativeTokenName: 'SOL',
           wrapperBalances: {
             [WRAPPER_PDA]: {
               [EURC_MINT]: {

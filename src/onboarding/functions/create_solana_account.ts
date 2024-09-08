@@ -119,6 +119,26 @@ export async function create_account(
     throw new Error('Error when deriving the wrapped account');
   }
 
+  return {
+    transaction,
+    signer,
+    pk: signer.publicKey,
+    idendity,
+    wrappedAccount,
+    twoAuth,
+    twoAuthEntity,
+    recoveryAccount,
+    pseudoAccount,
+    pseudo,
+  };
+}
+
+export async function commitAccount(
+  transaction: anchor.web3.Transaction,
+  signer: anchor.web3.Keypair,
+  twoAuthEntity: anchor.web3.PublicKey,
+  program: Program<AssetBased>,
+) {
   const blockhash =
     await program.provider.connection.getLatestBlockhashAndContext();
 
@@ -167,17 +187,6 @@ export async function create_account(
   await program.provider.connection.confirmTransaction(confirmStrategy);
 
   console.log('Finish creating account');
-
-  return {
-    pk: signer.publicKey,
-    idendity,
-    wrappedAccount,
-    twoAuth,
-    twoAuthEntity,
-    recoveryAccount,
-    pseudoAccount,
-    pseudo,
-  };
 }
 
 interface RecoveryAuthority {

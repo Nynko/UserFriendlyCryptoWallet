@@ -48,8 +48,8 @@ export const styles2 = StyleSheet.create({
   },
   buttonText: {
     color: '#3366cc', // Slightly more blueish color for text
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '400',
   },
   squareRoundButton: {
     width: 100,

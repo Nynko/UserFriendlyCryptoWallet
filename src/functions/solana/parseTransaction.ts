@@ -13,11 +13,37 @@ interface TransferData {
   decimals: number;
 }
 
+// TODO: change to parseSolanaInstruction / or iterate over the instructions
+/** For now we only consider the first instruction. It should be changed */
 export function parseSolanaTransaction(
   txSig: string,
   account: anchor.web3.PublicKey,
   txResponse: anchor.web3.TransactionResponse,
 ): Transaction | undefined {
+  // if (
+  //   tx.transaction.message.instructions[0].accounts
+  //     .length === 2 &&
+  //   tx.transaction.message.programIds().length === 1 &&
+  //   tx.transaction.message
+  //     .programIds()[0]
+  //     .equals(SYSTEM_PROGRAM_ID)
+  // ) {
+  //   const transaction: NativeTransaction = {
+  //     discriminator: TransactionType.NativeTransaction,
+  //     txSig: sig.signature,
+  //     timestamp: Number(tx.blockTime),
+  //     direction: Direction.INCOMING,
+  //     address: tx.transaction.message.accountKeys[0],
+  //     amount: Number(
+  //       (tx.meta?.postBalances[1] || 0) -
+  //         (tx.meta?.preBalances[1] || 0),
+  //     ),
+  //     decimals: 9,
+  //   };
+
+  //   return transaction;
+  // }
+
   const coder = new anchor.BorshCoder(IDL as AssetBased);
   const ix = coder.instruction.decode(
     txResponse.transaction.message.instructions[0].data,

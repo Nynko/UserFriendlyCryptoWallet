@@ -4,7 +4,8 @@ import {AssetBased} from '../Anchor_IDL/asset_based';
 import {getBalance, getWrappedAccount} from '../functions/solana/getBalances';
 import {appStore} from './zustandStore';
 import {produce} from 'immer';
-import {DLT, Transaction} from '../types/account';
+import {DLT, NativeTransaction, Transaction} from '../types/account';
+import {getPriceEur} from '../functions/prices/get_prices';
 
 export async function reloadBalanceSolana(
   wrappedAccount: anchor.web3.PublicKey,
@@ -26,6 +27,17 @@ export async function reloadBalanceSolana(
         fetchedBalance;
     }),
   );
+}
+
+export async function setNativeBalance(dlt: DLT, balance: bigint) {
+  const state = appStore.getState();
+  if (state.dlts[dlt].nativeBalance !== balance) {
+    appStore.setState(
+      produce(state, draftState => {
+        draftState.dlts[dlt].nativeBalance = balance;
+      }),
+    );
+  }
 }
 
 export async function setBalance(
@@ -50,6 +62,8 @@ export async function reloadAllBalancesSolana(program: Program<AssetBased>) {
     program.provider.connection,
     dltState.generalAddresses.pubKey,
   );
+
+  console.log('fetchedNativeBalance', fetchedNativeBalance);
 
   const wrapperBalances: Record<string, Record<string, bigint>> = {};
 
@@ -78,7 +92,7 @@ export async function reloadAllBalancesSolana(program: Program<AssetBased>) {
 }
 
 export function getSetTransaction(dlt: DLT) {
-  return (transaction: Transaction) =>
+  return (transaction: Transaction | NativeTransaction) =>
     appStore.setState(state =>
       produce(state, draftState => {
         if (
@@ -96,6 +110,18 @@ export function deleteTransactions(dlt: DLT) {
   return appStore.setState(state =>
     produce(state, draftState => {
       draftState.dlts[dlt].transactions = [];
+    }),
+  );
+}
+
+export async function fetchPrice(dlt: DLT, mint: string) {
+  const state = appStore.getState();
+
+  const price = await getPriceEur(dlt, mint);
+
+  appStore.setState(
+    produce(state, draftState => {
+      draftState.dlts[dlt].prices[mint] = price;
     }),
   );
 }

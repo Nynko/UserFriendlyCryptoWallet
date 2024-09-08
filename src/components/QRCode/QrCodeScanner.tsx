@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, Text, View} from 'react-native';
 import {
   Camera,
@@ -14,7 +13,7 @@ export function QrCodeScanner({
   setValue,
 }: {
   exit: () => void;
-  setValue: React.Dispatch<React.SetStateAction<string | null>>;
+  setValue: (value: string) => void;
 }) {
   const {hasPermission, requestPermission} = useCameraPermission();
   const [_reloaded, reload] = useBoolState(false);
@@ -47,7 +46,7 @@ export function QrCodeScanner({
     );
   }
   return (
-    <View style={styles.container}>
+    <View>
       <Camera
         style={styles.camera}
         device={device}

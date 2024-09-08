@@ -13,9 +13,13 @@
   "pseudoArePublic": "Les pseudos sont publics et uniques",
   "pseudoAlreadyTaken": "Le pseudo est déjà pris !",
   "pseudoTooLong": "Le pseudo est trop long ! (max 32 char)",
+  "Pseudo not found": "Pseudo non trouvé !",
   "Receive money": "Recevoir de l'argent",
   "My Pseudo": "Mon Pseudo",
   "Scan QR Code": "Scanner le code QR",
-  "Send to": "Envoyer à",
-  "Send to Pseudo": "Envoyer à un Pseudo"
+  "Send": "Envoyer",
+  "to": "à",
+  "Send to Pseudo": "Envoyer à un Pseudo",
+  "Transaction submitted": "Transaction envoyée !",
+  "BackHome": "Retour à l'accueil"
 }

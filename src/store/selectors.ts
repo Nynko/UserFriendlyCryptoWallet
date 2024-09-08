@@ -7,9 +7,10 @@ import {
   WrapperBalances,
 } from '../types/account';
 import {appStore} from './zustandStore';
+import {useShallow} from 'zustand/react/shallow';
 
 export function useIsStoreInitialized() {
-  return appStore(state => state.initialized);
+  return appStore(useShallow(state => state.initialized));
 }
 
 export function useTransactions(dlt: DLT) {
@@ -64,6 +65,12 @@ export function useMintBalance(
   return appStore(state => state.dlts[dlt].wrapperBalances[wrapper][mint]);
 }
 
+export function useMintDecimals(dlt: DLT, wrapper: string, mint: string) {
+  return appStore(
+    state => state.dlts[dlt].wrapperBalances[wrapper][mint].decimals,
+  );
+}
+
 export function useNativeBalance(dlt: DLT) {
   return appStore(state => state.dlts[dlt].nativeBalance);
 }
@@ -74,4 +81,8 @@ export function usePseudos() {
 
 export function useAccountPseudo(dlt: DLT) {
   return appStore(state => state.dlts[dlt].pseudo);
+}
+
+export function usePrice(dlt: DLT, mint: string) {
+  return appStore(state => state.dlts[dlt].prices[mint]);
 }

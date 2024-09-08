@@ -80,7 +80,7 @@ export function Settings() {
           </Button>
         </XStack>
       </YStack>
-      <View style={mainStyle.container}>
+      <View style={mainStyle.centered}>
         <NFC />
       </View>
     </SafeAreaView>

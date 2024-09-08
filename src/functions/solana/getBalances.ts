@@ -25,8 +25,13 @@ export async function getWrappedAccount(
   wrappedAccount: anchor.web3.PublicKey,
   program: Program<AssetBased>,
 ) {
-  const fetchedAccount =
-    await program.provider.connection.getTokenAccountBalance(wrappedAccount);
+  try {
+    const fetchedAccount =
+      await program.provider.connection.getTokenAccountBalance(wrappedAccount);
 
-  return BigInt(fetchedAccount.value.amount);
+    return BigInt(fetchedAccount.value.amount);
+  } catch (error) {
+    console.log(error);
+    return BigInt(0);
+  }
 }

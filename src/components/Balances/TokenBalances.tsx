@@ -18,7 +18,7 @@ export const TokenBalance = React.memo(
   }) => {
     const balance = useMintBalance(dlt, wrapperAddress, mintAddress);
     const value = Number(balance.balance) / 10 ** balance.decimals;
-
+    console.log('Rendering TokenBalance component');
     return (
       <View style={mainStyle.innerContainer} key={mintAddress}>
         <Text>{mintName}</Text>

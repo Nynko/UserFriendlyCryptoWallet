@@ -1,12 +1,18 @@
-import {useState} from 'react';
-import {WrapperBalances} from '../components/Balances/WrapperBalances';
-import {mapToViewModel} from '../functions/accounts/mapViewModels';
-import {useDltAccounts} from '../store/selectors';
+import {Dispatch, SetStateAction, useState} from 'react';
+import {WrapperBalances} from '../../components/Balances/WrapperBalances';
+import {mapToViewModel} from '../../functions/accounts/mapViewModels';
+import {useDltAccounts} from '../../store/selectors';
 import {YStack, XStack, Button, Text} from 'tamagui';
-
+import {SelectedMint} from '../../functions/dlts/SelectedMint';
 let counter = 0;
 
-export function Balances() {
+export function Balances({
+  selectedMint,
+  setSelectedMint,
+}: {
+  selectedMint: SelectedMint;
+  setSelectedMint: Dispatch<SetStateAction<SelectedMint>>;
+}) {
   const dltAccounts = useDltAccounts();
   const wrapperViewModels = mapToViewModel(dltAccounts);
   const [selectedWrapper, setSelectedWrapper] = useState<string | null>(
@@ -20,6 +26,7 @@ export function Balances() {
     setSelectedWrapper(wrapperAddress);
   };
 
+  console.log('Rendering Balances component');
   return (
     <YStack>
       <XStack overflow="scroll" padding="$2" gap="$2">
@@ -40,6 +47,8 @@ export function Balances() {
             key={selectedWrapper}
             wrapperViewModel={wrapperViewModels[selectedWrapper]}
             wrapperAddress={selectedWrapper}
+            selectedMint={selectedMint}
+            setSelectedMint={setSelectedMint}
           />
         )}
       </XStack>

@@ -1,61 +1,68 @@
 import * as anchor from '@coral-xyz/anchor';
-import {ActivityIndicator, Button} from 'react-native';
 import {transferToken} from '../../functions/solana/transfer';
 import {accessSolanaWallet} from '../../functions/wallet/solana_wallet';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
-import {Dispatch, SetStateAction, useState} from 'react';
-import {APPROVER, EURC_MINT, NATIVE_MINT, WRAPPER_PDA} from '../../const';
+import {Dispatch, SetStateAction} from 'react';
 import {getDeriveAddresses} from '../../functions/solana/getDerivedAddresses';
 import {TOKEN_PROGRAM_ID} from '@coral-xyz/anchor/dist/cjs/utils/token';
 import {TypedError} from '../../Errors/TypedError';
 import {DLT} from '../../types/account';
 import {useTranslation} from 'react-i18next';
 import {useDltAccount} from '../../store/selectors';
+import {Button, Spinner} from 'tamagui';
 
 export function SendLogic({
   pk,
   value,
   setError,
+  mint,
+  wrapper,
+  status,
+  setStatus,
 }: {
   pk: anchor.web3.PublicKey;
   value: number;
   setError: Dispatch<SetStateAction<string | null>>;
+  mint: string;
+  wrapper: string;
+  status: 'off' | 'submitting' | 'submitted';
+  setStatus: Dispatch<SetStateAction<'off' | 'submitting' | 'submitted'>>;
 }) {
-  const [loading, setLoading] = useState<boolean>(false);
   const {t} = useTranslation();
   const program = useAnchorProgram().program;
   const account = useDltAccount(DLT.SOLANA);
 
-  const mint = new anchor.web3.PublicKey(NATIVE_MINT);
-  const wrapper = new anchor.web3.PublicKey(WRAPPER_PDA);
-  const approver = new anchor.web3.PublicKey(APPROVER);
+  const mintPk = new anchor.web3.PublicKey(mint);
+  const wrapperPk = new anchor.web3.PublicKey(wrapper);
+  const approver = account.wrappers[wrapperPk.toBase58()].addresses.approver;
   async function getAndTransfer() {
     const [destinationWrappedAccount, _destinationIdendity] =
-      getDeriveAddresses(mint, wrapper, pk, program);
-    setLoading(true);
+      getDeriveAddresses(mintPk, wrapperPk, pk, program);
+    setStatus('submitting');
     accessSolanaWallet()
       .then(async signer => {
         return await transferToken(
           value,
-          9,
-          wrapper,
+          account.wrapperBalances[wrapper][mint].decimals,
+          wrapperPk,
           signer,
-          account.wrappers[wrapper.toBase58()].mints[mint.toBase58()].addresses
-            .wrappedToken,
+          account.wrappers[wrapperPk.toBase58()].mints[mintPk.toBase58()]
+            .addresses.wrappedToken,
           pk,
           destinationWrappedAccount,
           account.generalAddresses.twoAuth,
           account.generalAddresses.twoAuthEntity,
-          mint,
+          mintPk,
           approver,
           TOKEN_PROGRAM_ID,
           program,
         );
       })
       .then(() => {
-        setLoading(false);
+        setStatus('submitted');
       })
       .catch(e => {
+        setStatus('off');
         if (e instanceof TypedError) {
           console.log(e.toStringComplete());
           setError(t(e.toString()));
@@ -68,8 +75,11 @@ export function SendLogic({
 
   return (
     <>
-      <Button title="Confirm" onPress={getAndTransfer} />
-      {loading && <ActivityIndicator />}
+      <Button
+        icon={status === 'submitting' ? () => <Spinner /> : undefined}
+        onPress={getAndTransfer}>
+        {t('Send')}
+      </Button>
     </>
   );
 }

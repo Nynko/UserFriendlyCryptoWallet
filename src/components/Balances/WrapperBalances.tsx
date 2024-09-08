@@ -1,28 +1,28 @@
 import {Dimensions, Text} from 'react-native';
-import {mainStyle} from '../../../styles/style';
 import {WrapperViewModel} from '../../types/viewModels';
 import {typography} from '../../../styles/typography';
 import {TokenBalance} from './TokenBalances';
-import {TransactionHistory} from '../Transactions/TransactionHistory';
+import {Card, ScrollView, XStack, YStack, View} from 'tamagui';
+import {Dispatch, SetStateAction} from 'react';
 import {
-  Card,
-  ScrollView,
-  XStack,
-  YGroup,
-  YStack,
-  View,
-  Separator,
-} from 'tamagui';
+  isSelectedMintEquals,
+  SelectedMint,
+} from '../../functions/dlts/SelectedMint';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
 export const WrapperBalances = ({
   wrapperViewModel,
   wrapperAddress,
+  selectedMint,
+  setSelectedMint,
 }: {
   wrapperViewModel: WrapperViewModel;
   wrapperAddress: string;
+  selectedMint: SelectedMint;
+  setSelectedMint: Dispatch<SetStateAction<SelectedMint>>;
 }) => {
+  console.log('Rendering WrapperBalances component');
   return (
     <View style={{flex: 1}}>
       <YStack padding="$4">
@@ -34,11 +34,26 @@ export const WrapperBalances = ({
                   ([mintAddress, mint]) => (
                     <Card
                       key={mintAddress}
+                      onPress={() => {
+                        setSelectedMint({
+                          dlt: viewDltAccount.dltName,
+                          wrapper: wrapperAddress,
+                          mint: mintAddress,
+                        });
+                      }}
                       width={screenWidth * 0.4} // 40% of screen width
                       height={screenHeight * 0.15} // 15% of screen height
                       padding="$2"
                       margin="$2"
-                      backgroundColor="$gray2"
+                      backgroundColor={
+                        isSelectedMintEquals(selectedMint, {
+                          dlt: viewDltAccount.dltName,
+                          wrapper: wrapperAddress,
+                          mint: mintAddress,
+                        })
+                          ? '$gray5'
+                          : '$gray2'
+                      } // Change background color if selected
                       borderRadius="$2"
                       shadowColor="$shadowColor"
                       shadowOffset={{width: 0, height: 2}}
@@ -61,13 +76,6 @@ export const WrapperBalances = ({
             </ScrollView>
           </View>
         ))}
-        <View style={mainStyle.innerContainer}>
-          <Text>Transaction History</Text>
-          <Separator marginVertical="$4" />
-          <ScrollView maxHeight={screenHeight * 0.4} width="90%">
-            <TransactionHistory />
-          </ScrollView>
-        </View>
       </YStack>
     </View>
   );
