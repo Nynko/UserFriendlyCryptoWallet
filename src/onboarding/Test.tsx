@@ -10,9 +10,8 @@ import {
   SensorTypes,
 } from 'react-native-sensors';
 import {map, filter} from 'rxjs/operators';
-import {Button, Text, View} from 'tamagui';
-import LinearGradient from 'react-native-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
+import {Text, View} from 'tamagui';
+import {GradientButton} from '../components/Buttons/GradientButton';
 
 const {width, height} = Dimensions.get('window');
 
@@ -114,30 +113,17 @@ const LaunchingScreen = () => {
           styles.buttonContainer,
           styles.index1,
         ]}>
-        <MaskedView
-          maskElement={
-            <Button
-              style={[styles.buttonBorder, {backgroundColor: 'transparent'}]}
-            />
-          }>
-          <LinearGradient
-            colors={['#FFFAFA', '#00C0D9']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradientBorder}>
-            <Button style={styles.button} />
-          </LinearGradient>
-        </MaskedView>
-      </View>
-      <View
-        style={[
-          styles.container,
-          StyleSheet.absoluteFill,
-          styles.buttonContainer,
-        ]}>
-        <Button style={styles.button}>
+        <GradientButton
+          borderWidth={borderWidth}
+          linearGradientProps={{
+            colors: ['#FFFAFA', '#00C0D9'],
+            start: {x: 0, y: 0},
+            end: {x: 1, y: 0},
+            style: styles.gradientBorder,
+          }}
+          buttonStyle={styles.button}>
           <Text style={styles.buttonText}>Get Started</Text>
-        </Button>
+        </GradientButton>
       </View>
     </>
   );
@@ -205,21 +191,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(18, 17, 17, 0.4)',
     borderWidth: 0,
     width: width * 0.5,
-    marginTop: -borderWidth,
-    marginLeft: -borderWidth,
-  },
-  buttonMask: {
-    // height: '100%',
-    // top: '0%',
-    // right: '0%',
-    // bottom: '0%',
-    // left: '0%',
-    borderRadius: borderRadius,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderColor: '#ffffff',
-    borderWidth: borderWidth,
-    width: width * 0.5,
   },
   buttonText: {
     color: '#fff',
@@ -229,23 +200,7 @@ const styles = StyleSheet.create({
   },
   gradientBorder: {
     borderRadius: borderRadius,
-    padding: 1,
   },
-  buttonWrapper: {
-    borderRadius: borderRadius,
-    backgroundColor: 'transparent',
-  },
-  maskedView: {
-    width: width * 0.5 + 6, // Adjust width to include border
-    height: 50 + 6, // Adjust height to include border
-    borderRadius: 27 + 3, // Adjust border radius to include border
-  },
-  // maskContainer: {
-  //   width: '100%',
-  //   height: '100%',
-  //   borderRadius: 27,
-  //   backgroundColor: 'black',
-  // },
 });
 
 export default LaunchingScreen;
