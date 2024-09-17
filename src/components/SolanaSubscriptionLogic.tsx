@@ -1,20 +1,26 @@
 import {useEffect} from 'react';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
-import {useDltAccount, useTransactions} from '../store/selectors';
+import {useDltAccountAddresses} from '../store/selectors';
 import {
   getSetTransaction,
   setBalance,
   setNativeBalance,
 } from '../store/actions';
-import {DLT, TransactionType} from '../types/account';
-import {parseSolanaTransaction} from '../functions/solana/parseTransaction';
-import {sortSignatures} from '../functions/solana/utils';
+import {DLT} from '../types/account';
+import {setTx} from '../functions/solana/setTx';
+import {appStore} from '../store/zustandStore';
+
+let counter = 0;
 
 export function SolanaSubscriptionLogic() {
+  counter++;
+  console.log('SolanaSubscriptionLogic counter', counter);
+
   const program = useAnchorProgram().program;
-  const account = useDltAccount(DLT.SOLANA);
-  const transactions = useTransactions(DLT.SOLANA);
+  const account = useDltAccountAddresses(DLT.SOLANA);
+  const transactions = appStore.getState().dlts[DLT.SOLANA].transactions; // This won't trigger a re-render
   const setTransactions = getSetTransaction(DLT.SOLANA);
+
   useEffect(() => {
     const subIds: number[] = [];
 
@@ -52,46 +58,15 @@ export function SolanaSubscriptionLogic() {
             const number = dataView.getBigUint64(0, true); // true for little-endian, false for big-endian
 
             setBalance(number, wrapperAddress, mintAddress);
-
-            // Get related transactions
-            const filteredTxs = transactions.filter(
-              tx =>
-                tx.discriminator === TransactionType.Transaction &&
-                tx.wrapper?.toBase58() === wrapperAddress &&
-                tx.mint?.toBase58() === mintAddress,
+            setTx(
+              transactions,
+              setTransactions,
+              program,
+              account.generalAddresses.pubKey,
+              wrapperAddress,
+              mintAddress,
+              mint,
             );
-            const lastSig =
-              filteredTxs.length !== 0
-                ? filteredTxs[filteredTxs.length - 1].txSig
-                : undefined;
-            program.provider.connection
-              .getSignaturesForAddress(mint.addresses.wrappedToken, {
-                until: lastSig,
-              })
-              .then(signatures => {
-                const sortedSignatures = signatures.sort(sortSignatures);
-                const setTxs = async () => {
-                  for (const sig of sortedSignatures) {
-                    await program.provider.connection
-                      .getTransaction(sig.signature, {
-                        commitment: 'confirmed',
-                      })
-                      .then(tx => {
-                        if (tx) {
-                          const transaction = parseSolanaTransaction(
-                            sig.signature,
-                            account.generalAddresses.pubKey,
-                            tx,
-                          );
-                          if (transaction) {
-                            setTransactions(transaction);
-                          }
-                        }
-                      });
-                  }
-                };
-                setTxs();
-              });
           },
         );
         console.log(

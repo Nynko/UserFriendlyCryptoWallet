@@ -4,7 +4,10 @@ import {Send} from '../components/Send/Send';
 import {mainStyle} from '../../styles/style';
 import {appStore} from '../store/zustandStore';
 import {DLT} from '../types/account';
-import {fetchPrice, reloadAllBalancesSolana} from '../store/actions';
+import {
+  fetchPrice,
+  reloadAllBalancesAndTransactionsSolana,
+} from '../store/actions';
 import {useAnchorProgram} from '../hooks/contexts/useAnchorProgram';
 import {RefreshView} from '../components/utils/RefreshView';
 import {Balances} from '../components/Balances/Balances';
@@ -37,7 +40,7 @@ export function Home() {
   console.log('counterHome', counterHome);
 
   const program = useAnchorProgram().program;
-  const reloadBalances = () => reloadAllBalancesSolana(program);
+  const reloadBalances = () => reloadAllBalancesAndTransactionsSolana(program);
   const reloadPrice = useCallback(
     () => fetchPrice(selectedMint.dlt, selectedMint.mint),
     [selectedMint.dlt, selectedMint.mint],

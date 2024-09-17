@@ -20,13 +20,21 @@ export async function store_secret(
     service: service,
   };
   if (biometric) {
+    constraints = {
+      ...constraints,
+      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
+      // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
+      authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
+    };
+  } else {
+    constraints = {
+      ...constraints,
+      accessControl: Keychain.ACCESS_CONTROL.DEVICE_PASSCODE,
+      // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
+      authenticationType:
+        Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
+    };
   }
-  constraints = {
-    ...constraints,
-    accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
-    // accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-    authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
-  };
 
   Keychain.setGenericPassword(username, secret, constraints);
 

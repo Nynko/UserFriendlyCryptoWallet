@@ -1,10 +1,12 @@
 import {
   DLT,
   DltAccount,
+  GeneralAddresses,
   Mint,
   MintBalance,
   TransactionType,
   WrapperBalances,
+  Wrappers,
 } from '../types/account';
 import {appStore} from './zustandStore';
 import {useShallow} from 'zustand/react/shallow';
@@ -34,6 +36,20 @@ export function useDltAccounts(): Record<DLT, DltAccount> {
 
 export function useDltAccount(dlt: DLT): DltAccount {
   return appStore(state => state.dlts[dlt]);
+}
+
+export function useDltAccountAddresses(dlt: DLT): {
+  generalAddresses: GeneralAddresses;
+  wrappers: Record<string, Wrappers>;
+} {
+  return appStore(
+    useShallow(state => {
+      return {
+        generalAddresses: state.dlts[dlt].generalAddresses,
+        wrappers: state.dlts[dlt].wrappers,
+      };
+    }),
+  );
 }
 
 export function useDltAccountBalances(

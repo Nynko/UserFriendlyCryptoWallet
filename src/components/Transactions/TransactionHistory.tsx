@@ -1,8 +1,7 @@
 import {appStore} from '../../store/zustandStore';
-import {DLT, TransactionType} from '../../types/account';
-import {Transaction} from './Transaction';
+import {DLT} from '../../types/account';
+import {Transactions} from './Transactions';
 import {YGroup} from 'tamagui';
-import {NativeTransaction} from './NativeTransaction';
 
 export function TransactionHistory() {
   const transactions = appStore(state => state.dlts[DLT.SOLANA].transactions)
@@ -18,13 +17,7 @@ export function TransactionHistory() {
             size="$4"
             key={transaction.txSig}>
             <YGroup.Item>
-              {transaction.discriminator === TransactionType.Transaction && (
-                <Transaction transaction={transaction} />
-              )}
-              {transaction.discriminator ===
-                TransactionType.NativeTransaction && (
-                <NativeTransaction transaction={transaction} />
-              )}
+              <Transactions transaction={transaction} />
             </YGroup.Item>
           </YGroup>
         ))}

@@ -70,7 +70,9 @@ export async function transferToken(
       if (e instanceof anchor.web3.SendTransactionError) {
         if (
           e.transactionError.message ===
-          'Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.'
+            'Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.' ||
+          e.transactionError.message ===
+            'Transaction simulation failed: Transaction results in an account (0) with insufficient funds for rent'
         ) {
           throw new TypedError(
             SolanaWalletErrors.NotEnoughSolBalanceToPayFees,

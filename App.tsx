@@ -16,8 +16,10 @@ declare module '@tamagui/core' {
   interface TamaguiCustomConfig extends Conf {}
 }
 
+let counter = 0;
 function App(): React.JSX.Element {
-  appStore();
+  counter++;
+  console.log('App rendered', counter);
   return (
     <>
       <ImageBackground
