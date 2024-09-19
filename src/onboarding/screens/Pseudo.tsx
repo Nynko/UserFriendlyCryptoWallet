@@ -18,6 +18,8 @@ import {getAddressFromPseudo} from '../../functions/solana/getAddressFromPseudo'
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {mainStyle} from '../../../styles/style';
 import {TypedError} from '../../Errors/TypedError';
+import {ChevronLeft} from '@tamagui/lucide-icons';
+import {onboardingStyle} from '../OnboardingStyle';
 
 type PersonalInfoScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -56,38 +58,45 @@ export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={[typography.thinTitle, styles.center]}>
-          {t('choosePseudo')}
-        </Text>
-        <Text style={[typography.titleText, styles.center, styles.spacing]}>
-          {t('pseudoArePublic')}
-        </Text>
-        <View style={{marginTop: 40}}>
-          <Text style={styles.center}>{t('choosePseudo')}</Text>
-          <Controller
-            control={control}
-            name="pseudo"
-            render={({field: {onChange, value}}) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={e => {
-                  setError(null);
-                  onChange(e);
-                }}
-                value={value}
-              />
+    <>
+      <ChevronLeft
+        onPress={navigation.goBack}
+        style={onboardingStyle.ChevronLeftIcon}
+        size={50}
+      />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={[typography.thinTitle, styles.center]}>
+            {t('choosePseudo')}
+          </Text>
+          <Text style={[typography.titleText, styles.center, styles.spacing]}>
+            {t('pseudoArePublic')}
+          </Text>
+          <View style={{marginTop: 40}}>
+            <Text style={styles.center}>{t('choosePseudo')}</Text>
+            <Controller
+              control={control}
+              name="pseudo"
+              render={({field: {onChange, value}}) => (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={e => {
+                    setError(null);
+                    onChange(e);
+                  }}
+                  value={value}
+                />
+              )}
+            />
+            {error && (
+              <Text style={[mainStyle.errorText, styles.center]}>{error}</Text>
             )}
-          />
-          {error && (
-            <Text style={[mainStyle.errorText, styles.center]}>{error}</Text>
-          )}
+          </View>
+          <View style={{marginTop: 40}}>
+            <Button title={t('next')} onPress={onNext} />
+          </View>
         </View>
-        <View style={{marginTop: 40}}>
-          <Button title={t('next')} onPress={onNext} />
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
 import LinearGradient, {
   LinearGradientProps,
 } from 'react-native-linear-gradient';
-import {Button, View} from 'tamagui';
+import {Button, ButtonProps, View} from 'tamagui';
 
 // Defined in tamagui/web/src
 type LooseCombinedObjects<A extends Object, B extends Object> = A | B | (A & B);
@@ -15,6 +15,7 @@ export interface GradientButtonProps {
   children?: React.ReactNode;
   borderWidth: number;
   linearGradientProps: LinearGradientProps;
+  buttonProps?: ButtonProps;
 }
 
 export const GradientButton = memo(
@@ -24,6 +25,7 @@ export const GradientButton = memo(
     children,
     borderWidth,
     linearGradientProps,
+    buttonProps,
   }: GradientButtonProps) => {
     return (
       <View style={viewStyle}>
@@ -43,12 +45,14 @@ export const GradientButton = memo(
               />
             }>
             <LinearGradient {...linearGradientProps}>
-              <Button style={[buttonStyle]} />
+              <Button {...buttonProps} style={[buttonStyle]} />
             </LinearGradient>
           </MaskedView>
         </View>
         <View>
-          <Button style={[buttonStyle]}>{children}</Button>
+          <Button {...buttonProps} style={[buttonStyle]}>
+            {children}
+          </Button>
         </View>
       </View>
     );

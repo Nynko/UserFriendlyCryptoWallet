@@ -2,7 +2,6 @@ import {SolanaSubscriptionLogic} from './components/SolanaSubscriptionLogic';
 import {Layout} from './components/utils/Layout';
 import MainConnected from './MainConnected';
 import {OnboardingMain} from './onboarding/OnboardingMain';
-import LaunchingScreen from './onboarding/Test';
 import {useIsStoreInitialized} from './store/selectors';
 
 let counter = 0;
@@ -21,8 +20,7 @@ export function Main() {
       <>
         <SolanaSubscriptionLogic />
         <Layout>
-          {/* <MainConnected /> */}
-          <LaunchingScreen />
+          <MainConnected />
         </Layout>
       </>
     );

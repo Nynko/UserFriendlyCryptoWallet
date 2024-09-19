@@ -6,9 +6,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 20,
   },
-  flag: {
-    fontSize: 24,
-  },
   spacing: {
     marginTop: 20, // Add spacing between the texts
   },

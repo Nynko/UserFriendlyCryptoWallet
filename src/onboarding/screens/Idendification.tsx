@@ -1,12 +1,4 @@
-import {
-  Button,
-  Keyboard,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import {typography} from '../../../styles/typography';
+import {Dimensions, StyleSheet} from 'react-native';
 
 import {useForm, Controller} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -20,6 +12,13 @@ type PersonalInfoScreenProps = NativeStackScreenProps<
 import {useTranslation} from 'react-i18next';
 import {styles} from './styles';
 import {useState} from 'react';
+import {ChevronLeft} from '@tamagui/lucide-icons';
+import {onboardingStyle} from '../OnboardingStyle';
+import {Button, Input, Text, View, YStack} from 'tamagui';
+import {GradientButtonStyled} from '../../components/Buttons/GradientButtonStyled/GradientButtonStyled';
+
+const {height} = Dimensions.get('window');
+const gapRatio = height * 0.01;
 
 export function Idendification({navigation}: PersonalInfoScreenProps) {
   const {control, getValues} = useForm<IdentificationFormData>();
@@ -33,72 +32,112 @@ export function Idendification({navigation}: PersonalInfoScreenProps) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={[typography.thinTitle, styles.center]}>
-          {t('accountCreation')}
-        </Text>
-        <View style={{marginTop: 40}}>
-          <Text style={styles.center}>{t('firstName')}</Text>
-          <Controller
-            control={control}
-            name="firstName"
-            render={({field: {onChange, value}}) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-          />
-          <Text style={styles.center}>{t('lastName')}</Text>
-          <Controller
-            control={control}
-            name="lastName"
-            render={({field: {onChange, value}}) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-          />
-          <Text style={styles.center}>{t('dateOfBirth')}</Text>
-          <Controller
-            control={control}
-            name="dateOfBirth"
-            render={({field: {onChange, value}}) => (
-              <>
-                <TextInput
-                  // readOnly={true} // TODO: To change for android
-                  style={[styles.input, styles.dateInput]}
-                  value={value ? value.toLocaleDateString() : t('clickHere')}
-                  onPress={() => {
-                    setOpen(true);
-                  }}
+    <>
+      <ChevronLeft
+        onPress={navigation.goBack}
+        style={onboardingStyle.ChevronLeftIcon}
+        size={50}
+      />
+      <YStack
+        style={onboardingStyle.containerCenteredHorizontal}
+        gap={10 * gapRatio}>
+        <YStack style={onboardingStyle.titlesContainer}>
+          <Text style={[onboardingStyle.screenTitle, styles.center]}>
+            {t('onboarding:accountCreation')}
+          </Text>
+        </YStack>
+        <YStack gap={4 * gapRatio}>
+          <YStack style={onboardingStyle.inputContainer}>
+            <Text style={onboardingStyle.textAboveInput}>{t('lastName')}</Text>
+            <Controller
+              control={control}
+              name="lastName"
+              render={({field: {onChange, value}}) => (
+                <Input
+                  placeholder={t('lastName')}
+                  placeholderTextColor={'rgba(235, 237, 248, 0.4)'}
+                  borderWidth={2}
+                  borderColor={'rgba(235, 237, 248, 0.4)'}
+                  borderRadius={7}
+                  style={onboardingStyle.input}
+                  onChangeText={onChange}
+                  value={value}
                 />
-                <DatePicker
-                  modal
-                  mode="date"
-                  open={open}
-                  date={date}
-                  onConfirm={date => {
-                    setOpen(false);
-                    setDate(date);
-                    onChange(date);
-                  }}
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
+              )}
+            />
+          </YStack>
+          <YStack style={onboardingStyle.inputContainer}>
+            <Text style={onboardingStyle.textAboveInput}>{t('firstName')}</Text>
+            <Controller
+              control={control}
+              name="firstName"
+              render={({field: {onChange, value}}) => (
+                <Input
+                  placeholder={t('firstName')}
+                  placeholderTextColor={'rgba(235, 237, 248, 0.4)'}
+                  borderWidth={2}
+                  borderColor={'rgba(235, 237, 248, 0.4)'}
+                  borderRadius={7}
+                  style={onboardingStyle.input}
+                  onChangeText={onChange}
+                  value={value}
                 />
-              </>
-            )}
-          />
-        </View>
-        <View style={{marginTop: 40}}>
-          <Button title={t('next')} onPress={onNext} />
-        </View>
+              )}
+            />
+          </YStack>
+          <YStack style={onboardingStyle.inputContainer}>
+            <Text style={onboardingStyle.textAboveInput}>
+              {t('dateOfBirth')}
+            </Text>
+            <Controller
+              control={control}
+              name="dateOfBirth"
+              render={({field: {onChange, value}}) => (
+                <>
+                  <Button
+                    borderWidth={2}
+                    borderColor={'rgba(235, 237, 248, 0.4)'}
+                    borderRadius={7}
+                    style={onboardingStyle.input}
+                    onPress={() => {
+                      setOpen(true);
+                    }}>
+                    <Text>
+                      {value ? value.toLocaleDateString() : t('clickHere')}
+                    </Text>
+                  </Button>
+                  <DatePicker
+                    modal
+                    mode="date"
+                    open={open}
+                    date={date}
+                    onConfirm={date => {
+                      setOpen(false);
+                      setDate(date);
+                      onChange(date);
+                    }}
+                    onCancel={() => {
+                      setOpen(false);
+                    }}
+                  />
+                </>
+              )}
+            />
+          </YStack>
+        </YStack>
+      </YStack>
+
+      <View
+        style={[
+          onboardingStyle.container,
+          StyleSheet.absoluteFill,
+          onboardingStyle.buttonContainer,
+          onboardingStyle.index1,
+        ]}>
+        <GradientButtonStyled onPress={onNext}>
+          <Text style={onboardingStyle.buttonText}>{t('next')}</Text>
+        </GradientButtonStyled>
       </View>
-    </TouchableWithoutFeedback>
+    </>
   );
 }
