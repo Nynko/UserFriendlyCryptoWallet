@@ -15,7 +15,7 @@ import {useState} from 'react';
 import {ChevronLeft} from '@tamagui/lucide-icons';
 import {onboardingStyle} from '../OnboardingStyle';
 import {Button, Input, Text, View, YStack} from 'tamagui';
-import {GradientButtonStyled} from '../../components/Buttons/GradientButtonStyled/GradientButtonStyled';
+import {GradientButton} from '../../components/Buttons/GradientButton';
 import {KeyboardDismissPressable} from '../../components/KeyboardDismiss';
 
 const {width, height} = Dimensions.get('window');
@@ -136,9 +136,9 @@ export function Idendification({navigation}: PersonalInfoScreenProps) {
           onboardingStyle.buttonContainer,
           onboardingStyle.index1,
         ]}>
-        <GradientButtonStyled onPress={onNext}>
+        <GradientButton onPress={onNext}>
           <Text style={onboardingStyle.buttonText}>{t('next')}</Text>
-        </GradientButtonStyled>
+        </GradientButton>
       </View>
     </KeyboardDismissPressable>
   );

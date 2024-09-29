@@ -11,6 +11,22 @@ export function useBoolState(init?: boolean): [boolean, () => void] {
   ];
 }
 
+export function useBoolStateTwoSet(
+  init?: boolean,
+): [boolean, () => void, () => void] {
+  const [boolValue, setBoolValue] = useState<boolean>(init || false);
+
+  return [
+    boolValue,
+    () => {
+      setBoolValue(true);
+    },
+    () => {
+      setBoolValue(false);
+    },
+  ];
+}
+
 export function useBoolStateOnce(): [boolean, () => void] {
   const [boolValue, setBoolValue] = useState<boolean>(false);
 

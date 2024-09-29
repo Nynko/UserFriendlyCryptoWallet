@@ -10,7 +10,7 @@ import {Text, View} from 'tamagui';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../OnboardingMain';
 import {useTranslation} from 'react-i18next';
-import {GradientButtonStyled} from '../../components/Buttons/GradientButtonStyled/GradientButtonStyled';
+import {GradientButton} from '../../components/Buttons/GradientButton';
 import {onboardingStyle} from '../OnboardingStyle';
 import FastImage from 'react-native-fast-image';
 
@@ -121,11 +121,11 @@ export const WelcomeScreen = ({navigation}: Props) => {
           onboardingStyle.buttonContainer,
           onboardingStyle.index1,
         ]}>
-        <GradientButtonStyled onPress={onNext}>
+        <GradientButton onPress={onNext}>
           <Text style={onboardingStyle.buttonText}>
             {t('onboarding:GetStarted')}
           </Text>
-        </GradientButtonStyled>
+        </GradientButton>
       </View>
     </>
   );

@@ -4,7 +4,7 @@ import {RootStackParamList} from '../OnboardingMain';
 import {useTranslation} from 'react-i18next';
 import {ChevronLeft} from '@tamagui/lucide-icons';
 import {Button, View, YStack} from 'tamagui';
-import {GradientButtonStyled} from '../../components/Buttons/GradientButtonStyled/GradientButtonStyled';
+import {GradientButton} from '../../components/Buttons/GradientButton';
 import {onboardingStyle} from '../OnboardingStyle';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Langues'>;
@@ -63,9 +63,9 @@ export function Langues({navigation}: Props) {
           onboardingStyle.buttonContainer,
           onboardingStyle.index1,
         ]}>
-        <GradientButtonStyled onPress={onNext}>
+        <GradientButton onPress={onNext}>
           <Text style={onboardingStyle.buttonText}>{t('next')}</Text>
-        </GradientButtonStyled>
+        </GradientButton>
       </View>
     </>
   );

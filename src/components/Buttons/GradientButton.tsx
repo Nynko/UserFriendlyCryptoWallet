@@ -1,11 +1,20 @@
-import {memo} from 'react';
-import {GradientButtonOpacity} from '../GradientButton/GradientButtonOpacity';
+import {memo, useState} from 'react';
 import {Dimensions, StyleSheet} from 'react-native';
+import {GradientContoursComponent} from '../GradientContoursComponent';
+import {Button, ButtonProps} from 'tamagui';
 
-export const GradientButtonStyled = memo(
+export const GradientButton = memo(
   ({onPress, children}: {onPress: () => void; children: React.ReactNode}) => {
+    const [opacity, setOpacity] = useState(1);
+
+    const buttonStyle = StyleSheet.flatten(styles.button) || {};
+    const combinedButtonStyle = {
+      ...buttonStyle,
+      opacity,
+    };
+
     return (
-      <GradientButtonOpacity
+      <GradientContoursComponent
         children={children}
         borderWidth={borderWidth}
         linearGradientProps={{
@@ -14,8 +23,15 @@ export const GradientButtonStyled = memo(
           end: {x: 1, y: 0},
           style: styles.gradientBorder,
         }}
-        buttonStyle={styles.button}
-        buttonProps={{onPress: onPress}}
+        Component={Button}
+        componentStyle={combinedButtonStyle}
+        componentProps={
+          {
+            onPress: onPress,
+            onPressIn: () => setOpacity(0.6),
+            onPressOut: () => setOpacity(0.8),
+          } as ButtonProps
+        }
       />
     );
   },
