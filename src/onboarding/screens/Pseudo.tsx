@@ -14,7 +14,7 @@ import {ChevronLeft} from '@tamagui/lucide-icons';
 import {onboardingStyle} from '../OnboardingStyle';
 import {KeyboardDismissPressable} from '../../components/KeyboardDismiss';
 import {Input, YStack} from 'tamagui';
-import {GradientButtonStyled} from '../../components/Buttons/GradientButtonStyled/GradientButtonStyled';
+import {GradientButton} from '../../components/Buttons/GradientButton';
 import {
   commitAccount,
   create_account,
@@ -26,6 +26,7 @@ import {getWrappedTokenAddress} from '../../functions/solana/getDerivedAddresses
 import {DLT, DltAccount} from '../../types/account';
 import {appStore} from '../../store/zustandStore';
 import {produce} from 'immer';
+import {useBoolStateTwoSet} from '../../hooks/useBoolState';
 
 type PersonalInfoScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -44,6 +45,7 @@ export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
   const [error, setError] = useState<String | null>(null);
   const {t} = useTranslation();
   const {identification} = route.params;
+  const [lock, setLock, unlock] = useBoolStateTwoSet();
 
   const onNext = async () => {
     const data = getValues();
@@ -236,41 +238,16 @@ export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
           onboardingStyle.buttonContainer,
           onboardingStyle.index1,
         ]}>
-        <GradientButtonStyled onPress={onNext}>
+        <GradientButton
+          onPress={() => {
+            if (!lock) {
+              setLock();
+              onNext().then(unlock);
+            }
+          }}>
           <Text style={onboardingStyle.buttonText}>{t('next')}</Text>
-        </GradientButtonStyled>
+        </GradientButton>
       </View>
-      {/* <View style={styles.container}>
-        <Text style={[typography.thinTitle, styles.center]}>
-          {t('choosePseudo')}
-        </Text>
-        <Text style={[typography.titleText, styles.center, styles.spacing]}>
-          {t('pseudoArePublic')}
-        </Text>
-        <View style={{marginTop: 40}}>
-          <Text style={styles.center}>{t('choosePseudo')}</Text>
-          <Controller
-            control={control}
-            name="pseudo"
-            render={({field: {onChange, value}}) => (
-              <TextInput
-                style={styles.input}
-                onChangeText={e => {
-                  setError(null);
-                  onChange(e);
-                }}
-                value={value}
-              />
-            )}
-          />
-          {error && (
-            <Text style={[mainStyle.errorText, styles.center]}>{error}</Text>
-          )}
-        </View>
-        <View style={{marginTop: 40}}>
-          <Button title={t('next')} onPress={onNext} />
-        </View>
-      </View> */}
     </KeyboardDismissPressable>
   );
 }
