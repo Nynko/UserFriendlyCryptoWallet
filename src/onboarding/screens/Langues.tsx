@@ -11,6 +11,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Langues'>;
 
 const {height, width} = Dimensions.get('window');
 const gapRatio = height * 0.01;
+const widthRatio = width * 0.01;
 
 export function Langues({navigation}: Props) {
   const {t, i18n} = useTranslation();
@@ -23,7 +24,7 @@ export function Langues({navigation}: Props) {
       <ChevronLeft
         onPress={navigation.goBack}
         style={onboardingStyle.ChevronLeftIcon}
-        size={50}
+        size={13 * widthRatio} // 50
       />
       <YStack
         style={onboardingStyle.containerCenteredHorizontal}

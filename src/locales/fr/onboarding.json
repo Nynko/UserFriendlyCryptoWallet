@@ -2,5 +2,8 @@
   "GetStarted": "Commencer",
   "RedefineMoneyTransfers": "Redéfinir les paiements grâce à \nla puissance de la",
   "chooseLanguage": "Choisissez votre langue",
-  "accountCreation": "Créer ton compte"
+  "accountCreation": "Créer ton compte",
+  "choosePseudo": "Choisis ton pseudo",
+  "pseudoArePublicAndUnique": "Les pseudos sont publics et uniques",
+  "pseudoRequired": "Un pseudo est requis"
 }

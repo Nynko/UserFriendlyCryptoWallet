@@ -2,5 +2,8 @@
   "GetStarted": "Get Started",
   "RedefineMoneyTransfers": "Redefine money transfers with the \npower of",
   "chooseLanguage": "Choose your language",
-  "accountCreation": "Create your account"
+  "accountCreation": "Create your account",
+  "choosePseudo": "Choose your pseudo",
+  "pseudoArePublicAndUnique": "Pseudos are public and unique",
+  "pseudoRequired": "A pseudo is required"
 }

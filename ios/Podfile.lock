@@ -1249,7 +1249,7 @@ PODS:
     - SDWebImageWebPCoder (~> 0.8.4)
   - RNKeychain (8.2.0):
     - React-Core
-  - RNReanimated (3.15.2):
+  - RNReanimated (3.15.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1269,10 +1269,10 @@ PODS:
     - React-utils
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.15.2)
-    - RNReanimated/worklets (= 3.15.2)
+    - RNReanimated/reanimated (= 3.15.3)
+    - RNReanimated/worklets (= 3.15.3)
     - Yoga
-  - RNReanimated/reanimated (3.15.2):
+  - RNReanimated/reanimated (3.15.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1293,7 +1293,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.15.2):
+  - RNReanimated/worklets (3.15.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1663,7 +1663,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNKeychain: bfe3d12bf4620fe488771c414530bf16e88f3678
-  RNReanimated: 70454122c0c5cf9b661d5a505c3408f29c85b180
+  RNReanimated: 09ea7d18be5cac02e06daeee982c7f6a945c5478
   RNScreens: aa943ad421c3ced3ef5a47ede02b0cbfc43a012e
   RNSensors: 117ba71c7eeeea0407ea0c0bb79e3495d602049b
   RNSVG: 5da7a24f31968ec74f0b091e3440080f347e279b
