@@ -34,7 +34,14 @@ export const GradientContoursComponent = memo(
     Component,
     componentProps,
   }: GradientContoursComponentProps<P>) => {
-    const combinedStyle = [
+    const transparentStyle = [
+      componentStyle,
+      {
+        backgroundColor: 'transparent',
+      },
+    ];
+
+    const combinedStyleContour = [
       componentStyle,
       {
         backgroundColor: 'transparent',
@@ -49,10 +56,13 @@ export const GradientContoursComponent = memo(
         <View style={[StyleSheet.absoluteFill, {zIndex: 1}]}>
           <MaskedView
             maskElement={
-              <Component {...(componentProps as P)} style={combinedStyle} />
+              <Component
+                {...(componentProps as P)}
+                style={combinedStyleContour}
+              />
             }>
             <LinearGradient {...linearGradientProps}>
-              <Component {...(componentProps as P)} style={componentStyle} />
+              <Component {...(componentProps as P)} style={transparentStyle} />
             </LinearGradient>
           </MaskedView>
         </View>
