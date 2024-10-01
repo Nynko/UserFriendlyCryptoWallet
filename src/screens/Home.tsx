@@ -16,7 +16,10 @@ import {usePrice} from '../store/selectors';
 import {SelectedMint} from '../functions/dlts/SelectedMint';
 import {ActiveComponent} from '../types/components/ActiveComponent';
 import {HomeMain} from '../components/HomeMain';
-import {View} from 'tamagui';
+import {View, XStack, YStack} from 'tamagui';
+import {Dimensions, StyleSheet} from 'react-native';
+import {HomeLastTransaction} from '../components/Transactions/Home/HomeLastTransaction';
+// import {Home as HomeIcon} from '@tamagui/lucide-icons';
 
 let counterHome = 0;
 /* isBalanceReloading balances has no semantic, it will switch from true to false and opposite just to reload the balances 
@@ -56,31 +59,56 @@ export function Home() {
   console.log('Rendering Home component');
   return (
     <RefreshView otherRefreshAsync={[reloadBalances, reloadPrice]}>
-      <Balances setSelectedMint={setSelectedMint} selectedMint={selectedMint} />
-      <View style={mainStyle.flexYcentered}>
-        {activeComponent === ActiveComponent.None && (
-          <HomeMain
-            selectedMint={selectedMint}
-            priceOfSeletedMint={priceOfSeletedMint}
-            setActiveComponent={setActiveComponent}
-          />
-        )}
+      <YStack gap={50 * gapRatio}>
+        <Balances
+          setSelectedMint={setSelectedMint}
+          selectedMint={selectedMint}
+        />
+        <View>
+          {activeComponent === ActiveComponent.None && (
+            <HomeMain
+              selectedMint={selectedMint}
+              setSelectedMint={setSelectedMint}
+              priceOfSeletedMint={priceOfSeletedMint}
+              setActiveComponent={setActiveComponent}
+            />
+          )}
 
-        {activeComponent === ActiveComponent.SendComponent && (
-          <Send
-            selectedMint={selectedMint}
-            setSelectedMint={setSelectedMint}
-            setActiveComponent={setActiveComponent}
-          />
-        )}
-        {activeComponent === ActiveComponent.ReceiveComponent && pk && (
-          <Receive
-            pk={pk}
-            selectedMint={selectedMint}
-            setActiveComponent={setActiveComponent}
-          />
-        )}
-      </View>
+          {activeComponent === ActiveComponent.SendComponent && (
+            <Send
+              selectedMint={selectedMint}
+              setSelectedMint={setSelectedMint}
+              closingFunction={() => setActiveComponent(ActiveComponent.None)}
+            />
+          )}
+          {activeComponent === ActiveComponent.ReceiveComponent && pk && (
+            <Receive
+              pk={pk}
+              selectedMint={selectedMint}
+              setActiveComponent={setActiveComponent}
+            />
+          )}
+        </View>
+        <View style={[style.container]}>
+          <HomeLastTransaction />
+        </View>
+      </YStack>
     </RefreshView>
   );
 }
+
+const {height} = Dimensions.get('window');
+const gapRatio = height * 0.001;
+const style = StyleSheet.create({
+  container: {
+    // flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    top: height * 0.3,
+  },
+  index0: {
+    zIndex: 0,
+  },
+});

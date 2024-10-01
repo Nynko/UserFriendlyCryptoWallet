@@ -1,12 +1,10 @@
-import {appStore} from '../../store/zustandStore';
+import {useTransactions} from '../../store/selectors';
 import {DLT} from '../../types/account';
 import {Transactions} from './Transactions';
 import {YGroup} from 'tamagui';
 
 export function TransactionHistory() {
-  const transactions = appStore(state => state.dlts[DLT.SOLANA].transactions)
-    .slice()
-    .reverse();
+  const transactions = useTransactions(DLT.SOLANA).slice().reverse();
   return (
     <>
       {transactions.length !== 0 &&

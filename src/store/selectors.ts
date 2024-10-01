@@ -16,7 +16,7 @@ export function useIsStoreInitialized() {
 }
 
 export function useTransactions(dlt: DLT) {
-  return appStore(state => state.dlts[dlt].transactions);
+  return appStore(useShallow(state => state.dlts[dlt].transactions));
 }
 
 export function useMintTransactions(dlt: DLT, wrapper: string, mint: string) {

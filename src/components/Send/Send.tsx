@@ -14,18 +14,17 @@ import {
   isSelectedMintEquals,
   SelectedMint,
 } from '../../functions/dlts/SelectedMint';
-import {ActiveComponent} from '../../types/components/ActiveComponent';
 import {Button, YStack} from 'tamagui';
 import {useMintAddresses, useMintDecimals} from '../../store/selectors';
 
 export function Send({
   selectedMint,
   setSelectedMint,
-  setActiveComponent,
+  closingFunction,
 }: {
   selectedMint: SelectedMint;
   setSelectedMint: Dispatch<SetStateAction<SelectedMint>>;
-  setActiveComponent: Dispatch<SetStateAction<ActiveComponent>>;
+  closingFunction: () => void;
 }) {
   const [qrScannerActivated, activateQrScanner] = useBoolState();
   const [received, setReceived] = useState<string | null>(null);
@@ -137,10 +136,8 @@ export function Send({
         />
       )}
 
-      <YStack flex={1} justifyContent="flex-end">
-        <Button onPress={() => setActiveComponent(ActiveComponent.None)}>
-          {t('BackHome')}
-        </Button>
+      <YStack justifyContent="flex-end">
+        <Button onPress={() => closingFunction()}>{t('BackHome')}</Button>
       </YStack>
     </YStack>
   );
