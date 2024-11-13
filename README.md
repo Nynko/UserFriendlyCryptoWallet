@@ -7,8 +7,10 @@ There is a way to also implement stellar in it with this work : https://github.c
 
 **Overall, still WIP, not fully clean, not always DRY.** But functionnal !
 
-<img src="./src/onboarding/assets/Home-mockup.png" alt="Home" width="200"/>
-<img src="./src/onboarding/assets/Transactions-mockup.png" alt="Transactions" width="200"/>
+<p align="middle">
+<img src="./src/onboarding/assets/Home-mockup.png" alt="Home" width=200>
+<img src="./src/onboarding/assets/Transactions-mockup.png" alt="Transactions" width=200>
+</p>
 
 Figma Design by Heloise Suat.
 
