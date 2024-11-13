@@ -7,11 +7,14 @@ There is a way to also implement stellar in it with this work : https://github.c
 
 **Overall, still WIP, not fully clean, not always DRY.** But functionnal !
 
+<img src="./src/onboarding/assets/Home-mockup.png" alt="Home" width="200"/>
+<img src="./src/onboarding/assets/Transactions-mockup.png" alt="Transactions" width="200"/>
+
 Figma Design by Heloise Suat.
 
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
 # Getting Started
+
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 > **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
