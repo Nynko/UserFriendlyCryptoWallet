@@ -2,6 +2,7 @@ import * as anchor from '@coral-xyz/anchor';
 // DLT= Distributed Ledger Technology
 export enum DLT {
   SOLANA = 'solana',
+  // STELLAR = 'stellar',
   // ETHEREUM = 'ethereum',
   // POLYGON = 'polygon',
   // CARDANO = 'cardano',
