@@ -177,14 +177,7 @@ export async function commitAccount(
 
   const txSig = await program.provider.connection.sendRawTransaction(rawTx3);
 
-  const confirmStrategy: anchor.web3.BlockheightBasedTransactionConfirmationStrategy =
-    {
-      blockhash: blockhash.value.blockhash,
-      lastValidBlockHeight: blockhash.value.lastValidBlockHeight,
-      signature: txSig,
-    };
-
-  await program.provider.connection.confirmTransaction(confirmStrategy);
+  await program.provider.connection.getSignatureStatus(txSig);
 
   console.log('Finish creating account');
 }

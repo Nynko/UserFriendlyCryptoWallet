@@ -7,6 +7,7 @@ import {produce} from 'immer';
 import {DLT, NativeTransaction, Transaction} from '../types/account';
 import {getPriceEur} from '../functions/prices/get_prices';
 import {setTx} from '../functions/solana/setTx';
+import {getPseudo} from '../functions/solana/getPseudo';
 
 export async function reloadBalanceSolana(
   wrappedAccount: anchor.web3.PublicKey,
@@ -178,4 +179,21 @@ export async function fetchPrice(dlt: DLT, mint: string) {
       draftState.dlts[dlt].prices[mint] = price;
     }),
   );
+}
+
+export async function fetchPseudo(
+  address: anchor.web3.PublicKey,
+  program: Program<AssetBased>,
+): Promise<string | null> {
+  const state = appStore.getState();
+  const pseudo = await getPseudo(address, program);
+
+  appStore.setState(
+    produce(state, draftState => {
+      draftState.knownPseudos[address.toBase58()] =
+        pseudo || address.toBase58();
+    }),
+  );
+
+  return pseudo;
 }

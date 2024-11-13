@@ -4,7 +4,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import {Settings} from './screens/Settings';
 import {Transactions} from './screens/Transactions';
 import {Dimensions, ImageBackground, StyleSheet} from 'react-native';
-import backgroungImage from './assets/Background.png';
+import backgroungImage from './assets/Background/Background.png';
 import {styles2} from './screens/Style';
 import {
   Home as HomeIcon,
@@ -24,12 +24,9 @@ const navTheme = {
   },
 };
 
-let counter = 0;
 const {width: screenWidth} = Dimensions.get('window');
 
 function MainConnected(): React.JSX.Element {
-  counter++;
-  console.log('MainConnected rendered', counter);
   return (
     <>
       <ImageBackground
@@ -44,6 +41,7 @@ function MainConnected(): React.JSX.Element {
             tabBarStyle: {
               backgroundColor: 'transparent',
               borderTopWidth: 0,
+              shadowColor: 'transparent',
             },
             tabBarLabelStyle: {
               width: screenWidth / 3, // Adjust the width as needed
@@ -51,9 +49,12 @@ function MainConnected(): React.JSX.Element {
             },
             tabBarActiveTintColor: 'white',
             tabBarInactiveTintColor: 'gray',
+            tabBarPressColor: 'transparent',
           }}>
           <Tab.Screen
-            options={{tabBarIcon: ({color}) => <SettingsIcon color={color} />}}
+            options={{
+              tabBarIcon: ({color}) => <SettingsIcon color={color} />,
+            }}
             name="Settings"
             component={Settings}
           />

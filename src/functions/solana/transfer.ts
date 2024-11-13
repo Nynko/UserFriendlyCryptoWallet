@@ -91,14 +91,7 @@ export async function transferToken(
       }
     });
 
-  const confirmStrategy: anchor.web3.BlockheightBasedTransactionConfirmationStrategy =
-    {
-      blockhash: blockhash.value.blockhash,
-      lastValidBlockHeight: blockhash.value.lastValidBlockHeight,
-      signature: txSig,
-    };
-
-  await program.provider.connection.confirmTransaction(confirmStrategy);
+  await program.provider.connection.getSignatureStatus(txSig);
 
   console.log(`Transfer (wrapped) raw tx : ${txSig}`);
 

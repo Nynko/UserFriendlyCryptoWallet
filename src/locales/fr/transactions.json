@@ -1,5 +1,6 @@
 {
   "IncomingFrom": "Reçu de",
   "OutgoingTo": "Envoyé à",
-  "SelfTransfer": "Transfert interne"
+  "SelfTransfer": "Transfert interne",
+  "TransactionSubmitted": "Transaction envoyée !"
 }

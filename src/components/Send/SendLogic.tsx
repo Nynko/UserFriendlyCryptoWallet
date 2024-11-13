@@ -10,6 +10,7 @@ import {DLT} from '../../types/account';
 import {useTranslation} from 'react-i18next';
 import {useDltAccount} from '../../store/selectors';
 import {Button, Spinner} from 'tamagui';
+import {useBoolStateTwoSet} from '../../hooks/useBoolState';
 
 export function SendLogic({
   pk,
@@ -31,7 +32,7 @@ export function SendLogic({
   const {t} = useTranslation();
   const program = useAnchorProgram().program;
   const account = useDltAccount(DLT.SOLANA);
-
+  const [lock, setLock, unlock] = useBoolStateTwoSet();
   const mintPk = new anchor.web3.PublicKey(mint);
   const wrapperPk = new anchor.web3.PublicKey(wrapper);
   const approver = account.wrappers[wrapperPk.toBase58()].addresses.approver;
@@ -77,7 +78,12 @@ export function SendLogic({
     <>
       <Button
         icon={status === 'submitting' ? () => <Spinner /> : undefined}
-        onPress={getAndTransfer}>
+        onPress={() => {
+          if (!lock) {
+            setLock();
+            getAndTransfer().finally(unlock);
+          }
+        }}>
         {t('Send')}
       </Button>
     </>

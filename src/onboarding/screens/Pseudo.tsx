@@ -242,7 +242,7 @@ export function Pseudo({navigation, route}: PersonalInfoScreenProps) {
           onPress={() => {
             if (!lock) {
               setLock();
-              onNext().then(unlock);
+              onNext().finally(unlock);
             }
           }}>
           <Text style={onboardingStyle.buttonText}>{t('next')}</Text>

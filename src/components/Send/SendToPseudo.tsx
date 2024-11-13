@@ -13,6 +13,9 @@ import {transferToken} from '../../functions/solana/transfer';
 import {DLT} from '../../types/account';
 import {TypedError} from '../../Errors/TypedError';
 import {TOKEN_PROGRAM_ID} from '../../const';
+import {useBoolStateTwoSet} from '../../hooks/useBoolState';
+import {Dimensions, StyleSheet} from 'react-native';
+import {styles2} from '../../screens/Style';
 
 export function SendToPseudo({
   error,
@@ -41,6 +44,7 @@ export function SendToPseudo({
   const mintPk = new anchor.web3.PublicKey(selectedMint.mint);
   const wrapperPk = new anchor.web3.PublicKey(selectedMint.wrapper);
   const approver = account.wrappers[wrapperPk.toBase58()].addresses.approver;
+  const [lock, setLock, unlock] = useBoolStateTwoSet();
 
   async function getAndTransfer(val: number) {
     const pubk = await getAddressFromPseudo(pseudo, program);
@@ -80,19 +84,22 @@ export function SendToPseudo({
         if (e instanceof TypedError) {
           console.log(e.toStringComplete());
           setError(t(e.toString()));
+          throw e;
         } else {
           console.log(e);
           setError(t('An error occured'));
-
+          throw e;
           // Send to us the error
         }
       });
   }
 
   return (
-    <YStack padding="$1" gap="$4">
+    <YStack style={{alignItems: 'center'}} padding="$1" gap="$4">
       <Input
         placeholder="Pseudo"
+        style={style.input}
+        color={'black'}
         value={pseudo}
         onChangeText={text => {
           setPseudo(text);
@@ -102,7 +109,9 @@ export function SendToPseudo({
         }}
       />
       <NumericInput
+        style={style.input}
         value={value}
+        color={'black'}
         setValue={text => {
           setValue(text);
           if (error) {
@@ -110,13 +119,47 @@ export function SendToPseudo({
           }
         }}
       />
-      {value && (
-        <Button
-          icon={status === 'submitting' ? () => <Spinner /> : undefined}
-          onPress={() => getAndTransfer(Number(value) * 10 ** decimals)}>
-          {t('Send')}
-        </Button>
-      )}
+
+      <Button
+        icon={status === 'submitting' ? () => <Spinner /> : undefined}
+        style={styles2.button}
+        onPress={() => {
+          if (!lock) {
+            setLock();
+            getAndTransfer(Number(value) * 10 ** decimals).finally(unlock);
+          }
+        }}>
+        {t('Send')}
+      </Button>
     </YStack>
   );
 }
+
+const {height} = Dimensions.get('window');
+const style = StyleSheet.create({
+  input: {
+    width: 200,
+    backgroundColor: '#ffffff',
+    borderColor: 'rgba(132, 132, 132, 0.8)',
+    fontSize: 16 * height * 0.001,
+    fontFamily: 'Montserrat-Regular',
+    // height: 40 * height * 0.001,
+    // fontSize: 16 * height * 0.001,
+    // fontFamily: 'Montserrat-Regular',
+    // color: '#fff',
+    // textAlign: 'left',
+  },
+  // pseudo: {
+  //   fontWeight: '300',
+  //   fontSize: 16 * height * 0.001,
+  //   fontFamily: 'Montserrat-Regular',
+  //   color: '#fff',
+  //   textAlign: 'left',
+  // },
+  // value: {
+  //   fontWeight: '300',
+  //   fontSize: 16 * height * 0.001,
+  //   fontFamily: 'Montserrat-Regular',
+  //   textAlign: 'right',
+  // },
+});

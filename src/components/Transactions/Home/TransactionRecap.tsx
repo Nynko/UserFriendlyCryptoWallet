@@ -1,11 +1,11 @@
 import {Dimensions, StyleSheet, Text} from 'react-native';
 import {Direction, DLT, Transaction} from '../../../types/account';
 import {useMintAddresses, usePseudos} from '../../../store/selectors';
-import {ListItem, Spinner, View, XStack} from 'tamagui';
+import {Spinner, View, XStack} from 'tamagui';
 import * as anchor from '@coral-xyz/anchor';
 import {useAnchorProgram} from '../../../hooks/contexts/useAnchorProgram';
 import {useEffect, useState} from 'react';
-import {getPseudo} from '../../../functions/solana/getPseudo';
+import {fetchPseudo} from '../../../store/actions';
 
 interface TransactionComponentProps {
   transaction: Transaction;
@@ -21,21 +21,20 @@ export function TransactionRecap({transaction}: TransactionComponentProps) {
 
   const pseudos = usePseudos();
   const program = useAnchorProgram().program;
-
-  const [pseudo, setPseudo] = useState<string | null>(null);
   const addressBase58 = transaction.address.toBase58();
-  const cachedPseudo = pseudos[addressBase58];
+  const cachedPseudo = pseudos[addressBase58] || null;
+  const [pseudo, setPseudo] = useState<string | null>(cachedPseudo);
 
   useEffect(() => {
     const updateLocalPseudo = async (address: anchor.web3.PublicKey) => {
-      const fetchedPseudo = await getPseudo(address, program);
+      const fetchedPseudo = await fetchPseudo(address, program);
       setPseudo(fetchedPseudo || addressBase58);
     };
 
     if (!cachedPseudo) {
       updateLocalPseudo(transaction.address);
     }
-  }, [cachedPseudo, pseudos, program, addressBase58, transaction.address]);
+  }, [cachedPseudo, program, addressBase58, transaction.address]);
 
   let minus = '';
   let color = '#ffffff';

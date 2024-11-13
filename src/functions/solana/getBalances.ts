@@ -31,7 +31,11 @@ export async function getWrappedAccount(
 
     return BigInt(fetchedAccount.value.amount);
   } catch (error) {
-    console.log(error);
+    console.log(
+      `Address: ${wrappedAccount}\n`,
+      'getWrappedAccount error:',
+      error,
+    );
     return BigInt(0);
   }
 }

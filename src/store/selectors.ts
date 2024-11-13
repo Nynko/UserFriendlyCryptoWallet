@@ -102,3 +102,7 @@ export function useAccountPseudo(dlt: DLT) {
 export function usePrice(dlt: DLT, mint: string) {
   return appStore(state => state.dlts[dlt].prices[mint]);
 }
+
+export function usePk(dlt: DLT) {
+  return appStore(useShallow(state => state.dlts[dlt].generalAddresses.pubKey));
+}

@@ -5,13 +5,13 @@ import {
   TransactionType,
 } from '../../types/account';
 import {usePseudos} from '../../store/selectors';
-import {getPseudo} from '../../functions/solana/getPseudo';
 import {useAnchorProgram} from '../../hooks/contexts/useAnchorProgram';
 import {useEffect, useState} from 'react';
 import {ListItem, Spinner} from 'tamagui';
 import * as anchor from '@coral-xyz/anchor';
 import {NativeTransactionComponent} from './NativeTransaction';
 import {TransactionComponent} from './Transaction';
+import {fetchPseudo} from '../../store/actions';
 
 interface TransactionsProps {
   transaction: Transaction | NativeTransaction;
@@ -20,26 +20,20 @@ interface TransactionsProps {
 export function Transactions({transaction}: TransactionsProps) {
   const pseudos = usePseudos();
   const program = useAnchorProgram().program;
-
-  const [pseudo, setPseudo] = useState<string | null>(null);
+  const addressBase58 = transaction.address.toBase58();
+  const cachedPseudo = pseudos[addressBase58] || null;
+  const [pseudo, setPseudo] = useState<string | null>(cachedPseudo);
 
   useEffect(() => {
     const updateLocalPseudo = async (address: anchor.web3.PublicKey) => {
-      const addressBase58 = address.toBase58();
-      const cachedPseudo = pseudos[addressBase58];
-      if (cachedPseudo) {
-        setPseudo(cachedPseudo);
-      } else {
-        const fetchedPseudo = await getPseudo(address, program);
-
-        setPseudo(fetchedPseudo || addressBase58);
-      }
+      const fetchedPseudo = await fetchPseudo(address, program);
+      setPseudo(fetchedPseudo || addressBase58);
     };
 
-    if (transaction.address) {
+    if (!cachedPseudo) {
       updateLocalPseudo(transaction.address);
     }
-  }, [transaction, pseudos, program]);
+  }, [cachedPseudo, program, addressBase58, transaction.address]);
 
   let title = '';
   switch (transaction.direction) {

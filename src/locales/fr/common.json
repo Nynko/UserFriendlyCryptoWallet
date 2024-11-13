@@ -16,9 +16,10 @@
   "My Pseudo": "Mon Pseudo",
   "Scan QR Code": "Scanner le code QR",
   "Send": "Envoyer",
+  "Receive": "Recevoir",
   "to": "à",
   "Send to Pseudo": "Envoyer à un Pseudo",
-  "Transaction submitted": "Transaction envoyée !",
   "BackHome": "Retour à l'accueil",
-  "MyLastTransactions": "Mes dernières transactions"
+  "MyLastTransactions": "Mes dernières transactions",
+  "GenerateQR": "Générer un QR code"
 }

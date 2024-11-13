@@ -1,8 +1,19 @@
+# User Friendly crypto wallet
+
+First integration of my "user-friendly and compliant" smart contract on solana (https://github.com/Nynko/solana_iteration3)
+There should be another version of the smart contract focused on good account abstraction.
+
+There is a way to also implement stellar in it with this work : https://github.com/Nynko/StellarSecuredSmartWallet
+
+**Overall, still WIP, not fully clean, not always DRY.** But functionnal !
+
+Figma Design by Heloise Suat.
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
 ## Step 1: Start the Metro Server
 

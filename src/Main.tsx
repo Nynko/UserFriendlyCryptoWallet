@@ -4,11 +4,8 @@ import MainConnected from './MainConnected';
 import {OnboardingMain} from './onboarding/OnboardingMain';
 import {useIsStoreInitialized} from './store/selectors';
 
-let counter = 0;
 export function Main() {
   const initialized = useIsStoreInitialized();
-  counter++;
-  console.log('Main rendered', counter);
   if (!initialized) {
     return (
       <>

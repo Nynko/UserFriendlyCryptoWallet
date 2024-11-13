@@ -43,6 +43,7 @@ const borderRadius = 27;
 const styles = StyleSheet.create({
   gradientBorder: {
     borderRadius: borderRadius,
+    opacity: 0.6,
   },
   button: {
     borderRadius: borderRadius,

@@ -1,5 +1,5 @@
 import {Dispatch, SetStateAction, useEffect, useMemo, useState} from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {Dimensions, StyleSheet, Text} from 'react-native';
 import {useBoolState} from '../../hooks/useBoolState';
 import {QrCodeScanner} from '../QRCode/QrCodeScanner';
 import {styles2} from '../../screens/Style';
@@ -14,17 +14,18 @@ import {
   isSelectedMintEquals,
   SelectedMint,
 } from '../../functions/dlts/SelectedMint';
-import {Button, YStack} from 'tamagui';
+import {Button, View, XStack, YStack} from 'tamagui';
 import {useMintAddresses, useMintDecimals} from '../../store/selectors';
+
+const {height} = Dimensions.get('window');
+const gapRatio = height * 0.01;
 
 export function Send({
   selectedMint,
   setSelectedMint,
-  closingFunction,
 }: {
   selectedMint: SelectedMint;
   setSelectedMint: Dispatch<SetStateAction<SelectedMint>>;
-  closingFunction: () => void;
 }) {
   const [qrScannerActivated, activateQrScanner] = useBoolState();
   const [received, setReceived] = useState<string | null>(null);
@@ -82,12 +83,32 @@ export function Send({
   }, [pseudo, pk, program]);
 
   return (
-    <YStack padding="$1" gap="$4">
-      {status === 'submitted' && <Text>{t('Transaction submitted')}</Text>}
+    <YStack style={style.container} padding="$1" gap={5 * gapRatio}>
+      {status === 'submitted' && (
+        <View style={style.textContainer}>
+          <Text style={style.submittedText}>
+            {t('transactions:TransactionSubmitted')}
+          </Text>
+        </View>
+      )}
       {pseudo && value && status !== 'submitted' && (
-        <Text>{`${t('Send')} ${value / 10 ** decimals} ${mint.name} ${t(
-          'to',
-        )}: ${pseudo} ?`}</Text>
+        // <Text>{`${t('Send')} ${value / 10 ** decimals} ${mint.name} ${t(
+        //   'to',
+        // )}: ${pseudo} ?`}</Text>
+        <YStack gap={4 * gapRatio} style={{marginTop: 10}}>
+          <XStack style={{flexDirection: 'row'}} gap={10 * widthRatio}>
+            <Text style={style.text}>{t('Send')}</Text>
+            <View style={{flex: 1}} />
+            <Text style={style.values}>{`${value / 10 ** decimals} ${
+              mint.name
+            }`}</Text>
+          </XStack>
+          <XStack style={{flexDirection: 'row'}}>
+            <Text style={style.text}>{t('to')}</Text>
+            <View style={{flex: 1}} />
+            <Text style={style.values}>{`${pseudo}`}</Text>
+          </XStack>
+        </YStack>
       )}
 
       {!error && data && pk && value && status !== 'submitted' && (
@@ -104,8 +125,8 @@ export function Send({
       {error && <Text style={mainStyle.errorText}>{`${error}`}</Text>}
 
       {!qrScannerActivated && !sentToPseudo && !pseudo && !value && (
-        <YStack gap="$2">
-          <TouchableOpacity
+        <YStack gap={4 * gapRatio}>
+          <Button
             style={styles2.button}
             onPress={() => {
               activateQrScanner();
@@ -113,12 +134,10 @@ export function Send({
               setReceived(null);
             }}>
             <Text style={styles2.buttonText}>{t('Scan QR Code')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles2.button}
-            onPress={() => setSendToPseudo(true)}>
+          </Button>
+          <Button style={styles2.button} onPress={() => setSendToPseudo(true)}>
             <Text style={styles2.buttonText}>{t('Send to Pseudo')}</Text>
-          </TouchableOpacity>
+          </Button>
         </YStack>
       )}
 
@@ -136,9 +155,42 @@ export function Send({
         />
       )}
 
-      <YStack justifyContent="flex-end">
+      {/* <YStack justifyContent="flex-end">
         <Button onPress={() => closingFunction()}>{t('BackHome')}</Button>
-      </YStack>
+      </YStack> */}
     </YStack>
   );
 }
+
+const widthRatio = Dimensions.get('window').width * 0.01;
+
+const style = StyleSheet.create({
+  submittedText: {
+    fontSize: 20,
+    fontFamily: 'Montserrat-Regular',
+    color: 'gray',
+    width: '100%',
+    paddingTop: '10%',
+  },
+  textContainer: {
+    textAlign: 'center',
+    alignContent: 'center',
+  },
+  container: {
+    width: '100%',
+  },
+  text: {
+    fontWeight: '300',
+    fontSize: 22 * height * 0.001,
+    fontFamily: 'Montserrat-Regular',
+    color: 'black',
+    textAlign: 'left',
+  },
+  values: {
+    fontWeight: '600',
+    fontSize: 22 * height * 0.001,
+    fontFamily: 'Montserrat-Bold',
+    color: 'black',
+    textAlign: 'right',
+  },
+});
