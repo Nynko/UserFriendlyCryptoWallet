@@ -1,11 +1,22 @@
 # User Friendly crypto wallet
 
-First integration of my "user-friendly and compliant" smart contract on solana (https://github.com/Nynko/solana_iteration3)
-There should be another version of the smart contract focused on good account abstraction.
+- First integration of my "user-friendly and compliant" smart contract on solana (https://github.com/Nynko/solana_iteration3).
+There will be another version of the smart contract focused on good account abstraction.
+- The account abstraction part is partially implemented on stellar in this work : https://github.com/Nynko/StellarSecuredSmartWallet
+and could be added to this wallet.
 
-There is a way to also implement stellar in it with this work : https://github.com/Nynko/StellarSecuredSmartWallet
+----
 
-**Overall, still WIP, not fully clean, not always DRY.** But functionnal !
+
+- Anoncreds V1 without revocations has been added with solana as a vdr : https://github.com/Nynko/solana-anoncreds-v1
+- Kong is used as an API gateway to keep the API key safe
+- For the external entity securing the funds the backend (for multisignature) is here : https://github.com/Nynko/backend_signatures
+- For the issuer entity, the backend is here : https://github.com/Nynko/solana_anoncreds-backend_id
+
+Everything is deployed using docker images and a docker compose file.
+
+
+**Overall, still WIP, not fully clean, not always DRY.** But functional !
 
 <p align="middle">
 <img src="./src/onboarding/assets/Home-mockup.png" alt="Home" width=200>
@@ -58,35 +69,9 @@ npm run ios
 yarn ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
 This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
-## Step 3: Modifying your App
 
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
 
 - [React Native Website](https://reactnative.dev) - learn more about React Native.
 - [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
