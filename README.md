@@ -1,6 +1,9 @@
 # User Friendly crypto wallet
 
-- First integration of my "user-friendly and compliant" smart contract on solana (https://github.com/Nynko/solana_iteration3).
+This project will be transformed into a fully open-source project with focus on using Stellar Smart Wallet and a new version of the Solana smart contract.
+This will be compatible with ledger hardware wallet.
+
+- First integration of the "user-friendly and compliant" smart contract on solana (https://github.com/Nynko/solana_iteration3).
 There will be another version of the smart contract focused on good account abstraction.
 - The account abstraction part is partially implemented on stellar in this work : https://github.com/Nynko/StellarSecuredSmartWallet
 and could be added to this wallet.
